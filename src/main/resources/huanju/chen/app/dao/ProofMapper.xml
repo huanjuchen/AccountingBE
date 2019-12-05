@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="huanju.chen.app.dao.ProofMapper">
+    <insert id="save" parameterType="proof">
+        INSERT INTO proof(id, create_time, director_id, recorder_id, category, valid, valid_result, valid_time)
+        VALUES (NULL, #{createTimne}, #{directorId}, #{recorderId}, #{category}, #{valid}, #{validResult}, #{validTime})
+        <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">
+            SELECT last_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="find" parameterType="int" resultType="proof">
+        SELECT * FROM proof
+    </select>
+
+
+</mapper>

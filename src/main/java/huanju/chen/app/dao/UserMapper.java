@@ -2,13 +2,13 @@ package huanju.chen.app.dao;
 
 import huanju.chen.app.model.entity.User;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author HuanJu
  */
-//@Repository("userDao")
-public interface UserDao extends BaseDao<User> {
+public interface UserMapper extends BaseMapper<User> {
 
 
     /**
@@ -19,6 +19,9 @@ public interface UserDao extends BaseDao<User> {
      * @return user
      */
     User findUserByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
+
+
+    List<User> listByStart(@Param("start") int start, @Param("length") int length);
 
 
 }

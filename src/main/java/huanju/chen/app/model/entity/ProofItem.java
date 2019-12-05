@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * @author HuanJu
  */
-public class ProofItem {
+public class  ProofItem {
 
     private Integer id;
 

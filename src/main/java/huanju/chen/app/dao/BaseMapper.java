@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author HuanJu
  */
-public interface BaseDao<T> {
+public interface BaseMapper<T> {
 
     /**
      * 存储实体

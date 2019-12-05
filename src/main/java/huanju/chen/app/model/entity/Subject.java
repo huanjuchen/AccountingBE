@@ -1,5 +1,7 @@
 package huanju.chen.app.model.entity;
 
+import javax.validation.constraints.NotNull;
+
 /**
  *
  * 科目实体
@@ -13,6 +15,7 @@ public class Subject {
     /**
      * 科目名
      */
+    @NotNull(message = "科目名不可为空")
     private String name;
 
     /**

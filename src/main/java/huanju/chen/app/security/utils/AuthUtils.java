@@ -23,7 +23,7 @@ public class AuthUtils {
     public static void managerCheck(String tempToken,String tokenStr,Claims claims){
         userLoginCheck(tempToken,tokenStr);
         int role=claims.get("role",Integer.class);
-        if (role!=2){
+        if (role!=2&&role!=1){
             throw new CustomException("权限不足",HttpStatus.FORBIDDEN);
         }
     }

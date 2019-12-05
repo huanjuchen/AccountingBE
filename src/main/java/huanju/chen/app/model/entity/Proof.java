@@ -40,6 +40,10 @@ public class Proof {
 
     /**
      * 凭证类别
+     *
+     * 1.收款记账凭证
+     * 2.付款记账凭证
+     * 3.转账记账凭证
      */
     private Integer category;
 

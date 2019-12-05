@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="huanju.chen.app.dao.UserDao">
+<mapper namespace="huanju.chen.app.dao.UserMapper">
     <insert id="save" parameterType="user">
         INSERT INTO user(id, username, password, role, phone, join_time, valid)
         VALUES (null, #{username}, #{password}, #{role}, #{phone}, #{joinTime}, 1)
@@ -18,7 +18,13 @@
         SELECT *
         FROM user
         WHERE username = #{name}
+    </select>
 
+    <select id="listByStart" resultType="user" parameterType="int">
+        SELECT id, username, role, phone, join_time, valid
+        FROM user
+        ORDER BY id DESC
+        LIMIT #{start},#{length}
     </select>
 
 

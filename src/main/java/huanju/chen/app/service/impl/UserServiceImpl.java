@@ -2,18 +2,19 @@ package huanju.chen.app.service.impl;
 
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
-import huanju.chen.app.dao.UserDao;
+import huanju.chen.app.dao.UserMapper;
 import huanju.chen.app.exception.AlreadyExistsException;
 import huanju.chen.app.exception.BadCreateException;
 import huanju.chen.app.exception.NotFoundException;
 import huanju.chen.app.model.RespBody;
 import huanju.chen.app.model.entity.User;
 import huanju.chen.app.model.vo.LoginParam;
+import huanju.chen.app.model.vo.UserVo;
 import huanju.chen.app.security.utils.JwtUtils;
 import huanju.chen.app.service.UserService;
+import huanju.chen.app.utils.UserEntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -31,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private static Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Resource
-    private UserDao userDao;
+    private UserMapper userMapper;
 
     @Resource
     private CacheManager cacheManager;
@@ -76,13 +78,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<RespBody> createUser(User user) {
         logger.debug(JSON.toJSONString(user));
-
         if (user.getRole()==1){
-
-
             throw new BadCreateException("不允许添加用户为超级管理员", HttpStatus.BAD_REQUEST);
         }
-
 
         user.setValid(true);
         user.setJoinTime(new Timestamp(System.currentTimeMillis()));
@@ -91,16 +89,9 @@ public class UserServiceImpl implements UserService {
         if(findUserByUsername(user.getUsername())!=null){
             throw new AlreadyExistsException("用户已存在",HttpStatus.BAD_REQUEST);
         }
-
-
         int result=save(user);
 
-        if (result<=0){
-            throw new BadCreateException("用户添加失败，系统出现错误",HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
         User temp=findUserByUsername(user.getUsername());
-
         RespBody body=new RespBody();
         body.setCode(200);
         body.setMessage("ok");
@@ -112,17 +103,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<RespBody> getUserList(int page) {
+        if (page<1){
+            page=1;
+        }
+
+        List<User> userList=getList((page-1)*10,10);
+        List<UserVo> userVos= UserEntityUtils.covertToVoList(userList);
+        logger.debug("userList："+userList.size());
+
+        RespBody body=new RespBody();
+        body.setCode(200);
+        body.setData(userVos);
+
+        return ResponseEntity.ok(body);
+    }
+
+    @Override
     public int save(User user) {
-        return userDao.save(user);
+        return userMapper.save(user);
     }
 
     @Override
     public User findUserByUsernameAndPassword(String username, String password) {
-        return userDao.findUserByUsernameAndPassword(username,password);
+        return userMapper.findUserByUsernameAndPassword(username,password);
     }
 
     @Override
     public User findUserByUsername(String username) {
-        return userDao.findByName(username);
+        return userMapper.findByName(username);
+    }
+
+    @Override
+    public List<User> getList(int start,int length) {
+        return userMapper.listByStart(start, length);
     }
 }

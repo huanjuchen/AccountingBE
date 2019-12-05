@@ -16,7 +16,7 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Resource
+    @Resource(name = "userServiceImpl")
     private UserService userService;
 
 
@@ -26,8 +26,14 @@ public class UserController {
     }
 
     @GetMapping("/admin/user")
-    public ResponseEntity<RespBody> userList(int page) {
+    public ResponseEntity<RespBody> getUserList(@RequestParam(required = false) int page) {
         logger.debug("page=" + page);
+        return userService.getUserList(page);
+    }
+
+    @GetMapping("/admin/user/userId")
+    public ResponseEntity<RespBody> getUserById(int userId){
+        logger.debug("userId="+userId);
         return null;
     }
 

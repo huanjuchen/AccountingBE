@@ -92,7 +92,7 @@ public class GlobalExceptionController {
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<RespBody> runtimeExceptionHandle(RuntimeException e) {
-        logger.warn(e.getMessage());
+        e.printStackTrace();
         RespBody body = new RespBody();
         body.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         body.setMessage("服务器错误，请稍后重试！");
