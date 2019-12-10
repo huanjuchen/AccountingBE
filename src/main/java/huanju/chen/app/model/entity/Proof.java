@@ -1,6 +1,9 @@
 package huanju.chen.app.model.entity;
 
+import huanju.chen.app.model.vo.ProofVo;
+
 import java.util.Date;
+import java.util.List;
 
 /**
  * 记账凭证实体
@@ -17,17 +20,6 @@ public class Proof {
     private Date createTime;
 
     /**
-     * 主管会计Id
-     */
-    private Integer directorId;
-
-    /**
-     * 主管会计
-     */
-    private User director;
-
-
-    /**
      * 凭证制作人Id
      */
     private Integer recorderId;
@@ -37,26 +29,23 @@ public class Proof {
      */
     private User recorder;
 
-
     /**
      * 凭证类别
-     *
      * 1.收款记账凭证
      * 2.付款记账凭证
      * 3.转账记账凭证
      */
     private Integer category;
 
-    /**
-     * 是否审核
-     */
-    private Boolean valid;
 
     /**
-     * 审核结果
+     * 审核
      */
-    private Boolean validResult;
+    private Integer examinationId;
 
+    private Examination examination;
+
+    private List<ProofItem> items;
 
     public Integer getId() {
         return id;
@@ -72,22 +61,6 @@ public class Proof {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getDirectorId() {
-        return directorId;
-    }
-
-    public void setDirectorId(Integer directorId) {
-        this.directorId = directorId;
-    }
-
-    public User getDirector() {
-        return director;
-    }
-
-    public void setDirector(User director) {
-        this.director = director;
     }
 
     public Integer getRecorderId() {
@@ -114,21 +87,46 @@ public class Proof {
         this.category = category;
     }
 
-    public Boolean getValid() {
-        return valid;
+    public Integer getExaminationId() {
+        return examinationId;
     }
 
-    public void setValid(Boolean valid) {
-        this.valid = valid;
+    public void setExaminationId(Integer examinationId) {
+        this.examinationId = examinationId;
     }
 
-    public Boolean getValidResult() {
-        return validResult;
+    public Examination getExamination() {
+        return examination;
     }
 
-    public void setValidResult(Boolean validResult) {
-        this.validResult = validResult;
+    public void setExamination(Examination examination) {
+        this.examination = examination;
+    }
+
+    public List<ProofItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ProofItem> items) {
+        this.items = items;
     }
 
 
+    public ProofVo covert() {
+        ProofVo proofVo = new ProofVo();
+        proofVo.setId(this.id);
+        proofVo.setCreateTime(this.createTime);
+        proofVo.setCategory(this.category);
+        proofVo.setItems(this.items);
+
+        if (this.recorder != null) {
+            proofVo.setRecorder(this.recorder.covert());
+
+        }
+        if (this.examination != null) {
+            proofVo.setExamination(this.examination.covert());
+        }
+
+        return proofVo;
+    }
 }

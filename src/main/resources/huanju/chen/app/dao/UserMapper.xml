@@ -7,6 +7,10 @@
         VALUES (null, #{username}, #{password}, #{role}, #{phone}, #{joinTime}, 1)
     </insert>
 
+    <select id="find" resultType="user">
+        SELECT * FROM user WHERE id=#{key}
+    </select>
+
     <select id="findUserByUsernameAndPassword" resultType="user">
         SELECT *
         FROM user

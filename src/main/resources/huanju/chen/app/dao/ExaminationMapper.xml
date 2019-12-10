@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="huanju.chen.app.dao.ExaminationMapper">
+    <insert id="save" parameterType="examination">
+        INSERT INTO examination(id, result, time, examiner_id)
+        VALUES (NULL, #{result}, #{time}, #{examinerId})
+    </insert>
+
+    <select id="find" parameterType="int" resultType="examination">
+        SELECT * FROM examination WHERE id=#{key}
+    </select>
+
+    <resultMap id="examinationMap" type="huanju.chen.app.model.entity.Examination">
+        <id column="id" property="id"/>
+        <result column="result" property="result"/>
+        <result column="time" property="time"/>
+        <result column="examiner_id" property="examinerId"/>
+        <association property="examiner" column="examiner_id" javaType="huanju.chen.app.model.entity.User"
+                     select="huanju.chen.app.dao.UserMapper.find">
+
+        </association>
+    </resultMap>
+
+
+
+</mapper>

@@ -3,16 +3,34 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="huanju.chen.app.dao.ProofMapper">
     <insert id="save" parameterType="proof">
-        INSERT INTO proof(id, create_time, director_id, recorder_id, category, valid, valid_result, valid_time)
-        VALUES (NULL, #{createTimne}, #{directorId}, #{recorderId}, #{category}, #{valid}, #{validResult}, #{validTime})
+
+        INSERT INTO proof(id, create_time, recorder_id, category, examination_id)
+        VALUES (NULL,#{createTime},#{recorderId},#{category},#{examinationId})
         <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">
             SELECT last_insert_id()
         </selectKey>
     </insert>
 
-    <select id="find" parameterType="int" resultType="proof">
-        SELECT * FROM proof
+    <select id="find" parameterType="int" resultMap="proofMap">
+        SELECT *
+        FROM proof
+        WHERE id = #{key}
     </select>
 
+
+    <resultMap id="proofMap" type="proof">
+        <id property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="recorderId" column="recorder_id"/>
+        <result property="category" column="category"/>
+        <result property="examinationId" column="examination_id"/>
+        <association property="recorder" select="huanju.chen.app.dao.UserMapper.find"
+                     javaType="huanju.chen.app.model.entity.User" column="recorder_id">
+        </association>
+        <association property="examination" javaType="huanju.chen.app.model.entity.Examination"
+                     column="examination_id" select="huanju.chen.app.dao.ExaminationMapper.find">
+
+        </association>
+    </resultMap>
 
 </mapper>

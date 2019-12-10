@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="huanju.chen.app.dao.ProofItemMapper">
+
+    <insert id="save" parameterType="proofItem">
+<!--        INSERT INTO proof_item(id, abstraction, sub_subject_id, ledger_subject_id, money, charge, proof_id)-->
+<!--        VALUES (NULL, #{abstraction}, #{subSubjectId}, #{ledgerSubjectId}, #{money}, #{charge}, #{proofId})-->
+<!--        <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">-->
+<!--            SELECT last_insert_id()-->
+<!--        </selectKey>-->
+    </insert>
+
+    <select id="find" resultType="proofItem">
+        SELECT *
+        FROM proof_item
+        WHERE id = #{key}
+    </select>
+
+    <select id="listByProofId" parameterType="int" resultType="proofItem">
+        SELECT *
+        FROM proof_item
+        WHERE proof_id = #{proofId}
+    </select>
+
+    <update id="update" parameterType="proofItem">
+<!--        UPDATE proof_item-->
+<!--        <set>-->
+<!--            <if test="abstraction!=null and abstraction!=''">-->
+<!--                abstraction=#{abstraction},-->
+<!--            </if>-->
+<!--            <if test="subSubjectId!=null">-->
+<!--                sub_subject_id=#{subSubjectId},-->
+<!--            </if>-->
+<!--            <if test="ledgerSubjectId!=null">-->
+<!--                ledger_subject_id=#{ledgerSubjectId},-->
+<!--            </if>-->
+<!--            <if test="money!=null">-->
+<!--                money=#{money},-->
+<!--            </if>-->
+<!--            <if test="charge!=null">-->
+<!--                charge=#{charge},-->
+<!--            </if>-->
+<!--            <if test="proofId!=null">-->
+<!--                proof_id=#{proofId},-->
+<!--            </if>-->
+<!--        </set>-->
+<!--        WHERE id=#{id}-->
+    </update>
+
+
+</mapper>
