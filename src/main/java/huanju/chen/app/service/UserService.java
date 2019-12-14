@@ -23,6 +23,8 @@ public interface UserService {
 
     int save(User user);
 
+    User find(Integer id);
+
     User findUserByUsernameAndPassword(String username, String password);
 
     User findUserByUsername(String username);

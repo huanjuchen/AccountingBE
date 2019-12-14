@@ -16,15 +16,20 @@ public interface SubjectService {
     ResponseEntity<RespBody> listByPage(int page);
 
 
+    ResponseEntity<RespBody> listByEnabledSubject();
+
+
     int save(Subject subject);
 
-    int delete(int key);
+    int delete(Integer key);
 
     int update(Subject subject);
 
-    Subject find(int key);
+    Subject find(Integer id);
 
     List<Subject> listByLimit(int start, int count);
+
+    List<Subject> listByEnabled();
 
 
 }

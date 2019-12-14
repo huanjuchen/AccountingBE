@@ -12,11 +12,12 @@ import huanju.chen.app.model.vo.LoginParam;
 import huanju.chen.app.model.vo.UserVo;
 import huanju.chen.app.security.utils.JwtUtils;
 import huanju.chen.app.service.UserService;
-import huanju.chen.app.utils.UserEntityUtils;
+import huanju.chen.app.utils.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -109,7 +110,7 @@ public class UserServiceImpl implements UserService {
         }
 
         List<User> userList=getList((page-1)*10,10);
-        List<UserVo> userVos= UserEntityUtils.covertToVoList(userList);
+        List<UserVo> userVos= EntityUtils.covertToUserVoList(userList);
         logger.debug("userList："+userList.size());
 
         RespBody body=new RespBody();
@@ -122,6 +123,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public int save(User user) {
         return userMapper.save(user);
+    }
+
+
+    @Override
+    @Cacheable(cacheNames = "userCache",condition = "#id>0",unless = "#result==null")
+    public User find(Integer id) {
+        return userMapper.find(id);
     }
 
     @Override

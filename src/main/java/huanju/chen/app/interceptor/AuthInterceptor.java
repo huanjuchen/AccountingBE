@@ -7,7 +7,6 @@ import huanju.chen.app.security.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
 
-    @Autowired
+    @Resource
     private CacheManager cacheManager;
 
     @Override
@@ -41,7 +41,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         try {
 
             Claims claims = JwtUtils.decodeJwt(tokenStr);
-            logger.debug("【DEBUG】："+this.getClass()+"---"+ JSON.toJSONString(claims));
+            logger.debug(JSON.toJSONString(claims));
 
             int tokenId = (int) claims.get("id");
             String tempToken = cache.get(tokenId, String.class);
@@ -50,10 +50,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 
         } catch (CustomException e) {
-            logger.warn(this.getClass().getName() + "---" + e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         } catch (Exception e) {
-            logger.error(this.getClass().getName() + "---" + e.getMessage());
+            logger.error(e.getMessage());
             throw new CustomException("非法Token", HttpStatus.UNAUTHORIZED);
         }
         return true;

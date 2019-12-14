@@ -1,10 +1,9 @@
 package huanju.chen.app.model.vo;
 
-import huanju.chen.app.model.entity.User;
-
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class UserVo {
+public class UserVo implements Serializable {
 
     private Integer id;
 
@@ -66,14 +65,4 @@ public class UserVo {
         this.joinTime = joinTime;
     }
 
-    public User covert() {
-        User user = new User();
-        user.setId(this.id);
-        user.setUsername(this.username);
-        user.setValid(this.valid);
-        user.setJoinTime(this.joinTime);
-        user.setRole(this.role);
-        user.setPhone(this.phone);
-        return user;
-    }
 }

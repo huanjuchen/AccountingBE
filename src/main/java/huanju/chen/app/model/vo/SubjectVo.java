@@ -1,27 +1,14 @@
-package huanju.chen.app.model.entity;
+package huanju.chen.app.model.vo;
 
-import huanju.chen.app.model.vo.SubjectVo;
-import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-/**
- * 科目实体
- *
- * @author HuanJu
- */
-public class Subject implements Serializable {
+public class SubjectVo implements Serializable {
 
-
-    @NotNull(message = "科目代码不能为空")
     private Integer id;
 
     /**
      * 科目名
      */
-    @NotNull(message = "科目名不可为空")
-    @Length(max = 20, message = "长度不能操作${max}")
     private String name;
 
     /**
@@ -42,6 +29,7 @@ public class Subject implements Serializable {
      * 科目标识，标注科目是否可用
      */
     private Boolean valid;
+
 
     public Integer getId() {
         return id;
@@ -84,14 +72,4 @@ public class Subject implements Serializable {
     }
 
 
-    public SubjectVo covert() {
-        SubjectVo subjectVo = new SubjectVo();
-        subjectVo.setId(this.id);
-        subjectVo.setName(this.name);
-        subjectVo.setSubjectType(this.subjectType);
-        subjectVo.setRemark(this.remark);
-        subjectVo.setValid(this.valid);
-        return subjectVo;
-
-    }
 }

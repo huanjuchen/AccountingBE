@@ -3,6 +3,7 @@ package huanju.chen.app.model.entity;
 import huanju.chen.app.model.vo.UserVo;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -10,7 +11,7 @@ import java.sql.Timestamp;
  *
  * @author HuanJu
  */
-public class User {
+public class User implements Serializable {
 
 
     private Integer id;

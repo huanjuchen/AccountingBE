@@ -15,15 +15,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class MangeAuthInterceptor implements HandlerInterceptor {
+public class ManageAuthInterceptor implements HandlerInterceptor {
 
-    private static final Logger logger= LoggerFactory.getLogger(MangeAuthInterceptor.class);
+    private static final Logger logger= LoggerFactory.getLogger(ManageAuthInterceptor.class);
 
-    @Autowired
+    @Resource
     private CacheManager cacheManager;
 
     @Override
@@ -31,6 +32,7 @@ public class MangeAuthInterceptor implements HandlerInterceptor {
         String tokenStr = request.getHeader("token");
         if (tokenStr == null || tokenStr.length() == 0) {
             throw new CustomException("未登录", HttpStatus.UNAUTHORIZED);
+
         }
         Cache cache=cacheManager.getCache("tokenCache");
 

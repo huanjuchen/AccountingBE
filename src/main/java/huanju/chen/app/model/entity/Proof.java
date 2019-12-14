@@ -1,7 +1,10 @@
 package huanju.chen.app.model.entity;
 
+import huanju.chen.app.model.vo.ProofItemVo;
 import huanju.chen.app.model.vo.ProofVo;
+import org.hibernate.validator.constraints.Length;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,35 +18,55 @@ public class Proof {
     private Integer id;
 
     /**
-     * 凭证创建时间
+     * 业务发生日期
      */
-    private Date createTime;
+    private Date date;
 
     /**
-     * 凭证制作人Id
+     * 单据数
      */
-    private Integer recorderId;
-
-    /**
-     * 凭证制作人
-     */
-    private User recorder;
-
-    /**
-     * 凭证类别
-     * 1.收款记账凭证
-     * 2.付款记账凭证
-     * 3.转账记账凭证
-     */
-    private Integer category;
+    private Integer invoiceCount;
 
 
     /**
-     * 审核
+     * 主管人员
+     */
+    private String manager;
+
+    /**
+     * 记账人
+     */
+    private String collection;
+
+    /**
+     * 稽核
      */
     private Integer examinationId;
 
     private Examination examination;
+
+    /**
+     * 制单人Id
+     */
+    private Integer recorderId;
+
+    /**
+     * 制单人
+     */
+    private User recorder;
+
+
+    /**
+     * 出纳人
+     */
+    private String cashier;
+
+
+    /**
+     * 交款人
+     */
+    private String payer;
+
 
     private List<ProofItem> items;
 
@@ -55,36 +78,36 @@ public class Proof {
         this.id = id;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public Date getDate() {
+        return date;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public Integer getRecorderId() {
-        return recorderId;
+    public Integer getInvoiceCount() {
+        return invoiceCount;
     }
 
-    public void setRecorderId(Integer recorderId) {
-        this.recorderId = recorderId;
+    public void setInvoiceCount(Integer invoiceCount) {
+        this.invoiceCount = invoiceCount;
     }
 
-    public User getRecorder() {
-        return recorder;
+    public String getManager() {
+        return manager;
     }
 
-    public void setRecorder(User recorder) {
-        this.recorder = recorder;
+    public void setManager(String manager) {
+        this.manager = manager;
     }
 
-    public Integer getCategory() {
-        return category;
+    public String getCollection() {
+        return collection;
     }
 
-    public void setCategory(Integer category) {
-        this.category = category;
+    public void setCollection(String collection) {
+        this.collection = collection;
     }
 
     public Integer getExaminationId() {
@@ -103,6 +126,38 @@ public class Proof {
         this.examination = examination;
     }
 
+    public Integer getRecorderId() {
+        return recorderId;
+    }
+
+    public void setRecorderId(Integer recorderId) {
+        this.recorderId = recorderId;
+    }
+
+    public User getRecorder() {
+        return recorder;
+    }
+
+    public void setRecorder(User recorder) {
+        this.recorder = recorder;
+    }
+
+    public String getCashier() {
+        return cashier;
+    }
+
+    public void setCashier(String cashier) {
+        this.cashier = cashier;
+    }
+
+    public String getPayer() {
+        return payer;
+    }
+
+    public void setPayer(String payer) {
+        this.payer = payer;
+    }
+
     public List<ProofItem> getItems() {
         return items;
     }
@@ -111,20 +166,33 @@ public class Proof {
         this.items = items;
     }
 
-
     public ProofVo covert() {
         ProofVo proofVo = new ProofVo();
         proofVo.setId(this.id);
-        proofVo.setCreateTime(this.createTime);
-        proofVo.setCategory(this.category);
-        proofVo.setItems(this.items);
+        proofVo.setDate(this.date);
+        proofVo.setInvoiceCount(this.invoiceCount);
+        proofVo.setManager(this.manager);
+        proofVo.setCollection(this.collection);
+        if (this.examination != null) {
+            proofVo.setExamination(this.examination.covert());
+        }
+
 
         if (this.recorder != null) {
             proofVo.setRecorder(this.recorder.covert());
 
         }
-        if (this.examination != null) {
-            proofVo.setExamination(this.examination.covert());
+
+        proofVo.setCashier(this.cashier);
+        proofVo.setPayer(this.payer);
+
+        List<ProofItemVo> itemVos = null;
+        if (this.items != null) {
+            itemVos = new ArrayList<>(this.items.size());
+            for (int i = 0; i < this.items.size(); i++) {
+                itemVos.add(i, this.items.get(i).covert());
+            }
+            proofVo.setItems(itemVos);
         }
 
         return proofVo;

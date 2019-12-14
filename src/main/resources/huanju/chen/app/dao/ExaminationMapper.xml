@@ -18,7 +18,6 @@
         <result column="examiner_id" property="examinerId"/>
         <association property="examiner" column="examiner_id" javaType="huanju.chen.app.model.entity.User"
                      select="huanju.chen.app.dao.UserMapper.find">
-
         </association>
     </resultMap>
 

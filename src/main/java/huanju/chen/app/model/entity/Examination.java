@@ -2,12 +2,13 @@ package huanju.chen.app.model.entity;
 
 import huanju.chen.app.model.vo.ExaminationVo;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * 审核记录实体
  */
-public class Examination {
+public class Examination implements Serializable {
 
     private Integer id;
 

@@ -46,15 +46,4 @@ public class ExaminationVo {
     }
 
 
-    public Examination covert() {
-        Examination examination = new Examination();
-        examination.setId(this.id);
-        examination.setResult(this.result);
-        examination.setTime(this.time);
-
-        if (this.examiner != null) {
-            examination.setExaminer(this.examiner.covert());
-        }
-        return examination;
-    }
 }

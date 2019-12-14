@@ -3,11 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="huanju.chen.app.dao.SubjectMapper">
     <insert id="save" parameterType="subject">
-        INSERT INTO subject(id, name, valid, `describe`)
-        VALUES (NULL, #{name}, 1, #{describe})
-        <selectKey resultType="integer" order="AFTER" keyColumn="id" keyProperty="id">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
+        INSERT INTO subject(id, name, subject_type, remark,valid)
+        VALUES (#{id},#{name},#{subjectType},#{remark},#{valid})
     </insert>
 
     <update id="update" parameterType="subject">
@@ -16,21 +13,19 @@
             <if test="name!=null and name!=''">
                 name=#{name},
             </if>
+            <if test="subjectType!=null">
+                subject_type=#{subjectType},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark=#{remark},
+            </if>
             <if test="valid!=null">
                 valid=#{valid},
-            </if>
-            <if test="describe!=null and describe!=''">
-                `describe`=#{describe},
             </if>
         </set>
         WHERE id=#{id}
     </update>
 
-    <delete id="delete" parameterType="int">
-        DELETE
-        FROM subject
-        WHERE id = #{key}
-    </delete>
 
     <select id="find" parameterType="int" resultType="subject">
         SELECT *
@@ -48,6 +43,11 @@
         SELECT *
         FROM subject
         LIMIT #{start},#{count}
+    </select>
+
+
+    <select id="listByEnabled" resultType="subject">
+        SELECT * FROM subject WHERE valid=TRUE
     </select>
 
 </mapper>

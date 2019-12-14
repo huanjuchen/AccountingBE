@@ -1,4 +1,4 @@
-package huanju.chen.app.controller.manage;
+package huanju.chen.app.controller;
 
 import huanju.chen.app.model.RespBody;
 import huanju.chen.app.model.entity.Subject;
@@ -34,6 +34,12 @@ public class SubjectController {
     @GetMapping({"/manage/subject","/subject"})
     public ResponseEntity<RespBody> listByPage(int page){
         return subjectService.listByPage(page);
+    }
+
+
+    @GetMapping("/subject/available/true")
+    public ResponseEntity<RespBody> listByAvailable(){
+        return subjectService.listByEnabledSubject();
     }
 
 

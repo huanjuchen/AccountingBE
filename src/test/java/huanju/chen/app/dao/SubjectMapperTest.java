@@ -14,12 +14,14 @@ public class SubjectMapperTest {
 
     @Test
     public void saveTest(){
-
         Subject subject=new Subject();
-        subject.setName("科目1");
-        subject.setDescribe("科目测试1");
+
+        subject.setId(1001);
+        subject.setName("库存现金");
+        subject.setSubjectType(1);
+        subject.setValid(true);
 
         subjectMapper.save(subject);
-        System.out.println(subject.getId());
+
     }
 }

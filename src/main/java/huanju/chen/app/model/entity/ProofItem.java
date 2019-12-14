@@ -1,11 +1,13 @@
 package huanju.chen.app.model.entity;
 
+import huanju.chen.app.model.vo.ProofItemVo;
+
 import java.math.BigDecimal;
 
 /**
  * @author HuanJu
  */
-public class  ProofItem {
+public class ProofItem {
 
     private Integer id;
 
@@ -25,7 +27,7 @@ public class  ProofItem {
     private Subject debitSubSubject;
 
     /**
-     * 贷方明细账科目
+     * 贷方明细账科目ID
      */
     private Integer creditSubSubjectId;
 
@@ -59,27 +61,7 @@ public class  ProofItem {
 
 
     /**
-     * 明细账科目ID
-     */
-    private Integer subSubjectId;
-
-    /**
-     * 明细账科目
-     */
-    private Subject subSubject;
-
-    /**
-     * 总账科目ID
-     */
-    private Integer ledgerSubjectId;
-
-    /**
-     * 总账科目
-     */
-    private Subject ledgerSubject;
-
-    /**
-     * 金额
+     * 贷方总账科目ID
      */
     private BigDecimal money;
 
@@ -93,6 +75,7 @@ public class  ProofItem {
      * 关联列，凭证号
      */
     private Integer proofId;
+
 
     public Integer getId() {
         return id;
@@ -110,36 +93,68 @@ public class  ProofItem {
         this.abstraction = abstraction;
     }
 
-    public Integer getSubSubjectId() {
-        return subSubjectId;
+    public Integer getDebitSubSubjectId() {
+        return debitSubSubjectId;
     }
 
-    public void setSubSubjectId(Integer subSubjectId) {
-        this.subSubjectId = subSubjectId;
+    public void setDebitSubSubjectId(Integer debitSubSubjectId) {
+        this.debitSubSubjectId = debitSubSubjectId;
     }
 
-    public Subject getSubSubject() {
-        return subSubject;
+    public Subject getDebitSubSubject() {
+        return debitSubSubject;
     }
 
-    public void setSubSubject(Subject subSubject) {
-        this.subSubject = subSubject;
+    public void setDebitSubSubject(Subject debitSubSubject) {
+        this.debitSubSubject = debitSubSubject;
     }
 
-    public Integer getLedgerSubjectId() {
-        return ledgerSubjectId;
+    public Integer getCreditSubSubjectId() {
+        return creditSubSubjectId;
     }
 
-    public void setLedgerSubjectId(Integer ledgerSubjectId) {
-        this.ledgerSubjectId = ledgerSubjectId;
+    public void setCreditSubSubjectId(Integer creditSubSubjectId) {
+        this.creditSubSubjectId = creditSubSubjectId;
     }
 
-    public Subject getLedgerSubject() {
-        return ledgerSubject;
+    public Subject getCreditSubSubject() {
+        return creditSubSubject;
     }
 
-    public void setLedgerSubject(Subject ledgerSubject) {
-        this.ledgerSubject = ledgerSubject;
+    public void setCreditSubSubject(Subject creditSubSubject) {
+        this.creditSubSubject = creditSubSubject;
+    }
+
+    public Integer getDebitLedgerSubjectId() {
+        return debitLedgerSubjectId;
+    }
+
+    public void setDebitLedgerSubjectId(Integer debitLedgerSubjectId) {
+        this.debitLedgerSubjectId = debitLedgerSubjectId;
+    }
+
+    public Subject getDebitLedgerSubject() {
+        return debitLedgerSubject;
+    }
+
+    public void setDebitLedgerSubject(Subject debitLedgerSubject) {
+        this.debitLedgerSubject = debitLedgerSubject;
+    }
+
+    public Integer getCreditLedgerSubjectId() {
+        return creditLedgerSubjectId;
+    }
+
+    public void setCreditLedgerSubjectId(Integer creditLedgerSubjectId) {
+        this.creditLedgerSubjectId = creditLedgerSubjectId;
+    }
+
+    public Subject getCreditLedgerSubject() {
+        return creditLedgerSubject;
+    }
+
+    public void setCreditLedgerSubject(Subject creditLedgerSubject) {
+        this.creditLedgerSubject = creditLedgerSubject;
     }
 
     public BigDecimal getMoney() {
@@ -165,4 +180,22 @@ public class  ProofItem {
     public void setProofId(Integer proofId) {
         this.proofId = proofId;
     }
+
+
+    public ProofItemVo covert() {
+        ProofItemVo proofItemVo = new ProofItemVo();
+
+        proofItemVo.setId(this.id);
+        proofItemVo.setAbstraction(this.abstraction);
+        proofItemVo.setCreditLedgerSubject(this.creditLedgerSubject.covert());
+        proofItemVo.setCreditSubSubject(this.creditSubSubject.covert());
+        proofItemVo.setDebitLedgerSubject(this.debitLedgerSubject.covert());
+        proofItemVo.setDebitSubSubject(this.debitSubSubject.covert());
+        proofItemVo.setMoney(this.money);
+        proofItemVo.setCharge(this.charge);
+        return proofItemVo;
+
+
+    }
+
 }

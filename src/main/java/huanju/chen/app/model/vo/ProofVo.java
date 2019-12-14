@@ -1,24 +1,58 @@
 package huanju.chen.app.model.vo;
 
 
-import huanju.chen.app.model.entity.Proof;
-import huanju.chen.app.model.entity.ProofItem;
+
 
 import java.util.Date;
 import java.util.List;
 
 public class ProofVo {
+
     private Integer id;
+    /**
+     * 业务发生日期
+     */
+    private Date date;
 
-    private Date createTime;
+    /**
+     * 单据数
+     */
+    private Integer invoiceCount;
 
-    private UserVo recorder;
+    /**
+     * 主管人员
+     */
+    private String manager;
 
-    private Integer category;
+    /**
+     * 记账人
+     */
+    private String collection;
+
+    /**
+     * 稽核
+     */
 
     private ExaminationVo examination;
 
-    private List<ProofItem> items;
+    /**
+     * 制单人
+     */
+    private UserVo recorder;
+
+    /**
+     * 出纳人
+     */
+    private String cashier;
+
+    /**
+     * 交款人
+     */
+    private String payer;
+
+
+    private List<ProofItemVo> items;
+
 
     public Integer getId() {
         return id;
@@ -28,29 +62,38 @@ public class ProofVo {
         this.id = id;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public Date getDate() {
+        return date;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public UserVo getRecorder() {
-        return recorder;
+    public Integer getInvoiceCount() {
+        return invoiceCount;
     }
 
-    public void setRecorder(UserVo recorder) {
-        this.recorder = recorder;
+    public void setInvoiceCount(Integer invoiceCount) {
+        this.invoiceCount = invoiceCount;
     }
 
-    public Integer getCategory() {
-        return category;
+    public String getManager() {
+        return manager;
     }
 
-    public void setCategory(Integer category) {
-        this.category = category;
+    public void setManager(String manager) {
+        this.manager = manager;
     }
+
+    public String getCollection() {
+        return collection;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
 
     public ExaminationVo getExamination() {
         return examination;
@@ -60,28 +103,36 @@ public class ProofVo {
         this.examination = examination;
     }
 
-    public List<ProofItem> getItems() {
+
+    public UserVo getRecorder() {
+        return recorder;
+    }
+
+    public void setRecorder(UserVo recorder) {
+        this.recorder = recorder;
+    }
+
+    public String getCashier() {
+        return cashier;
+    }
+
+    public void setCashier(String cashier) {
+        this.cashier = cashier;
+    }
+
+    public String getPayer() {
+        return payer;
+    }
+
+    public void setPayer(String payer) {
+        this.payer = payer;
+    }
+
+    public List<ProofItemVo> getItems() {
         return items;
     }
 
-    public void setItems(List<ProofItem> items) {
+    public void setItems(List<ProofItemVo> items) {
         this.items = items;
     }
-
-    public Proof covert() {
-        Proof proof = new Proof();
-        proof.setId(this.id);
-        proof.setCreateTime(this.createTime);
-        proof.setCategory(this.category);
-        proof.setItems(this.items);
-        if (this.recorder != null) {
-            proof.setRecorder(this.recorder.covert());
-        }
-        if (this.examination != null) {
-            proof.setExamination(this.examination.covert());
-        }
-        return proof;
-
-    }
-
 }

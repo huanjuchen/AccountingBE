@@ -8,6 +8,11 @@ public interface ProofService {
 
     ResponseEntity<RespBody> create(Proof proof);
 
-    ResponseEntity<RespBody> findProofById(int id);
+    ResponseEntity<RespBody> findProofById(Integer id);
+
+
+    int save(Proof proof);
+
+    Proof find(Integer id);
 
 }

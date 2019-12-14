@@ -9,5 +9,7 @@ public interface SubjectMapper extends BaseMapper<Subject> {
 
     List<Subject> listByLimit(@Param("start") int start, @Param("count") int count);
 
+    List<Subject> listByEnabled();
+
 
 }
