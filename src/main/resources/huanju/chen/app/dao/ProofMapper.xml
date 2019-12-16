@@ -20,4 +20,10 @@
         WHERE id = #{key}
     </select>
 
+    <select id="listByUserId" resultType="proof">
+        SELECT *
+        FROM proof
+        WHERE recorder_id = #{userId}
+    </select>
+
 </mapper>

@@ -1,10 +1,9 @@
 package huanju.chen.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import huanju.chen.app.dao.ExaminationMapper;
-import huanju.chen.app.dao.ProofItemMapper;
+
 import huanju.chen.app.dao.ProofMapper;
-import huanju.chen.app.model.RespBody;
+
 import huanju.chen.app.model.entity.Examination;
 import huanju.chen.app.model.entity.Proof;
 import huanju.chen.app.model.entity.ProofItem;
@@ -15,10 +14,14 @@ import huanju.chen.app.service.ProofService;
 import huanju.chen.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -27,7 +30,7 @@ import java.util.List;
 @DependsOn(value = {"userServiceImpl", "examinationServiceImpl", "proofItemServiceImpl"})
 public class ProofServiceImpl implements ProofService {
 
-    private static final Logger logger= LoggerFactory.getLogger(ProofServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProofServiceImpl.class);
 
 
     @Resource
@@ -42,10 +45,13 @@ public class ProofServiceImpl implements ProofService {
     @Resource(name = "proofItemServiceImpl")
     private ProofItemService proofItemService;
 
+    @Autowired
+    private CacheManager cacheManager;
+
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public ResponseEntity<RespBody> create(Proof proof) {
+    public void save(Proof proof) {
         logger.debug(JSON.toJSONString(proof));
         proofMapper.save(proof);
         if (proof.getItems() != null && proof.getItems().size() != 0) {
@@ -54,14 +60,13 @@ public class ProofServiceImpl implements ProofService {
                 proofItemService.save(item);
             }
         }
-
-        return ResponseEntity.ok(null);
     }
 
+
     @Override
-    public ResponseEntity<RespBody> findProofById(Integer id) {
+    @Cacheable(value = "proofCache", key = "#id", condition = "#id>0", unless = "#result==null")
+    public Proof find(Integer id) {
         Proof proof = proofMapper.find(id);
-        RespBody body = null;
         if (proof != null) {
             List<ProofItem> itemList = proofItemService.listByProofId(proof.getId());
             proof.setItems(itemList);
@@ -71,21 +76,18 @@ public class ProofServiceImpl implements ProofService {
                 Examination examination = examinationService.find(proof.getExaminationId());
                 proof.setExamination(examination);
             }
-            body = new RespBody();
-            body.setCode(200);
-            body.setData(proof.covert());
         }
-
-        return ResponseEntity.ok().body(body);
+        return proof;
     }
 
-    @Override
-    public int save(Proof proof) {
-        return proofMapper.save(proof);
-    }
+
+
 
     @Override
-    public Proof find(Integer id) {
-        return proofMapper.find(id);
+    @Cacheable(value = "proofListCache", key = "#userId", condition = "#userId>0", unless = "#result==null")
+    public List<Proof> listByUserId(Integer userId) {
+        logger.debug("userId" + userId);
+        Cache cache = cacheManager.getCache("proofListCache");
+        return proofMapper.listByUserId(userId);
     }
 }

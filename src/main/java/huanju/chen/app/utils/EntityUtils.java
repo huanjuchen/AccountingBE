@@ -1,7 +1,9 @@
 package huanju.chen.app.utils;
 
+import huanju.chen.app.model.entity.Proof;
 import huanju.chen.app.model.entity.Subject;
 import huanju.chen.app.model.entity.User;
+import huanju.chen.app.model.vo.ProofVo;
 import huanju.chen.app.model.vo.SubjectVo;
 import huanju.chen.app.model.vo.UserVo;
 
@@ -26,6 +28,17 @@ public class EntityUtils {
         }
 
         return subjectVos;
+    }
+
+
+
+    public static List<ProofVo> covertToProofVoList(List<Proof> proofs){
+        List<ProofVo> proofVos=new ArrayList<>(proofs.size());
+        for (int i = 0; i < proofs.size(); i++) {
+            proofVos.add(i,proofs.get(i).covert());
+        }
+
+        return proofVos;
     }
 
 }

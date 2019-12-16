@@ -5,7 +5,7 @@ package huanju.chen.app.model;
  *
  *
  */
-public class RespBody {
+public class RespResult {
 
     private Integer code;
 
@@ -13,19 +13,28 @@ public class RespBody {
 
     private Object data;
 
-    public RespBody() {
+
+    public static RespResult okAndBody(Object body){
+        return new RespResult(200,"ok",body);
     }
 
-    public RespBody(Integer code) {
+    public static RespResult ok(){
+        return new RespResult(200);
+    }
+
+    public RespResult() {
+    }
+
+    public RespResult(Integer code) {
         this.code = code;
     }
 
-    public RespBody(Integer code, String message) {
+    public RespResult(Integer code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    public RespBody(Integer code, String message, Object data) {
+    public RespResult(Integer code, String message, Object data) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -54,4 +63,6 @@ public class RespBody {
     public void setData(Object data) {
         this.data = data;
     }
+
+
 }

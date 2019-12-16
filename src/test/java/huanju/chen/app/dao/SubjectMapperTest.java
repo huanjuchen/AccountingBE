@@ -21,7 +21,7 @@ public class SubjectMapperTest {
         subject.setSubjectType(1);
         subject.setValid(true);
 
-        subjectMapper.save(subject);
+
 
     }
 }

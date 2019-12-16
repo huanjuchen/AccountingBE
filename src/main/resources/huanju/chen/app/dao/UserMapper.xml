@@ -5,6 +5,9 @@
     <insert id="save" parameterType="user">
         INSERT INTO user(id, username, password, role, phone, join_time, valid)
         VALUES (null, #{username}, #{password}, #{role}, #{phone}, #{joinTime}, 1)
+        <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">
+            SELECT last_insert_id()
+        </selectKey>
     </insert>
 
     <select id="find" resultType="user">

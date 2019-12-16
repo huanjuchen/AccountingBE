@@ -4,6 +4,7 @@ import huanju.chen.app.model.vo.ProofItemVo;
 import huanju.chen.app.model.vo.ProofVo;
 import org.hibernate.validator.constraints.Length;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author HuanJu
  */
-public class Proof {
+public class Proof implements Serializable {
 
     private Integer id;
 

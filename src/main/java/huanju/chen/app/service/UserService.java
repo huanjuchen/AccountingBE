@@ -1,31 +1,30 @@
 package huanju.chen.app.service;
 
-import huanju.chen.app.model.RespBody;
+
 import huanju.chen.app.model.entity.User;
 import huanju.chen.app.model.vo.LoginParam;
-import org.springframework.http.ResponseEntity;
+
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author HuanJu
  */
 public interface UserService {
 
-    ResponseEntity<RespBody> userLogin(LoginParam loginParam);
+    Map<String,Object> userLogin(LoginParam loginParam);
 
-    ResponseEntity<RespBody> userLogout();
+    void userLogout();
 
-    ResponseEntity<RespBody> createUser(User user);
+    User save(User user);
 
-    ResponseEntity<RespBody> getUserList(int page);
+    List<User> getUserList(int page);
 
 
-    int save(User user);
 
     User find(Integer id);
 
-    User findUserByUsernameAndPassword(String username, String password);
 
     User findUserByUsername(String username);
 

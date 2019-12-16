@@ -6,20 +6,16 @@ import huanju.chen.app.dao.UserMapper;
 import huanju.chen.app.exception.AlreadyExistsException;
 import huanju.chen.app.exception.BadCreateException;
 import huanju.chen.app.exception.NotFoundException;
-import huanju.chen.app.model.RespBody;
 import huanju.chen.app.model.entity.User;
 import huanju.chen.app.model.vo.LoginParam;
-import huanju.chen.app.model.vo.UserVo;
 import huanju.chen.app.security.utils.JwtUtils;
 import huanju.chen.app.service.UserService;
-import huanju.chen.app.utils.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,10 +38,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<RespBody> userLogin(LoginParam loginParam) {
+    public Map<String,Object> userLogin(LoginParam loginParam) {
         logger.debug(JSON.toJSONString(loginParam));
         logger.info(loginParam.getUsername()+"正在尝试登陆");
-        User user=findUserByUsernameAndPassword(loginParam.getUsername(), SecureUtil.md5(loginParam.getPassword()));
+        User user=userMapper.findUserByUsernameAndPassword(loginParam.getUsername(),SecureUtil.md5(loginParam.getPassword()));
         if (user==null){
             throw new NotFoundException("用户名或密码错误",HttpStatus.BAD_REQUEST);
         }
@@ -56,28 +52,26 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("系统错误，无法找到指定缓存容器",HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-
         String token= JwtUtils.buildJwt(user);
         cache.put(user.getId(),token);
-        RespBody body=new RespBody();
-        body.setCode(200);
+
         Map<String,Object> map=new HashMap<>(2,1);
         map.put("token",token);
         map.put("user",user.covert());
-        body.setData(map);
+
 
         logger.info(loginParam.getUsername()+"登陆成功");
 
-        return ResponseEntity.ok(body);
+        return map;
     }
 
     @Override
-    public ResponseEntity<RespBody> userLogout() {
-        return null;
+    public void userLogout() {
+
     }
 
     @Override
-    public ResponseEntity<RespBody> createUser(User user) {
+    public User save(User user) {
         logger.debug(JSON.toJSONString(user));
         if (user.getRole()==1){
             throw new BadCreateException("不允许添加用户为超级管理员", HttpStatus.BAD_REQUEST);
@@ -87,43 +81,24 @@ public class UserServiceImpl implements UserService {
         user.setJoinTime(new Timestamp(System.currentTimeMillis()));
         user.setPassword(SecureUtil.md5("12345678"));
 
-        if(findUserByUsername(user.getUsername())!=null){
+        if(userMapper.findByName(user.getUsername())!=null){
             throw new AlreadyExistsException("用户已存在",HttpStatus.BAD_REQUEST);
         }
-        int result=save(user);
-
-        User temp=findUserByUsername(user.getUsername());
-        RespBody body=new RespBody();
-        body.setCode(200);
-        body.setMessage("ok");
-        body.setData(temp.covert());
-
+        userMapper.save(user);
+        User temp=userMapper.find(user.getId());
         logger.info(user.getUsername()+"用户添加成功!");
-
-        return ResponseEntity.ok().body(body);
+        return temp;
     }
 
     @Override
-    public ResponseEntity<RespBody> getUserList(int page) {
+    public List<User> getUserList(int page) {
         if (page<1){
             page=1;
         }
 
-        List<User> userList=getList((page-1)*10,10);
-        List<UserVo> userVos= EntityUtils.covertToUserVoList(userList);
-        logger.debug("userList："+userList.size());
-
-        RespBody body=new RespBody();
-        body.setCode(200);
-        body.setData(userVos);
-
-        return ResponseEntity.ok(body);
+        return getList((page-1)*10,10);
     }
 
-    @Override
-    public int save(User user) {
-        return userMapper.save(user);
-    }
 
 
     @Override
@@ -132,10 +107,6 @@ public class UserServiceImpl implements UserService {
         return userMapper.find(id);
     }
 
-    @Override
-    public User findUserByUsernameAndPassword(String username, String password) {
-        return userMapper.findUserByUsernameAndPassword(username,password);
-    }
 
     @Override
     public User findUserByUsername(String username) {

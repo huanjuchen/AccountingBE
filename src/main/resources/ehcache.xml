@@ -4,7 +4,7 @@
         xmlns='http://www.ehcache.org/v3'
         xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
 
-    
+
     <cache alias="tokenCache">
         <key-type>java.lang.Integer</key-type>
         <value-type>java.lang.String</value-type>
@@ -48,8 +48,28 @@
             <heap unit="entries">128</heap>
         </resources>
     </cache>
-    
-    
+
+    <cache alias="proofListCache">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>java.util.List</value-type>
+        <expiry>
+            <tti unit="hours">2</tti>
+        </expiry>
+        <resources>
+            <heap unit="MB">16</heap>
+        </resources>
+    </cache>
+
+    <cache alias="proofCache">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>huanju.chen.app.model.entity.Proof</value-type>
+        <expiry>
+            <tti unit="hours">2</tti>
+        </expiry>
+        <resources>
+            <heap unit="MB">16</heap>
+        </resources>
+    </cache>
 
 
 </config>

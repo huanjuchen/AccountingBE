@@ -1,12 +1,13 @@
 package huanju.chen.app.controller;
 
-import huanju.chen.app.model.RespBody;
+import huanju.chen.app.model.RespResult;
 import huanju.chen.app.model.entity.Proof;
 import huanju.chen.app.service.ProofService;
-import org.springframework.http.ResponseEntity;
+import huanju.chen.app.utils.EntityUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 public class ProofController {
@@ -16,14 +17,28 @@ public class ProofController {
 
 
     @PostMapping("/proof")
-    public ResponseEntity<RespBody> createProof(@RequestBody Proof proof) {
-        return proofService.create(proof);
+    public RespResult createProof(@RequestBody Proof proof) {
+        proofService.save(proof);
+        return RespResult.ok();
     }
 
 
     @GetMapping("/proof/{id}")
-    public ResponseEntity<RespBody> findProofById(@PathVariable int id) {
-        return proofService.findProofById(id);
+    public RespResult findProofById(@PathVariable int id) {
+        Proof proof=proofService.find(id);
+
+
+
+        return RespResult.okAndBody(proof.covert());
+    }
+
+
+    @GetMapping("/proof")
+    public RespResult listByRecorder(Integer recorderId){
+        List<Proof> proofs=proofService.listByUserId(recorderId);
+
+
+        return RespResult.okAndBody(EntityUtils.covertToProofVoList(proofs));
     }
 
 }

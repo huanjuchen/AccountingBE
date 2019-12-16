@@ -2,12 +2,13 @@ package huanju.chen.app.model.entity;
 
 import huanju.chen.app.model.vo.ProofItemVo;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * @author HuanJu
  */
-public class ProofItem {
+public class ProofItem implements Serializable {
 
     private Integer id;
 

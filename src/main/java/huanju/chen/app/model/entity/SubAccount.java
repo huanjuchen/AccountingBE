@@ -1,5 +1,6 @@
 package huanju.chen.app.model.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -8,7 +9,7 @@ import java.util.Date;
  *
  * @author HuanJu
  */
-public class SubAccount {
+public class SubAccount implements Serializable {
 
     private Integer id;
 

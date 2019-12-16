@@ -2,7 +2,7 @@ package huanju.chen.app.controller.advice;
 
 import huanju.chen.app.exception.AccountingException;
 import huanju.chen.app.exception.CustomException;
-import huanju.chen.app.model.RespBody;
+import huanju.chen.app.model.RespResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,8 +21,9 @@ public class GlobalExceptionController {
 
 
     @ExceptionHandler(AccountingException.class)
-    public ResponseEntity<RespBody> accountingExceptionHandle(AccountingException e){
-        RespBody body = new RespBody(e.getStatus().value(), e.getMessage(), e.getExceptionData());
+    public ResponseEntity<RespResult> accountingExceptionHandle(AccountingException e){
+        e.printStackTrace();
+        RespResult body = new RespResult(e.getStatus().value(), e.getMessage(), e.getExceptionData());
         return new ResponseEntity<>(body, e.getStatus());
     }
 
@@ -34,8 +35,8 @@ public class GlobalExceptionController {
      * @return resp
      */
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<RespBody> blogExceptionHandle(CustomException e) {
-        RespBody body = new RespBody(e.getStatus().value(), e.getMessage(), e.getExceptionData());
+    public ResponseEntity<RespResult> blogExceptionHandle(CustomException e) {
+        RespResult body = new RespResult(e.getStatus().value(), e.getMessage(), e.getExceptionData());
         return new ResponseEntity<>(body, e.getStatus());
     }
 
@@ -47,8 +48,8 @@ public class GlobalExceptionController {
      * @return resp
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<RespBody> httpRequestMethodNotSupportedExceptionHandle(HttpRequestMethodNotSupportedException e) {
-        RespBody body = new RespBody();
+    public ResponseEntity<RespResult> httpRequestMethodNotSupportedExceptionHandle(HttpRequestMethodNotSupportedException e) {
+        RespResult body = new RespResult();
         body.setCode(HttpStatus.METHOD_NOT_ALLOWED.value());
         body.setMessage("请求方法" + e.getMethod() + "不被允许");
         logger.warn(e.getMessage());
@@ -57,30 +58,32 @@ public class GlobalExceptionController {
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<RespBody> httpMessageNotReadableExceptionHandle(HttpMessageNotReadableException e){
+    public ResponseEntity<RespResult> httpMessageNotReadableExceptionHandle(HttpMessageNotReadableException e){
         logger.warn(e.getMessage());
-        RespBody body = new RespBody();
+        RespResult body = new RespResult();
         body.setCode(HttpStatus.BAD_REQUEST.value());
         body.setMessage("请求参数缺失--请求参数错误");
-        return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<RespBody> methodArgumentNotValidExceptionHandle(MethodArgumentNotValidException e){
+    public ResponseEntity<RespResult> methodArgumentNotValidExceptionHandle(MethodArgumentNotValidException e){
         logger.warn(e.getMessage());
-        RespBody body = new RespBody();
+        RespResult body = new RespResult();
         body.setCode(HttpStatus.BAD_REQUEST.value());
         body.setMessage("请求数据验证失败");
-        return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
+//        return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(body);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<RespBody> methodArgumentTypeMismatchExceptionHandle(MethodArgumentTypeMismatchException e){
+    public ResponseEntity<RespResult> methodArgumentTypeMismatchExceptionHandle(MethodArgumentTypeMismatchException e){
         logger.warn(e.getMessage());
-        RespBody body = new RespBody();
+        RespResult body = new RespResult();
         body.setCode(HttpStatus.BAD_REQUEST.value());
         body.setMessage("请求参数不匹配");
-        return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
+//        return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(body);
     }
 
 
@@ -91,9 +94,9 @@ public class GlobalExceptionController {
      * @return resp
      */
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<RespBody> runtimeExceptionHandle(RuntimeException e) {
+    public ResponseEntity<RespResult> runtimeExceptionHandle(RuntimeException e) {
         e.printStackTrace();
-        RespBody body = new RespBody();
+        RespResult body = new RespResult();
         body.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         body.setMessage("服务器错误，请稍后重试！");
         return new ResponseEntity<>(body,HttpStatus.INTERNAL_SERVER_ERROR);
