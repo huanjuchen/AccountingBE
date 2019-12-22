@@ -12,7 +12,8 @@ public interface ProofService {
     Proof find(Integer id);
 
 
+    List<Proof> listByUserId(Integer userId, int page);
 
-    List<Proof> listByUserId(Integer userId);
+    List<Proof> listByNotExamination(int page);
 
 }

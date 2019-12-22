@@ -24,6 +24,19 @@
         SELECT *
         FROM proof
         WHERE recorder_id = #{userId}
+        LIMIT #{offset},10
+    </select>
+
+    <select id="listByNotExamination" resultType="proof">
+        SELECT *
+        FROM proof
+        WHERE examination_id IS NULL
+        LIMIT #{offset},10
+    </select>
+
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(id)
+        FROM proof
     </select>
 
 </mapper>

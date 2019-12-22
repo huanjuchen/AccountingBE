@@ -1,10 +1,15 @@
 package huanju.chen.app.dao;
 
 import huanju.chen.app.model.entity.Proof;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface ProofMapper extends BaseMapper<Proof> {
 
-    List<Proof> listByUserId(Integer userId);
+    List<Proof> listByUserId(@Param("userId") Integer userId, @Param("offset") int offset);
+
+    int countByUserId(Integer userId);
+
+    List<Proof> listByNotExamination(@Param("offset") int offset);
 }

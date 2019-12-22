@@ -25,20 +25,21 @@ public class ProofController {
 
     @GetMapping("/proof/{id}")
     public RespResult findProofById(@PathVariable int id) {
-        Proof proof=proofService.find(id);
-
-
-
+        Proof proof = proofService.find(id);
         return RespResult.okAndBody(proof.covert());
     }
 
 
     @GetMapping("/proof")
-    public RespResult listByRecorder(Integer recorderId){
-        List<Proof> proofs=proofService.listByUserId(recorderId);
-
-
+    public RespResult listByRecorder(Integer recorderId, int page) {
+        List<Proof> proofs = proofService.listByUserId(recorderId, page);
         return RespResult.okAndBody(EntityUtils.covertToProofVoList(proofs));
+    }
+
+    @GetMapping("/manager/proof/notExam")
+    public RespResult listByNotExam(int page) {
+        List<Proof> proofList = proofService.listByNotExamination(page);
+        return RespResult.okAndBody(proofList);
     }
 
 }

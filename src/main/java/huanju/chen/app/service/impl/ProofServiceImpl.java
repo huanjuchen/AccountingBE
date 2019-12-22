@@ -8,6 +8,7 @@ import huanju.chen.app.model.entity.Examination;
 import huanju.chen.app.model.entity.Proof;
 import huanju.chen.app.model.entity.ProofItem;
 import huanju.chen.app.model.entity.User;
+import huanju.chen.app.model.vo.ProofVo;
 import huanju.chen.app.service.ExaminationService;
 import huanju.chen.app.service.ProofItemService;
 import huanju.chen.app.service.ProofService;
@@ -81,13 +82,34 @@ public class ProofServiceImpl implements ProofService {
     }
 
 
-
+    @Override
+    public List<Proof> listByUserId(Integer userId, int page) {
+        if (page <= 1) {
+            page = 1;
+        }
+        logger.debug("userId：" + userId);
+        List<Proof> proofList = proofMapper.listByUserId(userId, (page - 1) * 10);
+        for (int i = 0; i < proofList.size(); i++) {
+            Proof proof = proofList.get(i);
+            User recorder = userService.find(proof.getRecorderId());
+            proof.setRecorder(recorder);
+            proofList.set(i, proof);
+        }
+        return proofList;
+    }
 
     @Override
-    @Cacheable(value = "proofListCache", key = "#userId", condition = "#userId>0", unless = "#result==null")
-    public List<Proof> listByUserId(Integer userId) {
-        logger.debug("userId" + userId);
-        Cache cache = cacheManager.getCache("proofListCache");
-        return proofMapper.listByUserId(userId);
+    public List<Proof> listByNotExamination(int page) {
+        if (page <= 1) {
+            page = 1;
+        }
+        List<Proof> proofList = proofMapper.listByNotExamination((page - 1) * 10);
+        for (int i = 0; i < proofList.size(); i++) {
+            Proof proof = proofList.get(i);
+            User recorder = userService.find(proof.getRecorderId());
+            proof.setRecorder(recorder);
+            proofList.set(i, proof);
+        }
+        return proofList;
     }
 }

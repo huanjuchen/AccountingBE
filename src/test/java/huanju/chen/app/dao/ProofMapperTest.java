@@ -19,7 +19,7 @@ public class ProofMapperTest {
 
     @Test
     public void listByUserId(){
-        List<Proof> proofs=proofMapper.listByUserId(1);
+        List<Proof> proofs=proofMapper.listByUserId(1,0);
         for (Proof item:proofs){
             System.out.println(JSON.toJSONString(item));
         }
