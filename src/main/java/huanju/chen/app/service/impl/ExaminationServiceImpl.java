@@ -1,7 +1,7 @@
 package huanju.chen.app.service.impl;
 
 import huanju.chen.app.dao.ExaminationMapper;
-import huanju.chen.app.model.entity.Examination;
+import huanju.chen.app.domain.dto.Examination;
 import huanju.chen.app.service.ExaminationService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

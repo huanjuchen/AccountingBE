@@ -3,8 +3,8 @@ package huanju.chen.app.service.impl;
 
 import huanju.chen.app.dao.ProofItemMapper;
 import huanju.chen.app.exception.BadCreateException;
-import huanju.chen.app.model.entity.ProofItem;
-import huanju.chen.app.model.entity.Subject;
+import huanju.chen.app.domain.dto.ProofItem;
+import huanju.chen.app.domain.dto.Subject;
 import huanju.chen.app.service.ProofItemService;
 import huanju.chen.app.service.SubjectService;
 import org.springframework.context.annotation.DependsOn;

@@ -1,4 +1,4 @@
-package huanju.chen.app.model.vo;
+package huanju.chen.app.domain.vo;
 
 import java.io.Serializable;
 
@@ -12,12 +12,23 @@ public class SubjectVo implements Serializable {
     private String name;
 
     /**
-     * 科目类型
-     * 0：非日记账科目
+     * 科目类别
+     * 1、资产类科目
+     * 2、负债类科目
+     * 3、共同类科目
+     * 4、所有者权益类科目
+     * 5、成本类科目
+     * 6、损益类科目
+     */
+    private Integer category;
+
+
+    /**
      * 1：现金类科目
      * 2：银行类科目
      */
-    private Integer subjectType;
+    private Integer daysKind;
+
 
     /**
      * 科目备注
@@ -47,12 +58,20 @@ public class SubjectVo implements Serializable {
         this.name = name;
     }
 
-    public Integer getSubjectType() {
-        return subjectType;
+    public Integer getCategory() {
+        return category;
     }
 
-    public void setSubjectType(Integer subjectType) {
-        this.subjectType = subjectType;
+    public void setCategory(Integer category) {
+        this.category = category;
+    }
+
+    public Integer getDaysKind() {
+        return daysKind;
+    }
+
+    public void setDaysKind(Integer daysKind) {
+        this.daysKind = daysKind;
     }
 
     public String getRemark() {
@@ -70,6 +89,4 @@ public class SubjectVo implements Serializable {
     public void setValid(Boolean valid) {
         this.valid = valid;
     }
-
-
 }

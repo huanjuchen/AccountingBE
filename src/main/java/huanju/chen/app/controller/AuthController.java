@@ -1,14 +1,18 @@
 package huanju.chen.app.controller;
 
-import huanju.chen.app.model.RespResult;
-import huanju.chen.app.model.vo.LoginParam;
+import huanju.chen.app.domain.vo.LoginParam;
+import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.UserService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 import java.util.Map;
 
 @RestController
@@ -19,19 +23,32 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public RespResult login(@RequestBody LoginParam loginParam){
+    public ApiResult<Map> login(@Validated @RequestBody LoginParam loginParam){
         Map<String,Object> map=userService.userLogin(loginParam);
-        return RespResult.okAndBody(map);
+        return ApiResult.success(map);
     }
 
+
     @GetMapping("/logout")
-    public RespResult logout(){
-        return null;
+    public ApiResult logout(HttpServletRequest request,HttpServletResponse response){
+        String tokenId=request.getHeader("token_id");
+        if (tokenId!=null){
+            userService.userLogout(tokenId);
+        }
+        return ApiResult.success();
     }
 
     @GetMapping("/test")
-    public RespResult test(){
-        return RespResult.ok();
+    public ApiResult test(HttpServletRequest request){
+        Enumeration<String> headerNames = request.getHeaderNames();
+
+        while (headerNames.hasMoreElements()){
+            String headerName=headerNames.nextElement();
+            String headerValue=request.getHeader(headerName);
+            System.out.println(headerName+": "+headerValue);
+
+        }
+        return ApiResult.success();
     }
 
 }

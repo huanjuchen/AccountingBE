@@ -18,7 +18,7 @@ public class MyBatisConfig {
             public void customize(org.apache.ibatis.session.Configuration configuration) {
                 configuration.setMapUnderscoreToCamelCase(true);
                 TypeAliasRegistry registry = configuration.getTypeAliasRegistry();
-                registry.registerAliases("huanju.chen.app.model.entity");
+                registry.registerAliases("huanju.chen.app.domain.dto");
 
             }
         };

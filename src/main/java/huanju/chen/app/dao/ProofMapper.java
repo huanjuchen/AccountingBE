@@ -1,6 +1,6 @@
 package huanju.chen.app.dao;
 
-import huanju.chen.app.model.entity.Proof;
+import huanju.chen.app.domain.dto.Proof;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

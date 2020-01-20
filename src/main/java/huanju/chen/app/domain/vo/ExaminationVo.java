@@ -1,6 +1,4 @@
-package huanju.chen.app.model.vo;
-
-import huanju.chen.app.model.entity.Examination;
+package huanju.chen.app.domain.vo;
 
 import java.sql.Timestamp;
 

@@ -4,11 +4,10 @@ import com.alibaba.fastjson.JSON;
 
 import huanju.chen.app.dao.ProofMapper;
 
-import huanju.chen.app.model.entity.Examination;
-import huanju.chen.app.model.entity.Proof;
-import huanju.chen.app.model.entity.ProofItem;
-import huanju.chen.app.model.entity.User;
-import huanju.chen.app.model.vo.ProofVo;
+import huanju.chen.app.domain.dto.Examination;
+import huanju.chen.app.domain.dto.Proof;
+import huanju.chen.app.domain.dto.ProofItem;
+import huanju.chen.app.domain.dto.User;
 import huanju.chen.app.service.ExaminationService;
 import huanju.chen.app.service.ProofItemService;
 import huanju.chen.app.service.ProofService;
@@ -16,7 +15,6 @@ import huanju.chen.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.DependsOn;

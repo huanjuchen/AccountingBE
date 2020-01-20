@@ -5,29 +5,34 @@ import com.alibaba.fastjson.JSON;
 import huanju.chen.app.dao.UserMapper;
 import huanju.chen.app.exception.AlreadyExistsException;
 import huanju.chen.app.exception.BadCreateException;
-import huanju.chen.app.exception.NotFoundException;
-import huanju.chen.app.model.entity.User;
-import huanju.chen.app.model.vo.LoginParam;
-import huanju.chen.app.security.utils.JwtUtils;
+import huanju.chen.app.domain.dto.User;
+import huanju.chen.app.domain.vo.LoginParam;
+import huanju.chen.app.exception.v2.AccountingException;
+import huanju.chen.app.exception.v2.BadRequestException;
+import huanju.chen.app.exception.v2.NotFoundException;
+import huanju.chen.app.security.token.Token;
 import huanju.chen.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
+@Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.SUPPORTS, readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    private static Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Resource
     private UserMapper userMapper;
@@ -36,44 +41,79 @@ public class UserServiceImpl implements UserService {
     private CacheManager cacheManager;
 
 
-
     @Override
-    public Map<String,Object> userLogin(LoginParam loginParam) {
+    public Map<String, Object> userLogin(LoginParam loginParam) {
         logger.debug(JSON.toJSONString(loginParam));
-        logger.info(loginParam.getUsername()+"正在尝试登陆");
-        User user=userMapper.findUserByUsernameAndPassword(loginParam.getUsername(),SecureUtil.md5(loginParam.getPassword()));
-        if (user==null){
-            throw new NotFoundException("用户名或密码错误",HttpStatus.BAD_REQUEST);
+        logger.info(loginParam.getUsername() + "正在尝试登陆");
+        //是否是用ID登录
+        boolean idLogin;
+
+        String username = loginParam.getUsername();
+        String password = SecureUtil.md5(loginParam.getPassword());
+        Integer userId = null;
+
+        try {
+            userId = Integer.valueOf(username);
+            idLogin = true;
+        } catch (NumberFormatException e) {
+            idLogin = false;
+        }
+        User user = null;
+
+        if (idLogin) {
+            user = userMapper.find(userId);
+        } else {
+            user = userMapper.findByName(username);
+        }
+        if (user == null) {
+            throw new BadRequestException(400, "用户名或用户编号正确");
         }
 
-        Cache cache=cacheManager.getCache("tokenCache");
-        if (cache==null){
-            logger.error("无法获取缓存");
-            throw new NotFoundException("系统错误，无法找到指定缓存容器",HttpStatus.INTERNAL_SERVER_ERROR);
+        //验证密码
+        if (!password.equals(user.getPassword())) {
+            throw new BadRequestException(400, "密码不正确");
         }
 
-        String token= JwtUtils.buildJwt(user);
-        cache.put(user.getId(),token);
+        Cache cache = cacheManager.getCache("tokenV2Cache");
 
-        Map<String,Object> map=new HashMap<>(2,1);
-        map.put("token",token);
-        map.put("user",user.covert());
+        String tokenId = UUID.randomUUID().toString();
+        tokenId = tokenId.replace("-", "");
 
+        if (cache != null) {
+            Token token = new Token(user.getId(), user.getRole());
+            cache.put(tokenId, token);
+        } else {
+            logger.error("缓存容器获取失败");
+            throw new AccountingException(500, "服务器出现异常...");
+        }
 
-        logger.info(loginParam.getUsername()+"登陆成功");
+        Map<String, Object> resultMap = new HashMap<>(2, 1);
 
-        return map;
+        resultMap.put("tokenId", tokenId);
+
+        resultMap.put("user", user.covert());
+
+        return resultMap;
     }
 
     @Override
-    public void userLogout() {
+    public void userLogout(String tokenId) {
+        Cache cache = cacheManager.getCache("tokenV2Cache");
+        if (cache != null) {
+            cache.evict("tokenId");
+        } else {
+            logger.error("缓存容器获取失败");
+            throw new AccountingException(500, "服务器出现异常...");
+        }
+
 
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class, readOnly = false)
     public User save(User user) {
         logger.debug(JSON.toJSONString(user));
-        if (user.getRole()==1){
+        if (user.getRole() == 1) {
             throw new BadCreateException("不允许添加用户为超级管理员", HttpStatus.BAD_REQUEST);
         }
 
@@ -81,28 +121,35 @@ public class UserServiceImpl implements UserService {
         user.setJoinTime(new Timestamp(System.currentTimeMillis()));
         user.setPassword(SecureUtil.md5("12345678"));
 
-        if(userMapper.findByName(user.getUsername())!=null){
-            throw new AlreadyExistsException("用户已存在",HttpStatus.BAD_REQUEST);
+        if (userMapper.findByName(user.getUsername()) != null) {
+            throw new AlreadyExistsException("用户已存在", HttpStatus.BAD_REQUEST);
         }
         userMapper.save(user);
-        User temp=userMapper.find(user.getId());
-        logger.info(user.getUsername()+"用户添加成功!");
+        User temp = userMapper.find(user.getId());
+        logger.info(user.getUsername() + "用户添加成功!");
         return temp;
     }
 
     @Override
-    public List<User> getUserList(int page) {
-        if (page<1){
-            page=1;
-        }
+    public List<User> getUserList(Map<String, Object> map) {
+        return userMapper.list(map);
+    }
 
-        return getList((page-1)*10,10);
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class, readOnly = false)
+    public void resetPwd(Integer userId) {
+        User user=userMapper.find(userId);
+        if (user==null){
+            throw new NotFoundException(400,"未找到指定用户");
+        }
+        user=new User();
+        user.setId(userId);
+        user.setPassword(SecureUtil.md5("12345678"));
+        userMapper.update(user);
     }
 
 
-
     @Override
-    @Cacheable(cacheNames = "userCache",condition = "#id>0",unless = "#result==null")
     public User find(Integer id) {
         return userMapper.find(id);
     }
@@ -113,8 +160,4 @@ public class UserServiceImpl implements UserService {
         return userMapper.findByName(username);
     }
 
-    @Override
-    public List<User> getList(int start,int length) {
-        return userMapper.listByStart(start, length);
-    }
 }

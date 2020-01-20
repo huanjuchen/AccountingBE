@@ -1,6 +1,6 @@
-package huanju.chen.app.model.entity;
+package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.model.vo.UserVo;
+import huanju.chen.app.domain.vo.UserVo;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -23,6 +23,12 @@ public class User implements Serializable {
 
 
     /**
+     * 姓名
+     */
+    private String name;
+
+
+    /**
      * 1：超级管理员
      * 2：主管会计
      * 3：普通会计
@@ -35,6 +41,13 @@ public class User implements Serializable {
 
     private Boolean valid;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;
@@ -97,6 +110,7 @@ public class User implements Serializable {
         UserVo userVo=new UserVo();
         userVo.setId(this.id);
         userVo.setUsername(this.username);
+        userVo.setName(this.name);
         userVo.setPhone(this.phone);
         userVo.setRole(this.role);
         userVo.setValid(this.valid);

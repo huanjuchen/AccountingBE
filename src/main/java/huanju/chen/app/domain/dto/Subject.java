@@ -1,6 +1,6 @@
-package huanju.chen.app.model.entity;
+package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.model.vo.SubjectVo;
+import huanju.chen.app.domain.vo.SubjectVo;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -24,13 +24,25 @@ public class Subject implements Serializable {
     @Length(max = 20, message = "长度不能操作${max}")
     private String name;
 
+
     /**
-     * 科目类型
-     * 0：非日记账科目
+     * 科目类别
+     * 1、资产类科目
+     * 2、负债类科目
+     * 3、共同类科目
+     * 4、所有者权益类科目
+     * 5、成本类科目
+     * 6、损益类科目
+     */
+    private Integer category;
+
+
+    /**
      * 1：现金类科目
      * 2：银行类科目
      */
-    private Integer subjectType;
+    private Integer daysKind;
+
 
     /**
      * 科目备注
@@ -42,6 +54,7 @@ public class Subject implements Serializable {
      * 科目标识，标注科目是否可用
      */
     private Boolean valid;
+
 
     public Integer getId() {
         return id;
@@ -59,12 +72,20 @@ public class Subject implements Serializable {
         this.name = name;
     }
 
-    public Integer getSubjectType() {
-        return subjectType;
+    public Integer getCategory() {
+        return category;
     }
 
-    public void setSubjectType(Integer subjectType) {
-        this.subjectType = subjectType;
+    public void setCategory(Integer category) {
+        this.category = category;
+    }
+
+    public Integer getDaysKind() {
+        return daysKind;
+    }
+
+    public void setDaysKind(Integer daysKind) {
+        this.daysKind = daysKind;
     }
 
     public String getRemark() {
@@ -83,12 +104,12 @@ public class Subject implements Serializable {
         this.valid = valid;
     }
 
-
     public SubjectVo covert() {
         SubjectVo subjectVo = new SubjectVo();
         subjectVo.setId(this.id);
         subjectVo.setName(this.name);
-        subjectVo.setSubjectType(this.subjectType);
+        subjectVo.setCategory(this.category);
+        subjectVo.setDaysKind(this.daysKind);
         subjectVo.setRemark(this.remark);
         subjectVo.setValid(this.valid);
         return subjectVo;

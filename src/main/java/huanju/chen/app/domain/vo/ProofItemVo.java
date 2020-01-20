@@ -1,4 +1,4 @@
-package huanju.chen.app.model.vo;
+package huanju.chen.app.domain.vo;
 
 import java.math.BigDecimal;
 

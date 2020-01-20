@@ -1,7 +1,7 @@
 package huanju.chen.app.entity;
 
 import com.alibaba.fastjson.JSON;
-import huanju.chen.app.model.vo.SubjectVo;
+import huanju.chen.app.domain.vo.SubjectVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

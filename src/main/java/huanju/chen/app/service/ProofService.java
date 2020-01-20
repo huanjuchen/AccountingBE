@@ -1,6 +1,6 @@
 package huanju.chen.app.service;
 
-import huanju.chen.app.model.entity.Proof;
+import huanju.chen.app.domain.dto.Proof;
 
 
 import java.util.List;

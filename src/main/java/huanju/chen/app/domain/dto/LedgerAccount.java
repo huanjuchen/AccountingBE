@@ -1,4 +1,4 @@
-package huanju.chen.app.model.entity;
+package huanju.chen.app.domain.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

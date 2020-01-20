@@ -3,7 +3,7 @@ package huanju.chen.app.service.impl;
 import com.alibaba.fastjson.JSON;
 import huanju.chen.app.dao.SubjectMapper;
 import huanju.chen.app.exception.AlreadyExistsException;
-import huanju.chen.app.model.entity.Subject;
+import huanju.chen.app.domain.dto.Subject;
 import huanju.chen.app.service.SubjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -36,9 +37,8 @@ public class SubjectServiceImpl implements SubjectService {
             throw new AlreadyExistsException("该科目名已存在", HttpStatus.BAD_REQUEST);
         }
         subject.setValid(true);
-
         subjectMapper.save(subject);
-        return subjectMapper.find(subject);
+        return subjectMapper.find(subject.getId());
     }
 
 
@@ -70,6 +70,17 @@ public class SubjectServiceImpl implements SubjectService {
         return subjectMapper.find(id);
     }
 
+    @Override
+    public List<Subject> list(Map<String, Object> map) {
+        logger.debug("==========");
+        logger.debug("查询条件");
+        logger.debug(JSON.toJSONString(map));
+        for (String key:map.keySet()){
+            logger.debug("key:"+key+"  value:"+map.get(key));
+        }
+        logger.debug("==========");
+        return subjectMapper.list(map);
+    }
 
 
     @Override

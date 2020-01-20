@@ -1,10 +1,11 @@
 package huanju.chen.app.service;
 
 
-import huanju.chen.app.model.entity.Subject;
+import huanju.chen.app.domain.dto.Subject;
 
 
 import java.util.List;
+import java.util.Map;
 
 public interface SubjectService {
 
@@ -19,6 +20,8 @@ public interface SubjectService {
     int update(Subject subject);
 
     Subject find(Integer id);
+
+    List<Subject> list(Map<String,Object> map);
 
 
     List<Subject> listByEnabled();

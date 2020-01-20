@@ -1,8 +1,8 @@
 package huanju.chen.app.service;
 
 
-import huanju.chen.app.model.entity.User;
-import huanju.chen.app.model.vo.LoginParam;
+import huanju.chen.app.domain.dto.User;
+import huanju.chen.app.domain.vo.LoginParam;
 
 
 import java.util.List;
@@ -15,11 +15,13 @@ public interface UserService {
 
     Map<String,Object> userLogin(LoginParam loginParam);
 
-    void userLogout();
+    void userLogout(String tokenId);
 
     User save(User user);
 
-    List<User> getUserList(int page);
+    List<User> getUserList(Map<String,Object> map);
+
+    void resetPwd(Integer userId);
 
 
 
@@ -28,7 +30,8 @@ public interface UserService {
 
     User findUserByUsername(String username);
 
-    List<User> getList(int start, int length);
+
+
 
 
 }

@@ -1,23 +1,17 @@
-package huanju.chen.app.model.entity;
+package huanju.chen.app.domain.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 日记账实体
+ * 明细账实体
  *
  * @author HuanJu
  */
-public class DaysAccount implements Serializable {
+public class SubAccount implements Serializable {
 
     private Integer id;
-
-
-    /**
-     * 日记账类型
-     */
-    private Boolean category;
 
     /**
      * 日期
@@ -55,11 +49,14 @@ public class DaysAccount implements Serializable {
     private BigDecimal creditMoney;
 
     /**
+     * 借或贷，true为借，false为贷
+     */
+    private Boolean debit;
+
+    /**
      * 余额
      */
     private BigDecimal balance;
-
-
 
 
     public Integer getId() {
@@ -102,14 +99,6 @@ public class DaysAccount implements Serializable {
         this.subjectId = subjectId;
     }
 
-    public Subject getSubject() {
-        return subject;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
-    }
-
     public BigDecimal getDebitMoney() {
         return debitMoney;
     }
@@ -124,6 +113,14 @@ public class DaysAccount implements Serializable {
 
     public void setCreditMoney(BigDecimal creditMoney) {
         this.creditMoney = creditMoney;
+    }
+
+    public Boolean getDebit() {
+        return debit;
+    }
+
+    public void setDebit(Boolean debit) {
+        this.debit = debit;
     }
 
     public BigDecimal getBalance() {

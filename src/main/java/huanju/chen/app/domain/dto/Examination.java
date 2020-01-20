@@ -1,6 +1,6 @@
-package huanju.chen.app.model.entity;
+package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.model.vo.ExaminationVo;
+import huanju.chen.app.domain.vo.ExaminationVo;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

@@ -1,8 +1,7 @@
-package huanju.chen.app.model.entity;
+package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.model.vo.ProofItemVo;
-import huanju.chen.app.model.vo.ProofVo;
-import org.hibernate.validator.constraints.Length;
+import huanju.chen.app.domain.vo.ProofItemVo;
+import huanju.chen.app.domain.vo.ProofVo;
 
 import java.io.Serializable;
 import java.util.ArrayList;

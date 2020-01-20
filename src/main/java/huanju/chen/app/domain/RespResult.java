@@ -1,4 +1,4 @@
-package huanju.chen.app.model;
+package huanju.chen.app.domain;
 
 /**
  * @author HuanJu

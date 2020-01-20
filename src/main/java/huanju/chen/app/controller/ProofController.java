@@ -1,9 +1,9 @@
 package huanju.chen.app.controller;
 
-import huanju.chen.app.model.RespResult;
-import huanju.chen.app.model.entity.Proof;
+import huanju.chen.app.domain.RespResult;
+import huanju.chen.app.domain.dto.Proof;
 import huanju.chen.app.service.ProofService;
-import huanju.chen.app.utils.EntityUtils;
+import huanju.chen.app.domain.EntityUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

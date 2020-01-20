@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="huanju.chen.app.dao.SubjectMapper">
     <insert id="save" parameterType="subject">
-        INSERT INTO subject(id, name, subject_type, remark,valid)
-        VALUES (#{id},#{name},#{subjectType},#{remark},#{valid})
+        INSERT INTO subject(id, name, category, days_kind, remark, valid)
+        VALUES (#{id}, #{name}, #{category}, #{daysKind}, #{remark}, #{valid})
     </insert>
 
     <update id="update" parameterType="subject">
@@ -47,7 +47,37 @@
 
 
     <select id="listByEnabled" resultType="subject">
-        SELECT * FROM subject WHERE valid=TRUE
+        SELECT *
+        FROM subject
+        WHERE valid = TRUE
     </select>
+
+    <select id="list" parameterType="map" resultType="subject">
+        SELECT * FROM subject
+        <where>
+            <if test="selectWord!=null and selectWord!=''">
+                name LIKE CONCAT('%',#{selectWord},'%')
+            </if>
+            <if test="category!=null">
+                AND category=#{category}
+            </if>
+            <if test="daysKind!=null">
+                AND days_kind=#{daysKind}
+            </if>
+
+            <if test="valid!=null">
+                AND valid=#{valid}
+            </if>
+        </where>
+        <if test="desc!=null and desc">
+                ORDER BY id DESC
+        </if>
+
+
+        <if test="offset!=null and count!=null">
+            LIMIT #{offset},#{count}
+        </if>
+    </select>
+
 
 </mapper>

@@ -1,4 +1,4 @@
-package huanju.chen.app.model.vo;
+package huanju.chen.app.domain.vo;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -9,6 +9,8 @@ public class UserVo implements Serializable {
 
     private String username;
 
+    private String name;
+
     private String phone;
 
     private Boolean valid;
@@ -16,6 +18,14 @@ public class UserVo implements Serializable {
     private Integer role;
 
     private Timestamp joinTime;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;

@@ -3,23 +3,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="huanju.chen.app.dao.UserMapper">
     <insert id="save" parameterType="user">
-        INSERT INTO user(id, username, password, role, phone, join_time, valid)
-        VALUES (null, #{username}, #{password}, #{role}, #{phone}, #{joinTime}, 1)
+        INSERT INTO user(id, username, password,name, role, phone, join_time, valid)
+        VALUES (null, #{username}, #{password},#{name}, #{role}, #{phone}, #{joinTime}, 1)
         <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">
             SELECT last_insert_id()
         </selectKey>
     </insert>
 
     <select id="find" resultType="user">
-        SELECT * FROM user WHERE id=#{key}
-    </select>
-
-    <select id="findUserByUsernameAndPassword" resultType="user">
         SELECT *
         FROM user
-        WHERE username = #{username}
-          AND password = #{password}
+        WHERE id = #{key}
     </select>
+
 
     <select id="findByName" resultType="user" parameterType="string">
         SELECT *
@@ -27,12 +23,56 @@
         WHERE username = #{name}
     </select>
 
-    <select id="listByStart" resultType="user" parameterType="int">
-        SELECT id, username, role, phone, join_time, valid
+
+    <select id="list" resultType="user" parameterType="map">
+        SELECT id,username,name,role,phone,join_time,valid
         FROM user
-        ORDER BY id DESC
-        LIMIT #{start},#{length}
+        <where>
+            <if test="unameSw!=null and unameSw!=''">
+                AND username LIKE CONCAT(#{unameSw},'%')
+            </if>
+            <if test="nameSw!=null and nameSw!=''">
+                AND name LIKE CONCAT(#{nameSw},'%')
+            </if>
+            <if test="valid!=null">
+                AND valid=#{valid}
+            </if>
+        </where>
+        <if test="desc!=null and desc">
+            ORDER BY id DESC
+        </if>
+        <if test="offset!=null and count!=null">
+            LIMIT #{offset},#{count}
+        </if>
     </select>
+
+    <update id="update" parameterType="user">
+        UPDATE user
+        <set>
+            <if test="username!=null and username!=''">
+                username=#{username},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="role!=null">
+                role=#{role},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="joinTime!=null">
+                join_time=#{joinTime},
+            </if>
+            <if test="valid!=null">
+                valid=#{valid}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
 
 
 </mapper>

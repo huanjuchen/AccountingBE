@@ -1,17 +1,10 @@
 package huanju.chen.app.test.service;
 
-import com.alibaba.fastjson.JSON;
-import huanju.chen.app.model.entity.Proof;
-import huanju.chen.app.model.entity.ProofItem;
 import huanju.chen.app.service.ProofService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @SpringBootTest
 public class ProofTest {

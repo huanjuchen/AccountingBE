@@ -1,15 +1,13 @@
 package huanju.chen.app.interceptor;
 
-import com.alibaba.fastjson.JSON;
-import huanju.chen.app.exception.CustomException;
-import huanju.chen.app.security.utils.AuthUtils;
-import huanju.chen.app.security.utils.JwtUtils;
-import io.jsonwebtoken.Claims;
+import huanju.chen.app.exception.v2.AccountingException;
+import huanju.chen.app.exception.v2.BadRequestException;
+import huanju.chen.app.exception.v2.UnAuthException;
+import huanju.chen.app.security.token.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,33 +26,46 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String tokenStr = request.getHeader("token");
-        if (tokenStr == null || tokenStr.length() == 0) {
-            throw new CustomException("未登录", HttpStatus.UNAUTHORIZED);
+        String tokenId=request.getHeader("token_id");
+        Token token=null;
+
+        String uri=request.getRequestURI();
+        logger.debug("tokenId: "+tokenId);
+        logger.debug("uri: "+uri);
+
+        Cache cache=cacheManager.getCache("tokenV2Cache");
+
+        if (cache==null){
+            logger.error("无法找到缓存容器...");
+            throw new AccountingException(500,"系统出现了异常，请稍后重试");
         }
-        Cache cache = cacheManager.getCache("tokenCache");
 
-        if (cache == null) {
-            throw new CustomException("服务器错误", HttpStatus.INTERNAL_SERVER_ERROR);
+        token=cache.get(tokenId,Token.class);
+
+        if (token==null){
+            throw new UnAuthException(401,"未登录或已过期");
         }
 
-        try {
 
-            Claims claims = JwtUtils.decodeJwt(tokenStr);
-            logger.debug(JSON.toJSONString(claims));
+        //验证是否为会计主管用户
+        int role=token.getRole();
 
-            int tokenId = (int) claims.get("id");
-            String tempToken = cache.get(tokenId, String.class);
-
-            AuthUtils.userLoginCheck(tempToken,tokenStr);
+        if (uri.contains("/manager/")){
 
 
-        } catch (CustomException e) {
-            logger.warn(e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            throw new CustomException("非法Token", HttpStatus.UNAUTHORIZED);
+
+            if (role>2){
+                throw new BadRequestException(400,"权限不足");
+            }
+
+        }
+
+        //验证是否为超级管理员用户
+
+        if (uri.contains("/admin/")){
+            if (role>1){
+                throw new BadRequestException(400,"权限不足");
+            }
         }
         return true;
     }

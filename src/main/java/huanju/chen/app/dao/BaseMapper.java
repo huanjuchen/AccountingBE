@@ -1,6 +1,7 @@
 package huanju.chen.app.dao;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author HuanJu
@@ -47,11 +48,13 @@ public interface BaseMapper<T> {
      */
     T findByName(String name);
 
+
     /**
-     * 查找所有
+     * 查询多个
      *
-     * @return all
+     * @param map 条件
+     * @return 实体list
      */
-    List<T> list();
+    List<T> list(Map<String,Object> map);
 
 }

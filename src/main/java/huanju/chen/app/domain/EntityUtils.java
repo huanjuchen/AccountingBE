@@ -1,11 +1,11 @@
-package huanju.chen.app.utils;
+package huanju.chen.app.domain;
 
-import huanju.chen.app.model.entity.Proof;
-import huanju.chen.app.model.entity.Subject;
-import huanju.chen.app.model.entity.User;
-import huanju.chen.app.model.vo.ProofVo;
-import huanju.chen.app.model.vo.SubjectVo;
-import huanju.chen.app.model.vo.UserVo;
+import huanju.chen.app.domain.dto.Proof;
+import huanju.chen.app.domain.dto.Subject;
+import huanju.chen.app.domain.dto.User;
+import huanju.chen.app.domain.vo.ProofVo;
+import huanju.chen.app.domain.vo.SubjectVo;
+import huanju.chen.app.domain.vo.UserVo;
 
 import java.util.ArrayList;
 import java.util.List;

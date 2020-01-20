@@ -1,6 +1,6 @@
-package huanju.chen.app.model.entity;
+package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.model.vo.ProofItemVo;
+import huanju.chen.app.domain.vo.ProofItemVo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

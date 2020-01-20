@@ -5,9 +5,10 @@
         xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
 
 
-    <cache alias="tokenCache">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>java.lang.String</value-type>
+
+    <cache alias="tokenV2Cache">
+        <key-type>java.lang.String</key-type>
+        <value-type>huanju.chen.app.security.token.Token</value-type>
         <expiry>
             <tti unit="hours">2</tti>
         </expiry>
@@ -18,7 +19,7 @@
 
     <cache alias="userCache">
         <key-type>java.lang.Integer</key-type>
-        <value-type>huanju.chen.app.model.entity.User</value-type>
+        <value-type>huanju.chen.app.domain.dto.User</value-type>
         <expiry>
             <tti unit="hours">6</tti>
         </expiry>
@@ -29,7 +30,7 @@
 
     <cache alias="subjectCache">
         <key-type>java.lang.Integer</key-type>
-        <value-type>huanju.chen.app.model.entity.Subject</value-type>
+        <value-type>huanju.chen.app.domain.dto.Subject</value-type>
         <expiry>
             <tti unit="hours">6</tti>
         </expiry>
@@ -40,7 +41,7 @@
 
     <cache alias="examinationCache">
         <key-type>java.lang.Integer</key-type>
-        <value-type>huanju.chen.app.model.entity.Examination</value-type>
+        <value-type>huanju.chen.app.domain.dto.Examination</value-type>
         <expiry>
             <tti unit="hours">2</tti>
         </expiry>
@@ -62,7 +63,7 @@
 
     <cache alias="proofCache">
         <key-type>java.lang.Integer</key-type>
-        <value-type>huanju.chen.app.model.entity.Proof</value-type>
+        <value-type>huanju.chen.app.domain.dto.Proof</value-type>
         <expiry>
             <tti unit="hours">2</tti>
         </expiry>

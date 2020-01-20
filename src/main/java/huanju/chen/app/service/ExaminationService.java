@@ -1,6 +1,6 @@
 package huanju.chen.app.service;
 
-import huanju.chen.app.model.entity.Examination;
+import huanju.chen.app.domain.dto.Examination;
 
 public interface ExaminationService {
 
