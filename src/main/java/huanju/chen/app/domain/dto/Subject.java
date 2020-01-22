@@ -1,9 +1,9 @@
 package huanju.chen.app.domain.dto;
 
 import huanju.chen.app.domain.vo.SubjectVo;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -14,14 +14,21 @@ import java.io.Serializable;
 public class Subject implements Serializable {
 
 
-    @NotNull(message = "科目代码不能为空")
     private Integer id;
+
+    /**
+     * 科目代码
+     */
+
+    @NotNull(message = "科目代码不能为空")
+    @Size(min = 4,max = 6,message = "科目代码的长度为${min}至${max}位")
+    private String code;
 
     /**
      * 科目名
      */
     @NotNull(message = "科目名不可为空")
-    @Length(max = 20, message = "长度不能操作${max}")
+    @Size(max = 20,min = 1,message = "长度不能超过${max}")
     private String name;
 
 
@@ -72,6 +79,14 @@ public class Subject implements Serializable {
         this.name = name;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public Integer getCategory() {
         return category;
     }
@@ -107,6 +122,7 @@ public class Subject implements Serializable {
     public SubjectVo covert() {
         SubjectVo subjectVo = new SubjectVo();
         subjectVo.setId(this.id);
+        subjectVo.setCode(this.code);
         subjectVo.setName(this.name);
         subjectVo.setCategory(this.category);
         subjectVo.setDaysKind(this.daysKind);

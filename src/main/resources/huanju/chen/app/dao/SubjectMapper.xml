@@ -3,16 +3,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="huanju.chen.app.dao.SubjectMapper">
     <insert id="save" parameterType="subject">
-        INSERT INTO subject(id, name, category, days_kind, remark, valid)
-        VALUES (#{id}, #{name}, #{category}, #{daysKind}, #{remark}, #{valid})
+        INSERT INTO subject(code, name, category, days_kind, remark, valid)
+        VALUES (#{code}, #{name}, #{category}, #{daysKind}, #{remark}, #{valid})
+        <selectKey resultType="integer" order="AFTER" keyColumn="id" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <update id="update" parameterType="subject">
         UPDATE subject
         <set>
+            <if test="code!=null and code!=''">
+                code=#{code},
+            </if>
             <if test="name!=null and name!=''">
                 name=#{name},
             </if>
+
             <if test="subjectType!=null">
                 subject_type=#{subjectType},
             </if>
@@ -38,6 +45,14 @@
         FROM subject
         WHERE name = #{name}
     </select>
+
+
+    <select id="findByCode" parameterType="string" resultType="subject">
+        SELECT *
+        FROM subject
+        WHERE code = #{code}
+    </select>
+
 
     <select id="listByLimit" resultType="subject">
         SELECT *
@@ -70,7 +85,7 @@
             </if>
         </where>
         <if test="desc!=null and desc">
-                ORDER BY id DESC
+            ORDER BY id DESC
         </if>
 
 

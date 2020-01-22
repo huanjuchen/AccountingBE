@@ -3,6 +3,8 @@ package huanju.chen.app.controller;
 
 import huanju.chen.app.domain.RespResult;
 import huanju.chen.app.domain.dto.Subject;
+import huanju.chen.app.domain.vo.SubjectVo;
+import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.SubjectService;
 import huanju.chen.app.domain.EntityUtils;
 import org.slf4j.Logger;
@@ -24,10 +26,10 @@ public class SubjectController {
     private SubjectService subjectService;
 
     @PostMapping("/manage/subject")
-    public RespResult createSubject(@RequestBody @Validated Subject subject) {
+    public ApiResult<SubjectVo> createSubject(@RequestBody @Validated Subject subject) {
 
         Subject temp = subjectService.save(subject);
-        return RespResult.okAndBody(temp.covert());
+        return ApiResult.success(temp.covert());
     }
 
 

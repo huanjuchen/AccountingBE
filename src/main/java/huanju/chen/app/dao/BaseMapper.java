@@ -57,4 +57,14 @@ public interface BaseMapper<T> {
      */
     List<T> list(Map<String,Object> map);
 
+
+    /**
+     * 查询记录的条数
+     *
+     * @param map 条件
+     * @return 根据条件查询的总行数
+     */
+
+    int count(Map<String,Object> map);
+
 }

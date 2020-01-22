@@ -23,12 +23,16 @@ public interface UserService {
 
     void resetPwd(Integer userId);
 
+    void lockUser(Integer userId);
+
+    void unLockUser(Integer userId);
+
+    int count(Map<String,Object> map);
+
 
 
     User find(Integer id);
 
-
-    User findUserByUsername(String username);
 
 
 

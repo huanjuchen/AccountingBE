@@ -46,6 +46,23 @@
         </if>
     </select>
 
+
+    <select id="count" resultType="int" parameterType="map">
+        SELECT count(id)
+        FROM user
+        <where>
+            <if test="unameSw!=null and unameSw!=''">
+                AND username LIKE CONCAT(#{unameSw},'%')
+            </if>
+            <if test="nameSw!=null and nameSw!=''">
+                AND name LIKE CONCAT(#{nameSw},'%')
+            </if>
+            <if test="valid!=null">
+                AND valid=#{valid}
+            </if>
+        </where>
+    </select>
+
     <update id="update" parameterType="user">
         UPDATE user
         <set>

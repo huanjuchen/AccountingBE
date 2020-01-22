@@ -7,6 +7,11 @@ public class SubjectVo implements Serializable {
     private Integer id;
 
     /**
+     * 科目代码
+     */
+    private String code;
+
+    /**
      * 科目名
      */
     private String name;
@@ -48,6 +53,14 @@ public class SubjectVo implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getName() {

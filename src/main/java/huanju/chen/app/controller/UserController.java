@@ -1,10 +1,8 @@
 package huanju.chen.app.controller;
 
 
-import huanju.chen.app.domain.RespResult;
 import huanju.chen.app.domain.dto.User;
 import huanju.chen.app.domain.vo.UserVo;
-import huanju.chen.app.exception.v2.BadRequestException;
 import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.UserService;
 import huanju.chen.app.domain.EntityUtils;
@@ -38,7 +36,7 @@ public class UserController {
     public ApiResult<List> getUserList(@RequestParam(required = false, name = "page") String page,
                                        @RequestParam(required = false, name = "pageSize") String pageSize,
                                        @RequestParam(required = false, name = "selectWord") String selectWord,
-                                       @RequestParam(required = false,name = "desc") String desc,
+                                       @RequestParam(required = false, name = "desc") String desc,
                                        @RequestParam(required = false, name = "valid") String valid) {
         logger.debug("page=" + page + "  pageSize=" + pageSize + "  selectWord=" + selectWord + "  valid=" + valid);
         Map<String, Object> map = new HashMap<>(8, 1);
@@ -47,14 +45,14 @@ public class UserController {
 
         if (selectWord != null && !"".equals(selectWord)) {
             try {
-                Integer userid=Integer.valueOf(selectWord);
-                User user=userService.find(userid);
-                if (user!=null){
-                    List<UserVo> userVos=new ArrayList<>();
+                Integer userId = Integer.valueOf(selectWord);
+                User user = userService.find(userId);
+                if (user != null) {
+                    List<UserVo> userVos = new ArrayList<>();
                     userVos.add(user.covert());
                     return ApiResult.success(userVos);
                 }
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 map.put("nameSw", selectWord);
             }
         }
@@ -63,8 +61,8 @@ public class UserController {
             map.put("valid", Boolean.valueOf(valid));
         }
 
-        if (desc!=null && desc.length()>0){
-            map.put("desc","desc");
+        if (desc != null && desc.length() > 0) {
+            map.put("desc", "desc");
         }
 
         try {
@@ -104,25 +102,65 @@ public class UserController {
 
 
     @PutMapping("/admin/user/resetPwd")
-    public ApiResult resetPassword(@RequestParam(required = true) Integer userId){
-
-
+    public ApiResult resetPassword(@RequestParam(required = true) Integer userId) {
         userService.resetPwd(userId);
-
-
-
-
         return ApiResult.success();
     }
 
 
-    @GetMapping("/admin/user/{userId}")
-    public RespResult getUserById(@PathVariable String userId) {
-        logger.debug("userId=" + userId);
-
-
-        return RespResult.ok();
+    @PutMapping("/admin/user/lock")
+    public ApiResult lockUser(@RequestParam(required = true) Integer userId) {
+        userService.lockUser(userId);
+        return ApiResult.success();
     }
+
+    @PutMapping("/admin/user/unlock")
+    public ApiResult unLockUser(Integer userId) {
+        userService.unLockUser(userId);
+        return ApiResult.success();
+    }
+
+    @RequestMapping("/admin/user/count")
+    public ApiResult<Integer> count(
+            @RequestParam(required = false, name = "selectWord") String selectWord,
+            @RequestParam(required = false, name = "valid") String valid) {
+        Map<String, Object> map = new HashMap<>(2, 1);
+
+        if (selectWord != null && !"".equals(selectWord)) {
+            try {
+                Integer userId = Integer.valueOf(selectWord);
+                User user = userService.find(userId);
+                if (user != null) {
+                    return ApiResult.success(1);
+                }
+
+            } catch (NumberFormatException e) {
+                map.put("nameSw", selectWord);
+            }
+        }
+
+        if (valid != null && !"".equals(valid)) {
+            map.put("valid", Boolean.valueOf(valid));
+        }
+
+        int count = userService.count(map);
+
+        return ApiResult.success(count);
+
+    }
+
+
+    @GetMapping("/admin/user/{userId}")
+    public ApiResult<UserVo> getUserById(@PathVariable Integer userId) {
+        logger.debug("userId=" + userId);
+        User user = userService.find(userId);
+        if (user != null) {
+            return ApiResult.success(user.covert());
+        } else {
+            return ApiResult.success(null);
+        }
+    }
+
 
 
 }

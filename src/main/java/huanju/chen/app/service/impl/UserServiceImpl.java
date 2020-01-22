@@ -69,6 +69,11 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException(400, "用户名或用户编号正确");
         }
 
+        //验证账户是否为启动状态
+        if (!user.getValid()){
+            throw new BadRequestException(400,"用户已被禁用，无法登陆");
+        }
+
         //验证密码
         if (!password.equals(user.getPassword())) {
             throw new BadRequestException(400, "密码不正确");
@@ -148,6 +153,48 @@ public class UserServiceImpl implements UserService {
         userMapper.update(user);
     }
 
+    @Override
+    public void lockUser(Integer userId) {
+        logger.debug("正在禁用编号为 "+userId+" 用户");
+        User user=userMapper.find(userId);
+        if (user==null){
+            throw new BadRequestException(400,"非法请求");
+        }
+
+
+        if ("root".equals(user.getUsername())){
+            throw new BadRequestException(400,"非法请求，该用户无法被禁用");
+        }
+
+
+        user=new User();
+        user.setId(userId);
+        user.setValid(false);
+        userMapper.update(user);
+    }
+
+    @Override
+    public void unLockUser(Integer userId) {
+        logger.debug("正在启用编号为 "+userId+" 的用户");
+        User user=userMapper.find(userId);
+        if (user==null){
+            throw new BadRequestException(400,"非法请求");
+        }
+        if ("root".equals(user.getUsername())){
+            throw new BadRequestException(400,"无效的请求");
+        }
+
+        user=new User();
+        user.setId(userId);
+        user.setValid(true);
+        userMapper.update(user);
+    }
+
+    @Override
+    public int count(Map<String, Object> map) {
+        return userMapper.count(map);
+    }
+
 
     @Override
     public User find(Integer id) {
@@ -155,9 +202,5 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public User findUserByUsername(String username) {
-        return userMapper.findByName(username);
-    }
 
 }
