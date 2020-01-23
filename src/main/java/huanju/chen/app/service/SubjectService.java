@@ -12,19 +12,15 @@ public interface SubjectService {
 
     Subject save(Subject subject);
 
-    List<Subject> listByPage(int page);
-
-
     int delete(Integer key);
 
-    int update(Subject subject);
+    void update(Subject subject);
 
     Subject find(Integer id);
 
-    List<Subject> list(Map<String,Object> map);
+    List<Subject> list(Map<String, Object> map);
 
-
-    List<Subject> listByEnabled();
+    Integer count(Map<String, Object> map);
 
 
 }

@@ -47,7 +47,7 @@
     </select>
 
 
-    <select id="count" resultType="int" parameterType="map">
+    <select id="count" resultType="integer" parameterType="map">
         SELECT count(id)
         FROM user
         <where>

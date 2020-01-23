@@ -19,9 +19,11 @@
             <if test="name!=null and name!=''">
                 name=#{name},
             </if>
-
-            <if test="subjectType!=null">
-                subject_type=#{subjectType},
+            <if test="category!=null">
+                category=#{category},
+            </if>
+            <if test="daysKind!=null">
+                days_kind=#{daysKind},
             </if>
             <if test="remark!=null and remark!=''">
                 remark=#{remark},
@@ -54,44 +56,48 @@
     </select>
 
 
-    <select id="listByLimit" resultType="subject">
-        SELECT *
-        FROM subject
-        LIMIT #{start},#{count}
-    </select>
-
-
-    <select id="listByEnabled" resultType="subject">
-        SELECT *
-        FROM subject
-        WHERE valid = TRUE
-    </select>
-
     <select id="list" parameterType="map" resultType="subject">
-        SELECT * FROM subject
+        SELECT
+        <if test="selectType=='all'">
+            id,code,name,category,days_kind,remark,valid
+        </if>
+        <if test="selectType==null or selectType!='all'">
+            id,code,name
+        </if>
+        FROM subject
         <where>
-            <if test="selectWord!=null and selectWord!=''">
-                name LIKE CONCAT('%',#{selectWord},'%')
+            <if test="codeSw!=null and codeSw!=''">
+                AND code LIKE CONCAT(#{codeSw},'%')
             </if>
-            <if test="category!=null">
-                AND category=#{category}
+            <if test="nameSw!=null and nameSw!=''">
+                AND name LIKE CONCAT(#{nameSw},'%')
             </if>
-            <if test="daysKind!=null">
-                AND days_kind=#{daysKind}
-            </if>
-
             <if test="valid!=null">
                 AND valid=#{valid}
             </if>
         </where>
-        <if test="desc!=null and desc">
-            ORDER BY id DESC
+        <if test="desc!=null">
+            ORDER BY code DESC
         </if>
-
-
         <if test="offset!=null and count!=null">
             LIMIT #{offset},#{count}
         </if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id)
+        FROM subject
+        <where>
+            <if test="codeSw!=null and codeSw!=''">
+                AND code LIKE CONCAT(#{codeSw},'%')
+            </if>
+            <if test="nameSw!=null and nameSw!=''">
+                AND name LIKE CONCAT(#{nameSw},'%')
+            </if>
+            <if test="valid!=null">
+                AND valid=#{valid}
+            </if>
+        </where>
     </select>
 
 

@@ -9,6 +9,7 @@ import huanju.chen.app.domain.dto.User;
 import huanju.chen.app.domain.vo.LoginParam;
 import huanju.chen.app.exception.v2.AccountingException;
 import huanju.chen.app.exception.v2.BadRequestException;
+import huanju.chen.app.exception.v2.BadUpdateException;
 import huanju.chen.app.exception.v2.NotFoundException;
 import huanju.chen.app.security.token.Token;
 import huanju.chen.app.service.UserService;
@@ -70,8 +71,8 @@ public class UserServiceImpl implements UserService {
         }
 
         //验证账户是否为启动状态
-        if (!user.getValid()){
-            throw new BadRequestException(400,"用户已被禁用，无法登陆");
+        if (!user.getValid()) {
+            throw new BadRequestException(400, "用户已被禁用，无法登陆");
         }
 
         //验证密码
@@ -143,51 +144,65 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class, readOnly = false)
     public void resetPwd(Integer userId) {
-        User user=userMapper.find(userId);
-        if (user==null){
-            throw new NotFoundException(400,"未找到指定用户");
+        User user = userMapper.find(userId);
+        if (user == null) {
+            throw new NotFoundException(400, "未找到指定用户");
         }
-        user=new User();
+        user = new User();
         user.setId(userId);
         user.setPassword(SecureUtil.md5("12345678"));
-        userMapper.update(user);
+        int rows = userMapper.update(user);
+
+        if (rows != 1) {
+            throw new BadUpdateException(500, "修改失败");
+        }
     }
 
     @Override
     public void lockUser(Integer userId) {
-        logger.debug("正在禁用编号为 "+userId+" 用户");
-        User user=userMapper.find(userId);
-        if (user==null){
-            throw new BadRequestException(400,"非法请求");
+        logger.debug("正在禁用编号为 " + userId + " 用户");
+        User user = userMapper.find(userId);
+        if (user == null) {
+            throw new BadRequestException(400, "非法请求");
         }
 
 
-        if ("root".equals(user.getUsername())){
-            throw new BadRequestException(400,"非法请求，该用户无法被禁用");
+        if ("root".equals(user.getUsername())) {
+            throw new BadRequestException(400, "非法请求，该用户无法被禁用");
         }
 
 
-        user=new User();
+        user = new User();
         user.setId(userId);
         user.setValid(false);
-        userMapper.update(user);
+        int rows = userMapper.update(user);
+
+        if (rows != 1) {
+            throw new BadUpdateException(500, "修改失败");
+        }
+
     }
 
     @Override
     public void unLockUser(Integer userId) {
-        logger.debug("正在启用编号为 "+userId+" 的用户");
-        User user=userMapper.find(userId);
-        if (user==null){
-            throw new BadRequestException(400,"非法请求");
+        logger.debug("正在启用编号为 " + userId + " 的用户");
+        User user = userMapper.find(userId);
+        if (user == null) {
+            throw new BadRequestException(400, "非法请求");
         }
-        if ("root".equals(user.getUsername())){
-            throw new BadRequestException(400,"无效的请求");
+        if ("root".equals(user.getUsername())) {
+            throw new BadRequestException(400, "无效的请求");
         }
 
-        user=new User();
+        user = new User();
         user.setId(userId);
         user.setValid(true);
-        userMapper.update(user);
+        int rows = userMapper.update(user);
+
+        if (rows != 1) {
+            throw new BadUpdateException(500, "修改失败");
+        }
+
     }
 
     @Override
@@ -200,7 +215,6 @@ public class UserServiceImpl implements UserService {
     public User find(Integer id) {
         return userMapper.find(id);
     }
-
 
 
 }

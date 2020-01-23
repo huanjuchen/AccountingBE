@@ -20,91 +20,94 @@ import java.util.Map;
 @RestController
 public class SubjectController {
 
-    private Logger logger = LoggerFactory.getLogger(SubjectController.class);
-
     @Resource(name = "subjectServiceImpl")
     private SubjectService subjectService;
 
     @PostMapping("/manage/subject")
     public ApiResult<SubjectVo> createSubject(@RequestBody @Validated Subject subject) {
-
         Subject temp = subjectService.save(subject);
         return ApiResult.success(temp.covert());
     }
 
 
-    @GetMapping("/manage/subject/{id}")
-    public RespResult getSubjectById(@PathVariable int id) {
+    @GetMapping("/subject/{id}")
+    public ApiResult<SubjectVo> getSubjectById(@PathVariable int id) {
         Subject subject = subjectService.find(id);
-
-        return RespResult.okAndBody(subject);
+        return ApiResult.success(subject.covert());
     }
 
 
-    @GetMapping("/subject/available")
-    public RespResult listByAvailable() {
-        List<Subject> subjectList = subjectService.listByEnabled();
-        return RespResult.okAndBody(EntityUtils.covertToSubjectVoList(subjectList));
-    }
-
-
-    /**
-     * 查询科目
-     *
-     * @param selectWord 科目名
-     * @param category   科目类型
-     * @param daysKind   日记账类型
-     * @param valid      是否可用
-     * @param desc       倒序
-     * @param offset     筛选开始位置
-     * @param count      筛选数量
-     * @return list
-     */
-    @GetMapping({"/manage/subject", "/subject"})
-    public RespResult list(String selectWord,
-                           String category,
-                           String daysKind,
-                           String valid,
-                           String desc,
-                           String offset,
-                           String count) {
+    @GetMapping({"/subject"})
+    public ApiResult<List> list(
+            String selectType,
+            String searchWord,
+            String valid,
+            String desc,
+            Integer page,
+            Integer pageSize
+    ) {
         Map<String, Object> map = new HashMap<>();
-        if (selectWord != null && selectWord.length() > 0) {
-            map.put("selectWord", selectWord);
+        if (selectType != null && selectType.length() > 0) {
+            map.put("selectType", selectType);
         }
-
-        if (category != null && category.length() > 0) {
-            map.put("category", Integer.valueOf(category));
+        if (searchWord != null && searchWord.length() > 0) {
+            try {
+                Integer codeNum = Integer.valueOf(searchWord);
+                map.put("codeSw", searchWord);
+            } catch (NumberFormatException e) {
+                map.put("nameSw", searchWord);
+            }
         }
-
-        if (daysKind != null && daysKind.length() > 0) {
-            map.put("daysKind", Integer.valueOf(daysKind));
-        }
-
-
-
         if (valid != null && valid.length() > 0) {
             map.put("valid", Boolean.valueOf(valid));
         }
 
-        if (desc!=null&&desc.length()>0){
-            map.put("desc",Boolean.valueOf(desc));
+        if (desc != null && desc.length() > 0) {
+            map.put("desc", new Object());
         }
 
-        if (offset != null && offset.length() > 0) {
-            map.put("offset", Integer.valueOf(offset));
-        }else {
-            map.put("offset",0);
-        }
-
-        if (count != null && count.length() > 0) {
-            map.put("count", Integer.valueOf(count));
-        }else {
-            map.put("count",1000);
+        if (page != null && pageSize != null) {
+            map.put("offset", page > 0 ? ((page - 1) * pageSize) : 0);
+            map.put("count", pageSize > 1 ? pageSize : 1);
         }
 
         List<Subject> subjects = subjectService.list(map);
-        return RespResult.okAndBody(EntityUtils.covertToSubjectVoList(subjects));
+        return ApiResult.success(EntityUtils.covertToSubjectVoList(subjects));
+    }
+
+
+    @GetMapping("/subject/count")
+    public ApiResult<Integer> count(String searchWord,
+                                    String valid,
+                                    String desc) {
+
+        Map<String, Object> map = new HashMap<>();
+        if (searchWord != null && searchWord.length() > 0) {
+            try {
+                Integer codeNum = Integer.valueOf(searchWord);
+                map.put("codeSw", searchWord);
+            } catch (NumberFormatException e) {
+                map.put("nameSw", searchWord);
+            }
+        }
+        if (valid != null && valid.length() > 0) {
+            map.put("valid", Boolean.valueOf(valid));
+        }
+        Integer result = subjectService.count(map);
+        if (result == null) {
+            return ApiResult.success(0);
+        } else {
+            return ApiResult.success(result);
+        }
+
+    }
+
+
+    @PutMapping("/manage/subject")
+    public ApiResult update(@RequestBody @Validated Subject subject) {
+
+        subjectService.update(subject);
+        return ApiResult.success();
     }
 
 

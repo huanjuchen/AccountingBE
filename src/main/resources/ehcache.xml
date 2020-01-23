@@ -17,27 +17,6 @@
         </resources>
     </cache>
 
-    <cache alias="userCache">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>huanju.chen.app.domain.dto.User</value-type>
-        <expiry>
-            <tti unit="hours">6</tti>
-        </expiry>
-        <resources>
-            <heap unit="entries">128</heap>
-        </resources>
-    </cache>
-
-    <cache alias="subjectCache">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>huanju.chen.app.domain.dto.Subject</value-type>
-        <expiry>
-            <tti unit="hours">6</tti>
-        </expiry>
-        <resources>
-            <heap unit="entries">64</heap>
-        </resources>
-    </cache>
 
     <cache alias="examinationCache">
         <key-type>java.lang.Integer</key-type>

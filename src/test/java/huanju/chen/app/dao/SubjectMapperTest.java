@@ -1,49 +1,39 @@
 package huanju.chen.app.dao;
 
+
 import com.alibaba.fastjson.JSON;
 import huanju.chen.app.domain.dto.Subject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @SpringBootTest
 public class SubjectMapperTest {
 
-    @Resource
-    SubjectMapper subjectMapper;
-
-
     @Autowired
-    ApplicationContext context;
+    public SubjectMapper mapper;
 
 
     @Test
     public void listTest(){
-        Map<String,Object> map=new HashMap<>();
-//        map.put("selectWord","库");
-        map.put("category",1);
+        Map<String,Object> map=new HashMap<>(8,1);
+        map.put("selectType","all");
+        map.put("codeSw",1);
         map.put("valid",true);
-        map.put("sortField","id");
-        map.put("desc",true);
         map.put("offset",0);
-        map.put("count",1000);
-        List<Subject> subjectList=subjectMapper.list(map);
+        map.put("count",10);
 
-        context.getId();
-
-
-
-        for (Subject subject:subjectList){
+        List<Subject> subjects=mapper.list(map);
+        for (Subject subject:subjects){
             System.out.println(JSON.toJSONString(subject));
         }
-
-
-
     }
+
+
+
 }

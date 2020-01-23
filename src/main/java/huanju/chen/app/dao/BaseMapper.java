@@ -65,6 +65,6 @@ public interface BaseMapper<T> {
      * @return 根据条件查询的总行数
      */
 
-    int count(Map<String,Object> map);
+    Integer count(Map<String,Object> map);
 
 }

@@ -39,7 +39,7 @@ public class UserController {
                                        @RequestParam(required = false, name = "desc") String desc,
                                        @RequestParam(required = false, name = "valid") String valid) {
         logger.debug("page=" + page + "  pageSize=" + pageSize + "  selectWord=" + selectWord + "  valid=" + valid);
-        Map<String, Object> map = new HashMap<>(8, 1);
+        Map<String, Object> map = new HashMap<>();
         Integer pageInt = null;
         Integer pageSizeInt = null;
 
@@ -124,7 +124,7 @@ public class UserController {
     public ApiResult<Integer> count(
             @RequestParam(required = false, name = "selectWord") String selectWord,
             @RequestParam(required = false, name = "valid") String valid) {
-        Map<String, Object> map = new HashMap<>(2, 1);
+        Map<String, Object> map = new HashMap<>(4, 0.75f);
 
         if (selectWord != null && !"".equals(selectWord)) {
             try {
