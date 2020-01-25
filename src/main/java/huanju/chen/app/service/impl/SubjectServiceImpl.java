@@ -3,9 +3,7 @@ package huanju.chen.app.service.impl;
 import com.alibaba.fastjson.JSON;
 import huanju.chen.app.dao.SubjectMapper;
 import huanju.chen.app.domain.dto.Subject;
-import huanju.chen.app.exception.v2.AlreadyExistsException;
-import huanju.chen.app.exception.v2.BadCreateException;
-import huanju.chen.app.exception.v2.BadUpdateException;
+import huanju.chen.app.exception.v2.*;
 import huanju.chen.app.service.SubjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +54,17 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
-    public int delete(Integer key) {
-        return subjectMapper.delete(key);
+    public void delete(Integer id) {
+
+
+        //检查科目是否被使用
+
+        int rows = subjectMapper.delete(id);
+
+        if (rows != 1) {
+            throw new BadDeleteException(500, "删除失败");
+        }
+
     }
 
     @Override
@@ -81,10 +88,10 @@ public class SubjectServiceImpl implements SubjectService {
         }
 
 
-        int rows= subjectMapper.update(subject);
+        int rows = subjectMapper.update(subject);
 
-        if (rows!=1){
-            throw new BadUpdateException(500,"修改失败");
+        if (rows != 1) {
+            throw new BadUpdateException(500, "修改失败");
         }
 
     }
@@ -104,6 +111,47 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public Integer count(Map<String, Object> map) {
         return subjectMapper.count(map);
+    }
+
+    @Override
+    public void lock(Integer id) {
+        logger.debug("禁用Id为 " + id + " 的科目");
+        Subject subject = subjectMapper.find(id);
+        if (subject == null) {
+            throw new NotFoundException(400, "未找到指定科目");
+        }
+
+        subject = new Subject();
+        subject.setId(id);
+        subject.setValid(false);
+
+
+        int rows = subjectMapper.update(subject);
+
+        if (rows != 1) {
+            throw new BadUpdateException(500, "禁用失败");
+        }
+    }
+
+    @Override
+    public void unlock(Integer id) {
+        logger.debug("启用用Id为 " + id + " 的科目");
+        Subject subject = subjectMapper.find(id);
+        if (subject == null) {
+            throw new NotFoundException(400, "未找到指定科目");
+        }
+
+        subject = new Subject();
+        subject.setId(id);
+        subject.setValid(true);
+
+
+        int rows = subjectMapper.update(subject);
+
+        if (rows != 1) {
+            throw new BadUpdateException(500, "启用失败");
+        }
+
     }
 
 

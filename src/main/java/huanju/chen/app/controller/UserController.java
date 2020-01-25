@@ -101,21 +101,21 @@ public class UserController {
     }
 
 
-    @PutMapping("/admin/user/resetPwd")
-    public ApiResult resetPassword(@RequestParam(required = true) Integer userId) {
+    @PutMapping("/admin/user/resetPwd/{userId}")
+    public ApiResult resetPassword(@PathVariable Integer userId) {
         userService.resetPwd(userId);
         return ApiResult.success();
     }
 
 
-    @PutMapping("/admin/user/lock")
-    public ApiResult lockUser(@RequestParam(required = true) Integer userId) {
+    @PutMapping("/admin/user/lock/{userId}")
+    public ApiResult lockUser(@PathVariable Integer userId) {
         userService.lockUser(userId);
         return ApiResult.success();
     }
 
-    @PutMapping("/admin/user/unlock")
-    public ApiResult unLockUser(Integer userId) {
+    @PutMapping("/admin/user/unlock/{userId}")
+    public ApiResult unLockUser(@PathVariable Integer userId) {
         userService.unLockUser(userId);
         return ApiResult.success();
     }

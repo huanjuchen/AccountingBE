@@ -100,5 +100,11 @@
         </where>
     </select>
 
+    <delete id="delete" parameterType="integer">
+        DELETE
+        FROM subject
+        WHERE id = #{id}
+    </delete>
+
 
 </mapper>

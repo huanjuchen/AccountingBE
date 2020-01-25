@@ -12,7 +12,7 @@ public interface SubjectService {
 
     Subject save(Subject subject);
 
-    int delete(Integer key);
+    void delete(Integer id);
 
     void update(Subject subject);
 
@@ -22,5 +22,9 @@ public interface SubjectService {
 
     Integer count(Map<String, Object> map);
 
+
+    void lock(Integer id);
+
+    void unlock(Integer id);
 
 }
