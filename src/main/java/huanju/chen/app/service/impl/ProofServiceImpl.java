@@ -1,113 +1,104 @@
 package huanju.chen.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
-
+import huanju.chen.app.dao.ProofItemMapper;
 import huanju.chen.app.dao.ProofMapper;
-
-import huanju.chen.app.domain.dto.Examination;
+import huanju.chen.app.dao.SubjectMapper;
 import huanju.chen.app.domain.dto.Proof;
 import huanju.chen.app.domain.dto.ProofItem;
-import huanju.chen.app.domain.dto.User;
-import huanju.chen.app.service.ExaminationService;
-import huanju.chen.app.service.ProofItemService;
+import huanju.chen.app.domain.dto.Subject;
+
+import huanju.chen.app.exception.BadCreateException;
+import huanju.chen.app.exception.v2.AccountingException;
+import huanju.chen.app.security.token.Token;
 import huanju.chen.app.service.ProofService;
-import huanju.chen.app.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Service
-@DependsOn(value = {"userServiceImpl", "examinationServiceImpl", "proofItemServiceImpl"})
+@Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.SUPPORTS, readOnly = true)
 public class ProofServiceImpl implements ProofService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProofServiceImpl.class);
-
-
     @Resource
     private ProofMapper proofMapper;
-
-    @Resource(name = "userServiceImpl")
-    private UserService userService;
-
-    @Resource(name = "examinationServiceImpl")
-    private ExaminationService examinationService;
-
-    @Resource(name = "proofItemServiceImpl")
-    private ProofItemService proofItemService;
-
-    @Autowired
+    @Resource
+    private ProofItemMapper proofItemMapper;
+    @Resource
+    private SubjectMapper subjectMapper;
+    @Resource
     private CacheManager cacheManager;
 
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    public void save(Proof proof) {
-        logger.debug(JSON.toJSONString(proof));
-        proofMapper.save(proof);
-        if (proof.getItems() != null && proof.getItems().size() != 0) {
-            for (ProofItem item : proof.getItems()) {
-                item.setProofId(proof.getId());
-                proofItemService.save(item);
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
+    public void save(Proof proof, String tokenId) {
+        logger.debug("proof："+JSON.toJSONString(proof));
+        logger.debug("token_id："+tokenId);
+        //获取缓存中的数据并检查
+        Cache cache = cacheManager.getCache("tokenV2Cache");
+        if (cache == null) {
+            logger.error("无法找到缓存容器...");
+            throw new AccountingException(500, "系统出现了异常，请稍后重试");
+        }
+        Token token=cache.get(tokenId,Token.class);
+        if (token == null) {
+            logger.error("缓存容器错误");
+            throw new AccountingException(500, "系统出现了异常，请稍后重试");
+        }
+        Integer userId = token.getUserId();
+        proof.setRecorderId(userId);
+        //调用DAO层保存到数据库
+        int rows=proofMapper.save(proof);
+        if (rows!=1){
+            throw new AccountingException(500, "系统出现了异常，请稍后重试");
+        }
+        for (ProofItem proofItem:proof.getItems()){
+            proofItem.setProofId(proof.getId());
+            if (proofItem.getCreditLedgerSubjectId() != null) {
+                checkSubject(proofItem.getCreditLedgerSubjectId());
             }
+            if (proofItem.getCreditSubSubjectId() != null) {
+                checkSubject(proofItem.getCreditSubSubjectId());
+            }
+            if (proofItem.getDebitLedgerSubjectId() != null) {
+                checkSubject(proofItem.getDebitLedgerSubjectId());
+            }
+            if (proofItem.getDebitSubSubjectId() != null) {
+                checkSubject(proofItem.getDebitSubSubjectId());
+            }
+            //调用DAO层保存到数据库
+            int resultRows=proofItemMapper.save(proofItem);
+            if (resultRows!=1){
+                throw new AccountingException(500, "系统出现了异常，请稍后重试");
+            }
+        }
+    }
+
+    /**
+     *检查会计科目是否可用
+     */
+    private void checkSubject(Integer subjectId) {
+        Subject subject = subjectMapper.find(subjectId);
+        if (subject == null || subject.getValid().equals(false)) {
+            throw new BadCreateException("未选择科目/科目不可用", HttpStatus.BAD_REQUEST);
         }
     }
 
 
     @Override
-    @Cacheable(value = "proofCache", key = "#id", condition = "#id>0", unless = "#result==null")
     public Proof find(Integer id) {
-        Proof proof = proofMapper.find(id);
-        if (proof != null) {
-            List<ProofItem> itemList = proofItemService.listByProofId(proof.getId());
-            proof.setItems(itemList);
-            User recorder = userService.find(proof.getRecorderId());
-            proof.setRecorder(recorder);
-            if (proof.getExaminationId() != null) {
-                Examination examination = examinationService.find(proof.getExaminationId());
-                proof.setExamination(examination);
-            }
-        }
-        return proof;
+        return null;
     }
 
 
-    @Override
-    public List<Proof> listByUserId(Integer userId, int page) {
-        if (page <= 1) {
-            page = 1;
-        }
-        logger.debug("userId：" + userId);
-        List<Proof> proofList = proofMapper.listByUserId(userId, (page - 1) * 10);
-        for (int i = 0; i < proofList.size(); i++) {
-            Proof proof = proofList.get(i);
-            User recorder = userService.find(proof.getRecorderId());
-            proof.setRecorder(recorder);
-            proofList.set(i, proof);
-        }
-        return proofList;
-    }
-
-    @Override
-    public List<Proof> listByNotExamination(int page) {
-        if (page <= 1) {
-            page = 1;
-        }
-        List<Proof> proofList = proofMapper.listByNotExamination((page - 1) * 10);
-        for (int i = 0; i < proofList.size(); i++) {
-            Proof proof = proofList.get(i);
-            User recorder = userService.find(proof.getRecorderId());
-            proof.setRecorder(recorder);
-            proofList.set(i, proof);
-        }
-        return proofList;
-    }
 }

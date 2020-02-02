@@ -7,13 +7,9 @@ import java.util.List;
 
 public interface ProofService {
 
-    void save(Proof proof);
+    void save(Proof proof,String tokenId);
 
     Proof find(Integer id);
 
-
-    List<Proof> listByUserId(Integer userId, int page);
-
-    List<Proof> listByNotExamination(int page);
 
 }

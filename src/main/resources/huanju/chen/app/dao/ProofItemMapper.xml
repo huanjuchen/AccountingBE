@@ -22,6 +22,147 @@
         WHERE id = #{key}
     </select>
 
+    <resultMap id="itemsMap" type="proofItem">
+        <id column="id" property="id"/>
+        <result column="abstraction" property="abstraction"/>
+        <result column="money" property="money"/>
+        <result column="charge" property="charge"/>
+        <result column="proof_id" property="proofId"/>
+        <result column="DSSId" property="debitSubSubjectId"/>
+        <result column="CSSId" property="creditSubSubjectId"/>
+        <result column="DLSId" property="debitLedgerSubjectId"/>
+        <result column="CLSId" property="creditLedgerSubjectId"/>
+        <association property="debitSubSubject">
+            <id column="DSSDSSId" property="id"/>
+            <result column="DSSCode" property="code"/>
+            <result column="DSSName" property="name"/>
+            <result column="DSSCategory" property="category"/>
+            <result column="DSSDaysKind" property="daysKind"/>
+            <result column="DSSValid" property="valid"/>
+        </association>
+        <association property="creditSubSubject">
+            <id column="CSSCSSId" property="id"/>
+            <result column="CSSCode" property="code"/>
+            <result column="CSSName" property="name"/>
+            <result column="CSSCategory" property="category"/>
+            <result column="CSSDaysKind" property="daysKind"/>
+            <result column="CSSValid" property="valid"/>
+        </association>
+        <association property="debitLedgerSubject">
+            <id column="DLSDLSId" property="id"/>
+            <result column="DLSCode" property="code"/>
+            <result column="DLSName" property="name"/>
+            <result column="DLSCategory" property="category"/>
+            <result column="DLSDaysKind" property="daysKind"/>
+            <result column="DLSValid" property="valid"/>
+        </association>
+        <association property="creditLedgerSubject">
+            <id column="CLSCLSId" property="id"/>
+            <result column="CLSCode" property="code"/>
+            <result column="CLSName" property="name"/>
+            <result column="CLSCategory" property="category"/>
+            <result column="CLSDaysKind" property="daysKind"/>
+            <result column="CLSValid" property="valid"/>
+        </association>
+    </resultMap>
+
+    <select id="items" parameterType="integer" resultMap="itemsMap">
+        SELECT pi.id AS id,
+               pi.abstraction AS abstraction,
+               pi.money AS money,
+               pi.charge AS charge,
+               pi.proof_id AS proof_id,
+               debit_sub_subject_id     AS DSSId,
+               credit_sub_subject_id    AS CSSId,
+               debit_ledger_subject_id  AS DLSId,
+               credit_ledger_subject_id AS CLSId,
+               DSS.id        AS DSSDSSId,
+               DSS.code      AS DSSCode,
+               DSS.name      AS DSSName,
+               DSS.category  AS DSSCategory,
+               DSS.days_kind AS DSSDaysKind,
+               DSS.valid     AS DSSValid,
+               css.id        AS CSSCSSId,
+               css.code      AS CSSCode,
+               css.name      AS CSSName,
+               css.category  AS CSSCategory,
+               css.days_kind AS CSSDaysKind,
+               css.valid     AS CSSValid,
+               dls.id        AS DLSDLSId,
+               dls.code      AS DLSCode,
+               dls.name      AS DLSName,
+               dls.category  AS DLSCategory,
+               dls.days_kind AS DLSDaysKind,
+               dls.valid     AS DLSValid,
+               cls.id        AS CLSCLSId,
+               cls.code      AS CLSCode,
+               cls.name      AS CLSName,
+               cls.category  AS CLSCategory,
+               cls.days_kind AS CLSDaysKind,
+               cls.valid     AS CLSValid
+        FROM proof_item pi
+                 LEFT JOIN subject DSS ON DSS.id = pi.debit_sub_subject_id
+                 LEFT JOIN subject css ON css.id = pi.credit_sub_subject_id
+                 LEFT JOIN subject dls ON dls.id = pi.debit_ledger_subject_id
+                 LEFT JOIN subject cls ON cls.id = pi.credit_ledger_subject_id
+        WHERE pi.proof_id = #{proofId}
+    </select>
+
+
+    <select id="items2" parameterType="integer" resultMap="itemsMap">
+        SELECT id,
+               abstraction,
+               money,
+               charge,
+               proof_id,
+               debit_sub_subject_id     AS DSSId,
+               credit_sub_subject_id    AS CSSId,
+               debit_ledger_subject_id  AS DLSId,
+               credit_ledger_subject_id AS CLSId,
+               (SELECT DSS.id        AS DSSDSSId,
+                       DSS.code      AS DSSCode,
+                       DSS.name      AS DSSName,
+                       DSS.category  AS DSSCategory,
+                       DSS.days_kind AS DSSDaysKind,
+                       DSS.valid     AS DSSValid
+                FROM subject DSS
+                WHERE DSS.id = debit_sub_subject_id
+               ),
+               (
+                   SELECT css.id        AS CSSCSSId,
+                          css.code      AS CSSCode,
+                          css.name      AS CSSName,
+                          css.category  AS CSSCategory,
+                          css.days_kind AS CSSDaysKind,
+                          css.valid     AS CSSValid
+                   FROM subject css
+                   WHERE css.id = credit_sub_subject_id
+               ),
+               (
+                   SELECT dls.id        AS DLSDLSId,
+                          dls.code      AS DLSCode,
+                          dls.name      AS DLSName,
+                          dls.category  AS DLSCategory,
+                          dls.days_kind AS DLSDaysKind,
+                          dls.valid     AS DLSValid
+                   FROM subject dls
+                   WHERE dls.id = debit_ledger_subject_id
+               ),
+               (
+                   SELECT cls.id        AS CLSCLSId,
+                          cls.code      AS CLSCode,
+                          cls.name      AS CLSName,
+                          cls.category  AS CLSCategory,
+                          cls.days_kind AS CLSDaysKind,
+                          cls.valid     AS CLSValid
+                   FROM subject cls
+                   WHERE cls.id = credit_ledger_subject_id
+               )
+        FROM proof_item
+        WHERE proof_id = #{proofId}
+    </select>
+
+
     <select id="listByProofId" parameterType="int" resultType="proofItem">
         SELECT *
         FROM proof_item

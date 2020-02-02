@@ -17,10 +17,7 @@ public class ProofMapperTest {
 
     @Test
     public void listByUserId(){
-        List<Proof> proofs=proofMapper.listByUserId(1,0);
-        for (Proof item:proofs){
-            System.out.println(JSON.toJSONString(item));
-        }
+
     }
 
 
@@ -32,6 +29,7 @@ public class ProofMapperTest {
 
     @Test
     public void findTest(){
-
+        Proof proof=proofMapper.find(2);
+        System.out.println(JSON.toJSONString(proof));
     }
 }

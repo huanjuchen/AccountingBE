@@ -2,7 +2,7 @@ package huanju.chen.app.domain.vo;
 
 import java.math.BigDecimal;
 
-public class ProofItemVo {
+public class ProofItemVO {
 
     private Integer id;
 

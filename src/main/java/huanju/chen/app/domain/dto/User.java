@@ -1,6 +1,6 @@
 package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.domain.vo.UserVo;
+import huanju.chen.app.domain.vo.UserVO;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -106,8 +106,8 @@ public class User implements Serializable {
     }
 
 
-    public UserVo covert(){
-        UserVo userVo=new UserVo();
+    public UserVO covert(){
+        UserVO userVo=new UserVO();
         userVo.setId(this.id);
         userVo.setUsername(this.username);
         userVo.setName(this.name);

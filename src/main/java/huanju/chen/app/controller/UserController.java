@@ -2,7 +2,7 @@ package huanju.chen.app.controller;
 
 
 import huanju.chen.app.domain.dto.User;
-import huanju.chen.app.domain.vo.UserVo;
+import huanju.chen.app.domain.vo.UserVO;
 import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.UserService;
 import huanju.chen.app.domain.EntityUtils;
@@ -27,7 +27,7 @@ public class UserController {
 
 
     @PostMapping("/admin/user")
-    public ApiResult<UserVo> createUser(@RequestBody @Validated User user) {
+    public ApiResult<UserVO> createUser(@RequestBody @Validated User user) {
         User temp = userService.save(user);
         return ApiResult.success(temp.covert());
     }
@@ -48,7 +48,7 @@ public class UserController {
                 Integer userId = Integer.valueOf(selectWord);
                 User user = userService.find(userId);
                 if (user != null) {
-                    List<UserVo> userVos = new ArrayList<>();
+                    List<UserVO> userVos = new ArrayList<>();
                     userVos.add(user.covert());
                     return ApiResult.success(userVos);
                 }
@@ -151,7 +151,7 @@ public class UserController {
 
 
     @GetMapping("/admin/user/{userId}")
-    public ApiResult<UserVo> getUserById(@PathVariable Integer userId) {
+    public ApiResult<UserVO> getUserById(@PathVariable Integer userId) {
         logger.debug("userId=" + userId);
         User user = userService.find(userId);
         if (user != null) {

@@ -1,8 +1,9 @@
 package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.domain.vo.ProofItemVo;
-import huanju.chen.app.domain.vo.ProofVo;
+import huanju.chen.app.domain.vo.ProofItemVO;
+import huanju.chen.app.domain.vo.ProofVO;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,11 +21,13 @@ public class Proof implements Serializable {
     /**
      * 业务发生日期
      */
+    @NotNull(message = "业务发生日期不允许为空")
     private Date date;
 
     /**
      * 单据数
      */
+    @NotNull(message = "单据数不允许为空")
     private Integer invoiceCount;
 
 
@@ -37,13 +40,6 @@ public class Proof implements Serializable {
      * 记账人
      */
     private String collection;
-
-    /**
-     * 稽核
-     */
-    private Integer examinationId;
-
-    private Examination examination;
 
     /**
      * 制单人Id
@@ -69,6 +65,59 @@ public class Proof implements Serializable {
 
 
     private List<ProofItem> items;
+
+
+    /**
+     * 稽查人ID
+     */
+    private Integer verifyUserId;
+
+    private User verifyUser;
+
+    /**
+     * 稽查结果
+     * 1.通过
+     * 0.未审核
+     * -1.未通过
+     */
+    private Integer verify;
+
+    /**
+     * 稽查时间
+     */
+    private Date verifyTime;
+
+
+    public ProofVO covert() {
+        ProofVO proofVo = new ProofVO();
+        proofVo.setId(this.id);
+        proofVo.setDate(this.date);
+        proofVo.setInvoiceCount(this.invoiceCount);
+        proofVo.setManager(this.manager);
+        proofVo.setCollection(this.collection);
+        if (this.recorder != null) {
+            proofVo.setRecorder(this.recorder.covert());
+
+        }
+        proofVo.setCashier(this.cashier);
+        proofVo.setPayer(this.payer);
+        List<ProofItemVO> itemVos = null;
+        if (this.items != null) {
+            itemVos = new ArrayList<>(this.items.size());
+            for (int i = 0; i < this.items.size(); i++) {
+                itemVos.add(i, this.items.get(i).covert());
+            }
+            proofVo.setItems(itemVos);
+        }
+
+        proofVo.setVerify(this.verify);
+        proofVo.setVerifyTime(this.verifyTime);
+        if (this.verifyUser != null) {
+            proofVo.setVerifyUser(this.verifyUser.covert());
+        }
+        return proofVo;
+    }
+
 
     public Integer getId() {
         return id;
@@ -108,22 +157,6 @@ public class Proof implements Serializable {
 
     public void setCollection(String collection) {
         this.collection = collection;
-    }
-
-    public Integer getExaminationId() {
-        return examinationId;
-    }
-
-    public void setExaminationId(Integer examinationId) {
-        this.examinationId = examinationId;
-    }
-
-    public Examination getExamination() {
-        return examination;
-    }
-
-    public void setExamination(Examination examination) {
-        this.examination = examination;
     }
 
     public Integer getRecorderId() {
@@ -166,35 +199,37 @@ public class Proof implements Serializable {
         this.items = items;
     }
 
-    public ProofVo covert() {
-        ProofVo proofVo = new ProofVo();
-        proofVo.setId(this.id);
-        proofVo.setDate(this.date);
-        proofVo.setInvoiceCount(this.invoiceCount);
-        proofVo.setManager(this.manager);
-        proofVo.setCollection(this.collection);
-        if (this.examination != null) {
-            proofVo.setExamination(this.examination.covert());
-        }
-
-
-        if (this.recorder != null) {
-            proofVo.setRecorder(this.recorder.covert());
-
-        }
-
-        proofVo.setCashier(this.cashier);
-        proofVo.setPayer(this.payer);
-
-        List<ProofItemVo> itemVos = null;
-        if (this.items != null) {
-            itemVos = new ArrayList<>(this.items.size());
-            for (int i = 0; i < this.items.size(); i++) {
-                itemVos.add(i, this.items.get(i).covert());
-            }
-            proofVo.setItems(itemVos);
-        }
-
-        return proofVo;
+    public Integer getVerify() {
+        return verify;
     }
+
+    public void setVerify(Integer verify) {
+        this.verify = verify;
+    }
+
+    public Integer getVerifyUserId() {
+        return verifyUserId;
+    }
+
+    public void setVerifyUserId(Integer verifyUserId) {
+        this.verifyUserId = verifyUserId;
+    }
+
+    public User getVerifyUser() {
+        return verifyUser;
+    }
+
+    public void setVerifyUser(User verifyUser) {
+        this.verifyUser = verifyUser;
+    }
+
+    public Date getVerifyTime() {
+        return verifyTime;
+    }
+
+    public void setVerifyTime(Date verifyTime) {
+        this.verifyTime = verifyTime;
+    }
+
+
 }

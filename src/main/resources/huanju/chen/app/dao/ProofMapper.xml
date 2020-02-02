@@ -3,40 +3,75 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="huanju.chen.app.dao.ProofMapper">
     <insert id="save" parameterType="proof">
-        INSERT INTO proof(id, date, examination_id,
+        INSERT INTO proof(id, date,
         invoice_count, manager, collection,
-        recorder_id, cashier, payer)
-        VALUES (NULL,#{date},#{examinationId},#{invoiceCount},#{manager},
-        #{collection},#{recorderId},#{cashier},#{payer})
+        recorder_id, cashier, payer,verify,verify_user_id,verify_time)
+        VALUES (NULL,#{date},#{invoiceCount},#{manager},
+        #{collection},#{recorderId},#{cashier},#{payer},0,null,null)
         <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">
             SELECT last_insert_id()
         </selectKey>
     </insert>
 
+    <resultMap id="proofResultMap" type="proof">
+        <id column="pId" property="id"/>
+        <result column="pDate" property="date"/>
+        <result column="pInvoiceCount" property="invoiceCount"/>
+        <result column="pManager" property="manager"/>
+        <result column="pCollection" property="collection"/>
+        <result column="pRecorderId" property="recorderId"/>
+        <result column="pCashier" property="cashier"/>
+        <result column="pPayer" property="payer"/>
+        <result column="pVerify" property="verify"/>
+        <result column="pVerifyUserId" property="verifyUserId"/>
+        <result column="pVerifyTime" property="verifyTime"/>
+        <association property="recorder">
+            <id column="uId" property="id"/>
+            <result column="uUsername" property="username"/>
+            <result column="uName" property="name"/>
+            <result column="uRole" property="role"/>
+        </association>
+        <association property="verifyUser">
+            <id column="vId" property="id"/>
+            <result column="vUsername" property="username"/>
+            <result column="vName" property="name"/>
+            <result column="vRole" property="role"/>
+        </association>
+        <collection property="items" column="pId" select="huanju.chen.app.dao.ProofItemMapper.items"/>
+    </resultMap>
 
-    <select id="find" resultType="proof">
-        SELECT *
-        FROM proof
-        WHERE id = #{key}
+
+    <select id="find" resultMap="proofResultMap" parameterType="integer">
+        SELECT p.id             AS pId,
+               p.date           AS pDate,
+               p.invoice_count  AS pInvoiceCount,
+               p.manager        AS pManager,
+               p.collection     AS pCollection,
+               p.recorder_id    As pRecorderId,
+               p.cashier        AS pCashier,
+               p.payer          AS pPayer,
+               p.verify         AS pVerify,
+               p.verify_user_id AS pVerifyUserId,
+               p.verify_time    AS pVerifyTime,
+               u.id             AS uId,
+               u.username       AS uUsername,
+               u.name           AS uName,
+               u.role           AS uRole,
+               vu.id            AS vId,
+               vu.username      AS vUsername,
+               vu.name          AS vName,
+               vu.role          AS vRole
+        FROM proof p
+                 LEFT JOIN user u ON p.recorder_id = u.id
+                 LEFT JOIN user vu ON p.verify_user_id = u.id
+        WHERE p.id = #{key}
     </select>
 
-    <select id="listByUserId" resultType="proof">
-        SELECT *
+
+    <select id="list" resultType="proof" parameterType="map">
+        SELECT id, date, invoice_count, verify
         FROM proof
-        WHERE recorder_id = #{userId}
-        LIMIT #{offset},10
     </select>
 
-    <select id="listByNotExamination" resultType="proof">
-        SELECT *
-        FROM proof
-        WHERE examination_id IS NULL
-        LIMIT #{offset},10
-    </select>
-
-    <select id="countByUserId" resultType="int">
-        SELECT COUNT(id)
-        FROM proof
-    </select>
 
 </mapper>

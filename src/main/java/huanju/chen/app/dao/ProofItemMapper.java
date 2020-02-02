@@ -8,4 +8,7 @@ public interface ProofItemMapper extends BaseMapper<ProofItem> {
 
     List<ProofItem> listByProofId(int proofId);
 
+
+    List<ProofItem> items(Integer proofId);
+
 }

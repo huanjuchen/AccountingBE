@@ -1,7 +1,8 @@
 package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.domain.vo.ProofItemVo;
+import huanju.chen.app.domain.vo.ProofItemVO;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -64,6 +65,7 @@ public class ProofItem implements Serializable {
     /**
      * 贷方总账科目ID
      */
+    @NotNull
     private BigDecimal money;
 
     /**
@@ -183,8 +185,8 @@ public class ProofItem implements Serializable {
     }
 
 
-    public ProofItemVo covert() {
-        ProofItemVo proofItemVo = new ProofItemVo();
+    public ProofItemVO covert() {
+        ProofItemVO proofItemVo = new ProofItemVO();
 
         proofItemVo.setId(this.id);
         proofItemVo.setAbstraction(this.abstraction);

@@ -1,6 +1,6 @@
 package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.domain.vo.ExaminationVo;
+import huanju.chen.app.domain.vo.ExaminationVO;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -62,8 +62,8 @@ public class Examination implements Serializable {
     }
 
 
-    public ExaminationVo covert() {
-        ExaminationVo examinationVo = new ExaminationVo();
+    public ExaminationVO covert() {
+        ExaminationVO examinationVo = new ExaminationVO();
         examinationVo.setId(this.id);
         examinationVo.setResult(this.result);
         examinationVo.setTime(this.time);

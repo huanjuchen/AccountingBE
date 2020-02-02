@@ -3,10 +3,12 @@ package huanju.chen.app.domain.vo;
 
 
 
+import huanju.chen.app.domain.dto.User;
+
 import java.util.Date;
 import java.util.List;
 
-public class ProofVo {
+public class ProofVO {
 
     private Integer id;
     /**
@@ -29,16 +31,11 @@ public class ProofVo {
      */
     private String collection;
 
-    /**
-     * 稽核
-     */
-
-    private ExaminationVo examination;
 
     /**
      * 制单人
      */
-    private UserVo recorder;
+    private UserVO recorder;
 
     /**
      * 出纳人
@@ -51,7 +48,15 @@ public class ProofVo {
     private String payer;
 
 
-    private List<ProofItemVo> items;
+    private Integer verify;
+
+
+    private UserVO verifyUser;
+
+    private Date verifyTime;
+
+
+    private List<ProofItemVO> items;
 
 
     public Integer getId() {
@@ -95,20 +100,12 @@ public class ProofVo {
     }
 
 
-    public ExaminationVo getExamination() {
-        return examination;
-    }
 
-    public void setExamination(ExaminationVo examination) {
-        this.examination = examination;
-    }
-
-
-    public UserVo getRecorder() {
+    public UserVO getRecorder() {
         return recorder;
     }
 
-    public void setRecorder(UserVo recorder) {
+    public void setRecorder(UserVO recorder) {
         this.recorder = recorder;
     }
 
@@ -128,11 +125,37 @@ public class ProofVo {
         this.payer = payer;
     }
 
-    public List<ProofItemVo> getItems() {
+    public List<ProofItemVO> getItems() {
         return items;
     }
 
-    public void setItems(List<ProofItemVo> items) {
+    public void setItems(List<ProofItemVO> items) {
         this.items = items;
+    }
+
+
+    public Integer getVerify() {
+        return verify;
+    }
+
+    public void setVerify(Integer verify) {
+        this.verify = verify;
+    }
+
+    public UserVO getVerifyUser() {
+        return verifyUser;
+    }
+
+    public void setVerifyUser(UserVO verifyUser) {
+        this.verifyUser = verifyUser;
+    }
+
+
+    public Date getVerifyTime() {
+        return verifyTime;
+    }
+
+    public void setVerifyTime(Date verifyTime) {
+        this.verifyTime = verifyTime;
     }
 }

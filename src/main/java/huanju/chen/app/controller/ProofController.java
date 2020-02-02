@@ -2,11 +2,14 @@ package huanju.chen.app.controller;
 
 import huanju.chen.app.domain.RespResult;
 import huanju.chen.app.domain.dto.Proof;
+import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.ProofService;
 import huanju.chen.app.domain.EntityUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -16,30 +19,16 @@ public class ProofController {
     private ProofService proofService;
 
 
+
     @PostMapping("/proof")
-    public RespResult createProof(@RequestBody Proof proof) {
-        proofService.save(proof);
-        return RespResult.ok();
+    public ApiResult createProof(@Validated @RequestBody Proof proof, HttpServletRequest request) {
+        String tokenId=request.getHeader("token_id");
+        proofService.save(proof,tokenId);
+        return ApiResult.success();
     }
 
 
-    @GetMapping("/proof/{id}")
-    public RespResult findProofById(@PathVariable int id) {
-        Proof proof = proofService.find(id);
-        return RespResult.okAndBody(proof.covert());
-    }
 
 
-    @GetMapping("/proof")
-    public RespResult listByRecorder(Integer recorderId, int page) {
-        List<Proof> proofs = proofService.listByUserId(recorderId, page);
-        return RespResult.okAndBody(EntityUtils.covertToProofVoList(proofs));
-    }
-
-    @GetMapping("/manager/proof/notExam")
-    public RespResult listByNotExam(int page) {
-        List<Proof> proofList = proofService.listByNotExamination(page);
-        return RespResult.okAndBody(proofList);
-    }
 
 }

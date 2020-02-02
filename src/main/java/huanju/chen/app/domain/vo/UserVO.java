@@ -3,7 +3,7 @@ package huanju.chen.app.domain.vo;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class UserVo implements Serializable {
+public class UserVO implements Serializable {
 
     private Integer id;
 

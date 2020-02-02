@@ -2,14 +2,14 @@ package huanju.chen.app.domain.vo;
 
 import java.sql.Timestamp;
 
-public class ExaminationVo {
+public class ExaminationVO {
     private Integer id;
 
     private Boolean result;
 
     private Timestamp time;
 
-    private UserVo examiner;
+    private UserVO examiner;
 
     public Integer getId() {
         return id;
@@ -35,11 +35,11 @@ public class ExaminationVo {
         this.time = time;
     }
 
-    public UserVo getExaminer() {
+    public UserVO getExaminer() {
         return examiner;
     }
 
-    public void setExaminer(UserVo examiner) {
+    public void setExaminer(UserVO examiner) {
         this.examiner = examiner;
     }
 

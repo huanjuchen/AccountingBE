@@ -25,7 +25,6 @@ public class ExceptionHandlerController {
      * 处理自定义业务异常
      *
      * @param e
-     * @return
      */
     @ExceptionHandler(AccountingException.class)
     public ApiResult accountingException(AccountingException e) {

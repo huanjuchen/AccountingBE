@@ -29,27 +29,7 @@
         </resources>
     </cache>
 
-    <cache alias="proofListCache">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>java.util.List</value-type>
-        <expiry>
-            <tti unit="hours">2</tti>
-        </expiry>
-        <resources>
-            <heap unit="MB">16</heap>
-        </resources>
-    </cache>
 
-    <cache alias="proofCache">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>huanju.chen.app.domain.dto.Proof</value-type>
-        <expiry>
-            <tti unit="hours">2</tti>
-        </expiry>
-        <resources>
-            <heap unit="MB">16</heap>
-        </resources>
-    </cache>
 
 
 </config>
