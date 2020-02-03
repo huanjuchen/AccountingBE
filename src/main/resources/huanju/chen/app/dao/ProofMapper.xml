@@ -71,6 +71,37 @@
     <select id="list" resultType="proof" parameterType="map">
         SELECT id, date, invoice_count, verify
         FROM proof
+        <where>
+            <if test="rid!=null">
+                AND recorder_id=#{rid}
+            </if>
+            <if test="startDate!=null and endDate!=null">
+                AND date BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="verify!=null">
+                AND verify=#{verify}
+            </if>
+        </where>
+        <if test="idDESC!=null">
+            ORDER BY id DESC
+        </if>
+
+        <if test="idASC">
+            ORDER BY id
+        </if>
+        <if test="dateDESC!=null">
+            ORDER BY date DESC
+        </if>
+        <if test="dateASC!=null">
+            ORDER BY date
+        </if>
+        <if test="ridDESC!=null">
+            ORDER BY recorder_id DESC
+        </if>
+        <if test="ridASC!=null">
+            ORDER BY recorder_id
+        </if>
+
     </select>
 
 

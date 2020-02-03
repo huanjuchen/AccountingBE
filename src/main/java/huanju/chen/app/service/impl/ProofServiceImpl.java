@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.SUPPORTS, readOnly = true)
@@ -97,7 +99,12 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     public Proof find(Integer id) {
-        return null;
+        return proofMapper.find(id);
+    }
+
+    @Override
+    public List<Proof> list(Map<String, Object> map) {
+        return proofMapper.list(map);
     }
 
 
