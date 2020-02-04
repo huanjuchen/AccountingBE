@@ -51,9 +51,11 @@ public class ProofController {
      * @param endDate   筛选结束日期
      * @param verify    审核类型
      * @param orderType 排序类型
+     * @param page      页数
+     * @param pageSize  每页数量
      */
     @GetMapping("/proof")
-    public ApiResult<List<ProofVO>> list(Integer rid, Date startDate, Date endDate, Integer verify, String orderType) {
+    public ApiResult<List<ProofVO>> list(Integer rid, Date startDate, Date endDate, Integer verify, String orderType, Integer page, Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
 
         //包装查询条件
@@ -73,7 +75,6 @@ public class ProofController {
                 map.put("verify", verify);
             }
         }
-
         if (orderType != null) {
             if (ID_ASC.equals(orderType)) {
                 map.put(ID_ASC, object);
@@ -90,10 +91,22 @@ public class ProofController {
             }
 
         }
+        if (page != null && pageSize != null) {
+            map.put("offset", page > 0 ? ((page - 1) * pageSize) : 0);
+            map.put("count", pageSize > 1 ? pageSize : 1);
+        } else {
+            map.put("offset", 0);
+            map.put("count", 10);
+        }
 
         //调用Service层获取数据
         List<Proof> proofs = proofService.list(map);
-        return ApiResult.success(EntityUtils.covertToProofVoList(proofs));
+        if (proofs != null) {
+            return ApiResult.success(EntityUtils.covertToProofVoList(proofs));
+        } else {
+            return ApiResult.success(null);
+        }
+
     }
 
 

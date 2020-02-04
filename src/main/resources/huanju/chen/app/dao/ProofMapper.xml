@@ -41,6 +41,19 @@
     </resultMap>
 
 
+    <resultMap id="listMap" type="proof">
+        <id column="pId" property="id"/>
+        <result column="pDate" property="date"/>
+        <result column="pInvoiceCount" property="invoiceCount"/>
+        <result column="pVerify" property="verify"/>
+        <association property="recorder">
+            <id column="uId" property="id"/>
+            <result column="uUsername" property="username"/>
+            <result column="uName" property="name"/>
+        </association>
+    </resultMap>
+
+
     <select id="find" resultMap="proofResultMap" parameterType="integer">
         SELECT p.id             AS pId,
                p.date           AS pDate,
@@ -68,38 +81,47 @@
     </select>
 
 
-    <select id="list" resultType="proof" parameterType="map">
-        SELECT id, date, invoice_count, verify
-        FROM proof
+    <select id="list" resultMap="listMap" parameterType="map">
+        SELECT p.id AS pId,
+        p.date AS pDate,
+        p.invoice_count AS pInvoiceCount,
+        p.verify AS pVerify,
+        u.id AS uId,
+        u.username AS uUsername,
+        u.name AS uName
+        FROM proof p LEFT JOIN user u ON p.recorder_id=u.id
         <where>
             <if test="rid!=null">
-                AND recorder_id=#{rid}
+                AND p.recorder_id=#{rid}
             </if>
             <if test="startDate!=null and endDate!=null">
-                AND date BETWEEN #{startDate} AND #{endDate}
+                AND p.date BETWEEN #{startDate} AND #{endDate}
             </if>
             <if test="verify!=null">
-                AND verify=#{verify}
+                AND p.verify=#{verify}
             </if>
         </where>
         <if test="idDESC!=null">
-            ORDER BY id DESC
+            ORDER BY p.id DESC
         </if>
 
         <if test="idASC">
-            ORDER BY id
+            ORDER BY p.id
         </if>
         <if test="dateDESC!=null">
-            ORDER BY date DESC
+            ORDER BY p.date DESC
         </if>
         <if test="dateASC!=null">
-            ORDER BY date
+            ORDER BY p.date
         </if>
         <if test="ridDESC!=null">
-            ORDER BY recorder_id DESC
+            ORDER BY p.recorder_id DESC
         </if>
         <if test="ridASC!=null">
-            ORDER BY recorder_id
+            ORDER BY p.recorder_id
+        </if>
+        <if test="offset!=null and count!=null">
+            LIMIT #{offset},#{count}
         </if>
 
     </select>
