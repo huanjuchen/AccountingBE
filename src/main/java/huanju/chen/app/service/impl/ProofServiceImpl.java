@@ -107,5 +107,10 @@ public class ProofServiceImpl implements ProofService {
         return proofMapper.list(map);
     }
 
+    @Override
+    public Integer count(Map<String, Object> map) {
+        return proofMapper.count(map);
+    }
+
 
 }

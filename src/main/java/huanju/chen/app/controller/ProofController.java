@@ -1,17 +1,21 @@
 package huanju.chen.app.controller;
 
 import huanju.chen.app.domain.EntityUtils;
-import huanju.chen.app.domain.RespResult;
 import huanju.chen.app.domain.dto.Proof;
 import huanju.chen.app.domain.vo.ProofVO;
 import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.ProofService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +28,8 @@ public class ProofController {
     @Resource(name = "proofServiceImpl")
     private ProofService proofService;
 
+    private static final Logger logger = LoggerFactory.getLogger(ProofController.class);
+
     @PostMapping("/proof")
     public ApiResult createProof(@Validated @RequestBody Proof proof, HttpServletRequest request) {
         String tokenId = request.getHeader("token_id");
@@ -31,17 +37,13 @@ public class ProofController {
         return ApiResult.success();
     }
 
-
     private Object object = new Object();
-
-
     private static String ID_DESC = "idDESC";
     private static String ID_ASC = "idASC";
     private static String DATE_DESC = "dateDESC";
     private static String DATE_ASC = "dateASC";
     private static String RID_DESC = "ridDESC";
     private static String RID_ASC = "ridASC";
-
 
     /**
      * 查询会计凭证
@@ -55,17 +57,28 @@ public class ProofController {
      * @param pageSize  每页数量
      */
     @GetMapping("/proof")
-    public ApiResult<List<ProofVO>> list(Integer rid, Date startDate, Date endDate, Integer verify, String orderType, Integer page, Integer pageSize) {
+    public ApiResult<List<ProofVO>> list(Integer rid, String startDate, String endDate, Integer verify, String orderType, Integer page, Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
-
         //包装查询条件
         if (rid != null) {
             map.put("rid", rid);
         }
         if (startDate != null) {
-            map.put("startDate", startDate);
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                map.put("startDate", format.parse(startDate));
+            } catch (ParseException e) {
+                logger.info("日期转换失败,已忽略");
+                logger.debug("调试日志" + e.getMessage());
+            }
             if (endDate != null) {
-                map.put("endDate", endDate);
+                try {
+                    map.put("endDate", format.parse(endDate));
+                } catch (ParseException e) {
+                    logger.info("日期转换失败,已忽略");
+                    logger.debug("调试日志" + e.getMessage());
+                }
+
             } else {
                 map.put("endDate", new Date());
             }
@@ -109,6 +122,46 @@ public class ProofController {
 
     }
 
+    @GetMapping("/proof/count")
+    public ApiResult<Integer> count(Integer rid, String startDate, String endDate, Integer verify) {
+        Map<String, Object> map = new HashMap<>();
+        //包装查询条件
+        if (rid != null) {
+            map.put("rid", rid);
+        }
+        if (startDate != null) {
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                map.put("startDate", format.parse(startDate));
+            } catch (ParseException e) {
+                logger.info("日期转换失败,已忽略");
+                logger.debug("调试日志" + e.getMessage());
+            }
+            if (endDate != null) {
+                try {
+                    map.put("endDate", format.parse(endDate));
+                } catch (ParseException e) {
+                    logger.info("日期转换失败,已忽略");
+                    logger.debug("调试日志" + e.getMessage());
+                }
+
+            } else {
+                map.put("endDate", new Date());
+            }
+        }
+        if (verify != null) {
+            if (verify == 0 || verify == 1 || verify == -1) {
+                map.put("verify", verify);
+            }
+        }
+
+        Integer count = proofService.count(map);
+        if (count != null) {
+            return ApiResult.success(count);
+        } else {
+            return ApiResult.success(0);
+        }
+    }
 
     @GetMapping("/proof/{id}")
     public ApiResult<ProofVO> find(@PathVariable Integer id) {
@@ -119,6 +172,4 @@ public class ProofController {
             return ApiResult.success(null);
         }
     }
-
-
 }

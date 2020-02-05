@@ -14,6 +14,7 @@ public interface ProofService {
 
     List<Proof> list(Map<String, Object> map);
 
+    Integer count(Map<String, Object> map);
 
 
 }

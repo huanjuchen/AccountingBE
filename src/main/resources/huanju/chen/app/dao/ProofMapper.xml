@@ -123,7 +123,21 @@
         <if test="offset!=null and count!=null">
             LIMIT #{offset},#{count}
         </if>
+    </select>
 
+    <select id="count" resultType="integer" parameterType="map">
+        SELECT COUNT(id) FROM proof
+        <where>
+            <if test="rid!=null">
+                AND recorder_id=#{rid}
+            </if>
+            <if test="startDate!=null and endDate!=null">
+                AND date BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="verify!=null">
+                AND verify=#{verify}
+            </if>
+        </where>
     </select>
 
 
