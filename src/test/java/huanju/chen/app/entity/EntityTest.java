@@ -1,7 +1,7 @@
 package huanju.chen.app.entity;
 
 import com.alibaba.fastjson.JSON;
-import huanju.chen.app.domain.vo.SubjectVo;
+import huanju.chen.app.domain.vo.SubjectVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -11,7 +11,7 @@ public class EntityTest {
 
     @Test
     public void subjectTest(){
-        SubjectVo subjectVo=new SubjectVo();
+        SubjectVO subjectVo=new SubjectVO();
         subjectVo.setName("hhh");
         subjectVo.setRemark("flkdsjafls");
 

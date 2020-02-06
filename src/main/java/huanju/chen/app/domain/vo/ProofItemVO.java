@@ -14,24 +14,24 @@ public class ProofItemVO {
     /**
      * 借方明细账科目
      */
-    private SubjectVo debitSubSubject;
+    private SubjectVO debitSubSubject;
 
 
     /**
      * 贷方明细账科目
      */
-    private SubjectVo creditSubSubject;
+    private SubjectVO creditSubSubject;
 
     /**
      * 借方总账科目
      */
-    private SubjectVo debitLedgerSubject;
+    private SubjectVO debitLedgerSubject;
 
 
     /**
      * 贷方总账 科目
      */
-    private SubjectVo creditLedgerSubject;
+    private SubjectVO creditLedgerSubject;
 
     /**
      * 金额
@@ -60,35 +60,35 @@ public class ProofItemVO {
         this.abstraction = abstraction;
     }
 
-    public SubjectVo getDebitSubSubject() {
+    public SubjectVO getDebitSubSubject() {
         return debitSubSubject;
     }
 
-    public void setDebitSubSubject(SubjectVo debitSubSubject) {
+    public void setDebitSubSubject(SubjectVO debitSubSubject) {
         this.debitSubSubject = debitSubSubject;
     }
 
-    public SubjectVo getCreditSubSubject() {
+    public SubjectVO getCreditSubSubject() {
         return creditSubSubject;
     }
 
-    public void setCreditSubSubject(SubjectVo creditSubSubject) {
+    public void setCreditSubSubject(SubjectVO creditSubSubject) {
         this.creditSubSubject = creditSubSubject;
     }
 
-    public SubjectVo getDebitLedgerSubject() {
+    public SubjectVO getDebitLedgerSubject() {
         return debitLedgerSubject;
     }
 
-    public void setDebitLedgerSubject(SubjectVo debitLedgerSubject) {
+    public void setDebitLedgerSubject(SubjectVO debitLedgerSubject) {
         this.debitLedgerSubject = debitLedgerSubject;
     }
 
-    public SubjectVo getCreditLedgerSubject() {
+    public SubjectVO getCreditLedgerSubject() {
         return creditLedgerSubject;
     }
 
-    public void setCreditLedgerSubject(SubjectVo creditLedgerSubject) {
+    public void setCreditLedgerSubject(SubjectVO creditLedgerSubject) {
         this.creditLedgerSubject = creditLedgerSubject;
     }
 

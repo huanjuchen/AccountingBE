@@ -1,6 +1,6 @@
 package huanju.chen.app.domain.dto;
 
-import huanju.chen.app.domain.vo.SubjectVo;
+import huanju.chen.app.domain.vo.SubjectVO;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -119,8 +119,8 @@ public class Subject implements Serializable {
         this.valid = valid;
     }
 
-    public SubjectVo covert() {
-        SubjectVo subjectVo = new SubjectVo();
+    public SubjectVO covert() {
+        SubjectVO subjectVo = new SubjectVO();
         subjectVo.setId(this.id);
         subjectVo.setCode(this.code);
         subjectVo.setName(this.name);

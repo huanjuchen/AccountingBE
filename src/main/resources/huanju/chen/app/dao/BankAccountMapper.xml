@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="huanju.chen.app.dao.BankAccountMapper">
+    <insert id="save" parameterType="bankAccount">
+        INSERT INTO bank_account(id, date, proof_id, abstraction, subject_id, debit_money, credit_money)
+        VALUES (NULL, #{date}, #{proofId}, #{abstraction}, #{subjectId}, #{debitMoney}, #{creditMoney})
+    </insert>
+
+    <resultMap id="listMap" type="bankAccount">
+        <id column="id" property="id"/>
+        <result column="date" property="date"/>
+        <result column="proof_id" property="proofId"/>
+        <result column="abstraction" property="abstraction"/>
+        <result column="subject_id" property="subjectId"/>
+        <result column="debit_money" property="debit_money"/>
+        <result column="credit_money" property="creditMoney"/>
+        <association property="subject">
+            <id column="sId" property="id"/>
+            <result column="sCode" property="code"/>
+            <result column="sName" property="name"/>
+        </association>
+    </resultMap>
+
+
+    <select id="list" parameterType="map" resultMap="listMap">
+        SELECT b.id           AS id,
+               b.date         AS date,
+               b.proof_id     AS proof_id,
+               b.abstraction  AS abstraction,
+               b.subject_id   AS subject_id,
+               b.debit_money  AS debit_money,
+               b.credit_money AS credit_money,
+               s.id           AS sId,
+               s.code         AS sCode,
+               s.name         AS sName
+        FROM bank_account b
+                 LEFT JOIN subject s ON s.id = b.subject_id
+    </select>
+
+</mapper>

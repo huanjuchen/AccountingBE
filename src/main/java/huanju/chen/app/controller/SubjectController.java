@@ -2,7 +2,7 @@ package huanju.chen.app.controller;
 
 
 import huanju.chen.app.domain.dto.Subject;
-import huanju.chen.app.domain.vo.SubjectVo;
+import huanju.chen.app.domain.vo.SubjectVO;
 import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.SubjectService;
 import huanju.chen.app.domain.EntityUtils;
@@ -26,7 +26,7 @@ public class SubjectController {
      * @param subject 科目实体
      */
     @PostMapping("/manage/subject")
-    public ApiResult<SubjectVo> createSubject(@RequestBody @Validated Subject subject) {
+    public ApiResult<SubjectVO> createSubject(@RequestBody @Validated Subject subject) {
         Subject temp = subjectService.save(subject);
         return ApiResult.success(temp.covert());
     }
@@ -39,7 +39,7 @@ public class SubjectController {
      */
 
     @GetMapping("/subject/{id}")
-    public ApiResult<SubjectVo> getSubjectById(@PathVariable int id) {
+    public ApiResult<SubjectVO> getSubjectById(@PathVariable int id) {
         Subject subject = subjectService.find(id);
         return ApiResult.success(subject.covert());
     }

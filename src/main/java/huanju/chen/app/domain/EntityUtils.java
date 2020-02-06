@@ -4,7 +4,7 @@ import huanju.chen.app.domain.dto.Proof;
 import huanju.chen.app.domain.dto.Subject;
 import huanju.chen.app.domain.dto.User;
 import huanju.chen.app.domain.vo.ProofVO;
-import huanju.chen.app.domain.vo.SubjectVo;
+import huanju.chen.app.domain.vo.SubjectVO;
 import huanju.chen.app.domain.vo.UserVO;
 
 import java.util.ArrayList;
@@ -21,8 +21,8 @@ public class EntityUtils {
         return userVos;
     }
 
-    public static List<SubjectVo> covertToSubjectVoList(List<Subject> subjects) {
-        List<SubjectVo> subjectVos = new ArrayList<>(subjects.size());
+    public static List<SubjectVO> covertToSubjectVoList(List<Subject> subjects) {
+        List<SubjectVO> subjectVos = new ArrayList<>(subjects.size());
         for (int i = 0; i < subjects.size(); i++) {
             subjectVos.add(i, subjects.get(i).covert());
         }

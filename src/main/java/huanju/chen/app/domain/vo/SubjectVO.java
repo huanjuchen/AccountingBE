@@ -2,7 +2,7 @@ package huanju.chen.app.domain.vo;
 
 import java.io.Serializable;
 
-public class SubjectVo implements Serializable {
+public class SubjectVO implements Serializable {
 
     private Integer id;
 
