@@ -40,7 +40,6 @@
         <collection property="items" column="pId" select="huanju.chen.app.dao.ProofItemMapper.items"/>
     </resultMap>
 
-
     <resultMap id="listMap" type="proof">
         <id column="pId" property="id"/>
         <result column="pDate" property="date"/>
@@ -52,7 +51,6 @@
             <result column="uName" property="name"/>
         </association>
     </resultMap>
-
 
     <select id="find" resultMap="proofResultMap" parameterType="integer">
         SELECT p.id             AS pId,
@@ -79,7 +77,6 @@
                  LEFT JOIN user vu ON p.verify_user_id = u.id
         WHERE p.id = #{key}
     </select>
-
 
     <select id="list" resultMap="listMap" parameterType="map">
         SELECT p.id AS pId,
@@ -139,6 +136,14 @@
             </if>
         </where>
     </select>
+
+    <update id="update" parameterType="proof">
+        UPDATE proof
+        SET verify=#{verify},
+            verify_user_id=#{verifyUserId},
+            verify_time=#{verifyTime}
+        WHERE id = #{id}
+    </update>
 
 
 </mapper>

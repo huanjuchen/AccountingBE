@@ -6,9 +6,8 @@ import java.util.List;
 
 public interface ProofItemMapper extends BaseMapper<ProofItem> {
 
-    List<ProofItem> listByProofId(int proofId);
-
-
     List<ProofItem> items(Integer proofId);
+
+    List<ProofItem> listBySubject(Integer subjectId);
 
 }

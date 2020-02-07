@@ -1,5 +1,7 @@
 package huanju.chen.app.domain.dto;
 
+import huanju.chen.app.domain.vo.SubAccountVO;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,51 +14,49 @@ import java.util.Date;
 public class SubAccount implements Serializable {
 
     private Integer id;
-
-    /**
-     * 日期
-     */
-    private Date dates;
-
-    /**
-     * 凭证号
-     */
-    private Integer proofId;
-
-    /**
-     * 摘要
-     */
-    private String abstraction;
-
     /**
      * 科目Id
      */
     private Integer subjectId;
-
     /**
      * 科目
      */
     private Subject subject;
-
+    /**
+     * 日期
+     */
+    private Date date;
+    /**
+     * 凭证号
+     */
+    private Integer proofId;
+    /**
+     * 摘要
+     */
+    private String abstraction;
     /**
      * 借方金额
      */
     private BigDecimal debitMoney;
-
     /**
      * 贷方金额
      */
     private BigDecimal creditMoney;
 
-    /**
-     * 借或贷，true为借，false为贷
-     */
-    private Boolean debit;
 
-    /**
-     * 余额
-     */
-    private BigDecimal balance;
+    public SubAccountVO covert(){
+        SubAccountVO vo=new SubAccountVO();
+        vo.setId(this.id);
+        if (this.subject!=null){
+            vo.setSubject(this.subject.covert());
+        }
+        vo.setDate(this.date);
+        vo.setProofId(this.proofId);
+        vo.setAbstraction(this.abstraction);
+        vo.setDebitMoney(this.debitMoney);
+        vo.setCreditMoney(this.creditMoney);
+        return vo;
+    }
 
 
     public Integer getId() {
@@ -67,12 +67,28 @@ public class SubAccount implements Serializable {
         this.id = id;
     }
 
-    public Date getDates() {
-        return dates;
+    public Integer getSubjectId() {
+        return subjectId;
     }
 
-    public void setDates(Date dates) {
-        this.dates = dates;
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Integer getProofId() {
@@ -91,14 +107,6 @@ public class SubAccount implements Serializable {
         this.abstraction = abstraction;
     }
 
-    public Integer getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
-    }
-
     public BigDecimal getDebitMoney() {
         return debitMoney;
     }
@@ -113,21 +121,5 @@ public class SubAccount implements Serializable {
 
     public void setCreditMoney(BigDecimal creditMoney) {
         this.creditMoney = creditMoney;
-    }
-
-    public Boolean getDebit() {
-        return debit;
-    }
-
-    public void setDebit(Boolean debit) {
-        this.debit = debit;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
     }
 }

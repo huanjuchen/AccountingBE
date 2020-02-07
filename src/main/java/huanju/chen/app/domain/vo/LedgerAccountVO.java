@@ -4,17 +4,16 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class BankAccountVO implements Serializable {
-
+public class LedgerAccountVO implements Serializable {
     private Integer id;
+
+    private SubjectVO subject;
 
     private Date date;
 
     private Integer proofId;
 
     private String abstraction;
-
-    private SubjectVO subject;
 
     private BigDecimal debitMoney;
 
@@ -26,6 +25,14 @@ public class BankAccountVO implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public SubjectVO getSubject() {
+        return subject;
+    }
+
+    public void setSubject(SubjectVO subject) {
+        this.subject = subject;
     }
 
     public Date getDate() {
@@ -50,14 +57,6 @@ public class BankAccountVO implements Serializable {
 
     public void setAbstraction(String abstraction) {
         this.abstraction = abstraction;
-    }
-
-    public SubjectVO getSubject() {
-        return subject;
-    }
-
-    public void setSubject(SubjectVO subject) {
-        this.subject = subject;
     }
 
     public BigDecimal getDebitMoney() {

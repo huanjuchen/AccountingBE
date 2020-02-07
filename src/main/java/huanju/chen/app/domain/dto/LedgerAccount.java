@@ -1,5 +1,7 @@
 package huanju.chen.app.domain.dto;
 
+import huanju.chen.app.domain.vo.LedgerAccountVO;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,51 +14,34 @@ import java.util.Date;
 public class LedgerAccount implements Serializable {
 
     private Integer id;
-
-
-    /**
-     * 日期
-     */
-    private Date dates;
-
-
     /**
      * 科目ID
      */
     private Integer subjectId;
-
     /**
      * 科目
      */
+    private Subject subject;
+    /**
+     * 日期
+     */
+    private Date date;
+    /**
+     * 凭证号
+     */
     private Integer proofId;
-
     /**
      * 摘要
      */
     private String abstraction;
-
     /**
      * 借方金额
      */
     private BigDecimal debitMoney;
-
-
     /**
      * 贷方金额
      */
     private BigDecimal creditMoney;
-
-
-    /**
-     * 余额
-     */
-    private BigDecimal balance;
-
-    /**
-     * 借或贷，true为借，false为贷
-     */
-    private Boolean debit;
-
 
     public Integer getId() {
         return id;
@@ -66,13 +51,21 @@ public class LedgerAccount implements Serializable {
         this.id = id;
     }
 
-    public Date getDates() {
-        return dates;
+    public LedgerAccountVO covert() {
+        LedgerAccountVO leda = new LedgerAccountVO();
+        leda.setId(this.id);
+//        leda.setSubject(this.subject);
+        if (this.subject!=null){
+            leda.setSubject(this.subject.covert());
+        }
+        leda.setDate(this.date);
+        leda.setAbstraction(this.abstraction);
+        leda.setProofId(this.proofId);
+        leda.setDebitMoney(this.debitMoney);
+        leda.setCreditMoney(this.creditMoney);
+        return leda;
     }
 
-    public void setDates(Date dates) {
-        this.dates = dates;
-    }
 
     public Integer getSubjectId() {
         return subjectId;
@@ -80,6 +73,22 @@ public class LedgerAccount implements Serializable {
 
     public void setSubjectId(Integer subjectId) {
         this.subjectId = subjectId;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Integer getProofId() {
@@ -112,21 +121,5 @@ public class LedgerAccount implements Serializable {
 
     public void setCreditMoney(BigDecimal creditMoney) {
         this.creditMoney = creditMoney;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public Boolean getDebit() {
-        return debit;
-    }
-
-    public void setDebit(Boolean debit) {
-        this.debit = debit;
     }
 }

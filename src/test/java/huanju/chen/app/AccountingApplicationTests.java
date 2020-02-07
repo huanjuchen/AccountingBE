@@ -5,11 +5,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class AccountingApplicationTests {
+    Integer int1 = -128;
+
 
     @Test
     void contextLoads() {
-        Integer a=Integer.valueOf(-2);
-        System.out.println(a<1);
+        Integer int2 = -128;
+        System.out.println(int1 == int2);
+
     }
 
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="huanju.chen.app.dao.LedgerAccountMapper">
+    <insert id="save" parameterType="ledgerAccount">
+        INSERT INTO ledger_account(id, date, subject_id, proof_id, abstraction, debit_money, credit_money)
+        VALUES (NULL, #{date}, #{subjectId}, #{proofId}, #{abstraction}, #{debitMoney}, #{creditMoney})
+    </insert>
+
+
+    <select id="list" parameterType="map" resultType="ledgerAccount">
+        SELECT *
+        FROM ledger_account
+        <where>
+            <if test="subjectId!=null">
+                AND subject_id=#{subjectId}
+            </if>
+            <if test="startDate!=null and endDate!=null">
+                AND date BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

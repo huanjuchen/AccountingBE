@@ -3,9 +3,6 @@
         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
         xmlns='http://www.ehcache.org/v3'
         xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
-
-
-
     <cache alias="tokenV2Cache">
         <key-type>java.lang.String</key-type>
         <value-type>huanju.chen.app.security.token.Token</value-type>
@@ -16,20 +13,4 @@
             <heap unit="entries">1024</heap>
         </resources>
     </cache>
-
-
-    <cache alias="examinationCache">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>huanju.chen.app.domain.dto.Examination</value-type>
-        <expiry>
-            <tti unit="hours">2</tti>
-        </expiry>
-        <resources>
-            <heap unit="entries">128</heap>
-        </resources>
-    </cache>
-
-
-
-
 </config>

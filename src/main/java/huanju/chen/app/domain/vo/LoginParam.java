@@ -1,8 +1,9 @@
 package huanju.chen.app.domain.vo;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
-public class LoginParam {
+public class LoginParam implements Serializable {
     @NotNull(message = "用户名或ID不允许为空")
     private String username;
 

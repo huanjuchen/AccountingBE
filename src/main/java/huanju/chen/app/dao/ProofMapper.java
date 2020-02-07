@@ -9,6 +9,8 @@ public interface ProofMapper extends BaseMapper<Proof> {
 
     List<Proof> listByUserId(@Param("userId") Integer userId, @Param("offset") int offset);
 
+
+
     int countByUserId(Integer userId);
 
     List<Proof> listByNotExamination(@Param("offset") int offset);

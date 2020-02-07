@@ -1,8 +1,9 @@
 package huanju.chen.app.domain.vo;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ProofItemVO {
+public class ProofItemVO implements Serializable {
 
     private Integer id;
 

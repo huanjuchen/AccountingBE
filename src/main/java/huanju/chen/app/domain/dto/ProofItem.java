@@ -12,12 +12,10 @@ import java.math.BigDecimal;
 public class ProofItem implements Serializable {
 
     private Integer id;
-
     /**
      * 摘要
      */
     private String abstraction;
-
     /**
      * 借方明细账科目ID
      */

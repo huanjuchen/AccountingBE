@@ -3,13 +3,14 @@ package huanju.chen.app.domain.dto;
 
 import huanju.chen.app.domain.vo.CashAccountVO;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * 银行日记账
  */
-public class CashAccount {
+public class CashAccount implements Serializable {
 
     private Integer id;
 

@@ -21,7 +21,6 @@ public class ExaminationServiceImpl implements ExaminationService {
     }
 
     @Override
-    @Cacheable(cacheNames = "examinationCache",condition = "#id>0",unless = "#result==null")
     public Examination find(Integer id) {
         return examinationMapper.find(id);
     }

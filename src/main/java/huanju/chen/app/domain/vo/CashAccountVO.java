@@ -1,9 +1,10 @@
 package huanju.chen.app.domain.vo;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class CashAccountVO {
+public class CashAccountVO implements Serializable {
 
     private Integer id;
 

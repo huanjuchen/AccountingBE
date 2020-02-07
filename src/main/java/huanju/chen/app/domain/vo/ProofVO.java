@@ -1,14 +1,8 @@
 package huanju.chen.app.domain.vo;
-
-
-
-
-import huanju.chen.app.domain.dto.User;
-
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-public class ProofVO {
+public class ProofVO implements Serializable {
 
     private Integer id;
     /**

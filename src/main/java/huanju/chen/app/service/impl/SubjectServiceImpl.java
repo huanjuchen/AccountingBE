@@ -1,7 +1,9 @@
 package huanju.chen.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import huanju.chen.app.dao.ProofItemMapper;
 import huanju.chen.app.dao.SubjectMapper;
+import huanju.chen.app.domain.dto.ProofItem;
 import huanju.chen.app.domain.dto.Subject;
 import huanju.chen.app.exception.v2.*;
 import huanju.chen.app.service.SubjectService;
@@ -24,6 +26,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Resource
     private SubjectMapper subjectMapper;
+
+    @Resource
+    private ProofItemMapper proofItemMapper;
 
     /**
      * 添加科目
@@ -55,26 +60,39 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(Integer id) {
-
-
         //检查科目是否被使用
+        checkEdit(id, 'd');
 
         int rows = subjectMapper.delete(id);
-
         if (rows != 1) {
             throw new BadDeleteException(500, "删除失败");
         }
+    }
 
+
+    /**
+     * 检查科目是否被使用
+     */
+    protected void checkEdit(Integer id, char type) {
+        List<ProofItem> proofItems = proofItemMapper.listBySubject(id);
+        if (proofItems != null && proofItems.size() > 0) {
+            if (type == 'u') {
+                throw new BadUpdateException(400, "修改失败,科目已被使用");
+            } else if (type == 'd') {
+                throw new BadDeleteException(400, "删除失败,科目已被使用");
+            } else {
+                throw new AccountingException(400, "处理失败,科目已被使用");
+            }
+
+        }
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
     public void update(Subject subject) {
         Subject temp = null;
-
         //查看该科目是否被使用
-
-
+        checkEdit(subject.getId(), 'u');
         //查看修改的科目代码是否被占用
         temp = subjectMapper.findByCode(subject.getCode());
         if (temp != null && !temp.getId().equals(subject.getId())) {
@@ -120,14 +138,10 @@ public class SubjectServiceImpl implements SubjectService {
         if (subject == null) {
             throw new NotFoundException(400, "未找到指定科目");
         }
-
         subject = new Subject();
         subject.setId(id);
         subject.setValid(false);
-
-
         int rows = subjectMapper.update(subject);
-
         if (rows != 1) {
             throw new BadUpdateException(500, "禁用失败");
         }
@@ -140,19 +154,12 @@ public class SubjectServiceImpl implements SubjectService {
         if (subject == null) {
             throw new NotFoundException(400, "未找到指定科目");
         }
-
         subject = new Subject();
         subject.setId(id);
         subject.setValid(true);
-
-
         int rows = subjectMapper.update(subject);
-
         if (rows != 1) {
             throw new BadUpdateException(500, "启用失败");
         }
-
     }
-
-
 }

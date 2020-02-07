@@ -17,41 +17,32 @@ import java.util.List;
 public class Proof implements Serializable {
 
     private Integer id;
-
     /**
      * 业务发生日期
      */
     @NotNull(message = "业务发生日期不允许为空")
     private Date date;
-
     /**
      * 单据数
      */
     @NotNull(message = "单据数不允许为空")
     private Integer invoiceCount;
-
-
     /**
      * 主管人员
      */
     private String manager;
-
     /**
      * 记账人
      */
     private String collection;
-
     /**
      * 制单人Id
      */
     private Integer recorderId;
-
     /**
      * 制单人
      */
     private User recorder;
-
-
     /**
      * 出纳人
      */
@@ -63,10 +54,7 @@ public class Proof implements Serializable {
      */
     private String payer;
 
-
     private List<ProofItem> items;
-
-
     /**
      * 稽查人ID
      */

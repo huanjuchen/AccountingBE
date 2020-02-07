@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="huanju.chen.app.dao.SubAccountMapper">
+    <insert id="save" parameterType="subAccount">
+        INSERT INTO sub_account(id, date, proof_id, abstraction, subject_id, debit_money, credit_money)
+        VALUES (NULL, #{date}, #{proofId}, #{abstraction}, #{subjectId}, #{debitMoney}, #{creditMoney})
+    </insert>
+
+    <select id="list" parameterType="map" resultType="subAccount">
+        SELECT *
+        FROM sub_account
+        <where>
+            <if test="subjectId!=null">
+                AND subject_id=#{subjectId}
+            </if>
+            <if test="startDate!=null and endDate!=null">
+                AND date BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
