@@ -73,8 +73,8 @@
                vu.name          AS vName,
                vu.role          AS vRole
         FROM proof p
-                 LEFT JOIN user u ON p.recorder_id = u.id
-                 LEFT JOIN user vu ON p.verify_user_id = u.id
+                 LEFT JOIN user u ON u.id = p.recorder_id
+                 LEFT JOIN user vu ON vu.id = p.verify_user_id
         WHERE p.id = #{key}
     </select>
 

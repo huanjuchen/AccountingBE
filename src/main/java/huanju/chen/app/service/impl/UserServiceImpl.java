@@ -3,14 +3,9 @@ package huanju.chen.app.service.impl;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
 import huanju.chen.app.dao.UserMapper;
-import huanju.chen.app.exception.AlreadyExistsException;
-import huanju.chen.app.exception.BadCreateException;
 import huanju.chen.app.domain.dto.User;
 import huanju.chen.app.domain.vo.LoginParam;
-import huanju.chen.app.exception.v2.AccountingException;
-import huanju.chen.app.exception.v2.BadRequestException;
-import huanju.chen.app.exception.v2.BadUpdateException;
-import huanju.chen.app.exception.v2.NotFoundException;
+import huanju.chen.app.exception.v2.*;
 import huanju.chen.app.security.token.Token;
 import huanju.chen.app.service.UserService;
 import org.slf4j.Logger;
@@ -120,7 +115,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         logger.debug(JSON.toJSONString(user));
         if (user.getRole() == 1) {
-            throw new BadCreateException("不允许添加用户为超级管理员", HttpStatus.BAD_REQUEST);
+            throw new BadCreateException(400, "不允许添加用户为超级管理员");
         }
 
         user.setValid(true);
@@ -128,7 +123,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(SecureUtil.md5("12345678"));
 
         if (userMapper.findByName(user.getUsername()) != null) {
-            throw new AlreadyExistsException("用户已存在", HttpStatus.BAD_REQUEST);
+            throw new AlreadyExistsException(400, "用户已存在");
         }
         userMapper.save(user);
         User temp = userMapper.find(user.getId());

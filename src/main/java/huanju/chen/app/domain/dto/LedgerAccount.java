@@ -8,7 +8,9 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 总分类账实体
@@ -61,5 +63,13 @@ public class LedgerAccount implements Serializable {
                 .setDebitMoney(this.debitMoney)
                 .setCreditMoney(this.creditMoney);
         return leda;
+    }
+
+    public static List<LedgerAccountVO> listCovert(List<LedgerAccount> sourcesList) {
+        List<LedgerAccountVO> vos = new ArrayList<>(sourcesList.size());
+        for (int i = 0; i < sourcesList.size(); i++) {
+            vos.add(i, sourcesList.get(i).covert());
+        }
+        return vos;
     }
 }

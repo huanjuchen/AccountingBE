@@ -3,6 +3,7 @@ package huanju.chen.app.controller;
 import huanju.chen.app.domain.EntityUtils;
 import huanju.chen.app.domain.dto.Proof;
 import huanju.chen.app.domain.vo.ProofVO;
+import huanju.chen.app.domain.vo.ProofVerify;
 import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.ProofService;
 
@@ -172,4 +173,15 @@ public class ProofController {
             return ApiResult.success(null);
         }
     }
+
+    /**
+     * 审核
+     */
+    @PutMapping("/manage/proof/verify")
+    public ApiResult verify(@RequestBody @Validated ProofVerify proofVerify, HttpServletRequest request) {
+        String tokenId = request.getHeader("token_id");
+        proofService.verify(proofVerify.getId(), proofVerify.getResult(), tokenId);
+        return ApiResult.success();
+    }
+
 }

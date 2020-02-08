@@ -9,7 +9,9 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 银行日记账
@@ -46,5 +48,14 @@ public class CashAccount implements Serializable {
                 .setDebitMoney(this.debitMoney)
                 .setCreditMoney(this.creditMoney);
         return cashAccountVO;
+    }
+
+
+    public static List<CashAccountVO> listCovert(List<CashAccount> cashAccounts){
+        List<CashAccountVO> vos=new ArrayList<>(cashAccounts.size());
+        for (int i = 0; i < cashAccounts.size(); i++) {
+            vos.add(i,cashAccounts.get(i).covert());
+        }
+        return vos;
     }
 }

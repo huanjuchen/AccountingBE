@@ -5,10 +5,13 @@ import huanju.chen.app.domain.vo.BankAccountVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 银行日记账
@@ -16,6 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Accessors(chain = true)
 public class BankAccount implements Serializable {
     private Integer id;
     /**
@@ -57,5 +61,14 @@ public class BankAccount implements Serializable {
                 .setCreditMoney(this.creditMoney);
         return bankAccountVO;
     }
+
+    public static List<BankAccountVO> listCovert(List<BankAccount> bankAccountList){
+        List<BankAccountVO> vos=new ArrayList<>(bankAccountList.size());
+        for (int i = 0; i < bankAccountList.size(); i++) {
+            vos.add(i,bankAccountList.get(i).covert());
+        }
+        return vos;
+    }
+
 
 }
