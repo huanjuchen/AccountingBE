@@ -1,6 +1,10 @@
 package huanju.chen.app.domain.dto;
 
 import huanju.chen.app.domain.vo.SubAccountVO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,6 +15,10 @@ import java.util.Date;
  *
  * @author HuanJu
  */
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Accessors(chain = true)
 public class SubAccount implements Serializable {
 
     private Integer id;
@@ -44,82 +52,16 @@ public class SubAccount implements Serializable {
     private BigDecimal creditMoney;
 
 
-    public SubAccountVO covert(){
-        SubAccountVO vo=new SubAccountVO();
-        vo.setId(this.id);
-        if (this.subject!=null){
-            vo.setSubject(this.subject.covert());
-        }
-        vo.setDate(this.date);
-        vo.setProofId(this.proofId);
-        vo.setAbstraction(this.abstraction);
-        vo.setDebitMoney(this.debitMoney);
-        vo.setCreditMoney(this.creditMoney);
+    public SubAccountVO covert() {
+        SubAccountVO vo = new SubAccountVO();
+        vo.setId(this.id)
+                .setSubject(this.subject == null ? null : this.subject.covert())
+                .setDate(this.date)
+                .setProofId(this.proofId)
+                .setAbstraction(this.abstraction)
+                .setDebitMoney(this.debitMoney)
+                .setCreditMoney(this.creditMoney);
         return vo;
     }
 
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
-    }
-
-    public Subject getSubject() {
-        return subject;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Integer getProofId() {
-        return proofId;
-    }
-
-    public void setProofId(Integer proofId) {
-        this.proofId = proofId;
-    }
-
-    public String getAbstraction() {
-        return abstraction;
-    }
-
-    public void setAbstraction(String abstraction) {
-        this.abstraction = abstraction;
-    }
-
-    public BigDecimal getDebitMoney() {
-        return debitMoney;
-    }
-
-    public void setDebitMoney(BigDecimal debitMoney) {
-        this.debitMoney = debitMoney;
-    }
-
-    public BigDecimal getCreditMoney() {
-        return creditMoney;
-    }
-
-    public void setCreditMoney(BigDecimal creditMoney) {
-        this.creditMoney = creditMoney;
-    }
 }

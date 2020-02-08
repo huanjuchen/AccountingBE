@@ -77,7 +77,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
@@ -96,13 +95,12 @@
             <version>1.2.61</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.apache.shiro</groupId>-->
-<!--            <artifactId>shiro-spring-boot-web-starter</artifactId>-->
-<!--            <version>1.4.2</version>-->
-<!--        </dependency>-->
-
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
+        </dependency>
 
 
     </dependencies>

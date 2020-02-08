@@ -1,7 +1,12 @@
 package huanju.chen.app.domain.dto;
 
+import huanju.chen.app.domain.EntityUtils;
 import huanju.chen.app.domain.vo.ProofItemVO;
 import huanju.chen.app.domain.vo.ProofVO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -14,6 +19,10 @@ import java.util.List;
  *
  * @author HuanJu
  */
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Accessors(chain = true)
 public class Proof implements Serializable {
 
     private Integer id;
@@ -47,8 +56,6 @@ public class Proof implements Serializable {
      * 出纳人
      */
     private String cashier;
-
-
     /**
      * 交款人
      */
@@ -61,7 +68,6 @@ public class Proof implements Serializable {
     private Integer verifyUserId;
 
     private User verifyUser;
-
     /**
      * 稽查结果
      * 1.通过
@@ -69,154 +75,26 @@ public class Proof implements Serializable {
      * -1.未通过
      */
     private Integer verify;
-
     /**
      * 稽查时间
      */
     private Date verifyTime;
 
-
     public ProofVO covert() {
         ProofVO proofVo = new ProofVO();
-        proofVo.setId(this.id);
-        proofVo.setDate(this.date);
-        proofVo.setInvoiceCount(this.invoiceCount);
-        proofVo.setManager(this.manager);
-        proofVo.setCollection(this.collection);
-        if (this.recorder != null) {
-            proofVo.setRecorder(this.recorder.covert());
-
-        }
-        proofVo.setCashier(this.cashier);
-        proofVo.setPayer(this.payer);
-        List<ProofItemVO> itemVos = null;
-        if (this.items != null) {
-            itemVos = new ArrayList<>(this.items.size());
-            for (int i = 0; i < this.items.size(); i++) {
-                itemVos.add(i, this.items.get(i).covert());
-            }
-            proofVo.setItems(itemVos);
-        }
-
-        proofVo.setVerify(this.verify);
-        proofVo.setVerifyTime(this.verifyTime);
-        if (this.verifyUser != null) {
-            proofVo.setVerifyUser(this.verifyUser.covert());
-        }
+        proofVo.setId(this.id)
+                .setDate(this.date)
+                .setInvoiceCount(this.invoiceCount)
+                .setManager(this.manager)
+                .setCollection(this.collection)
+                .setRecorder(recorder == null ? null : this.recorder.covert())
+                .setCashier(this.cashier)
+                .setPayer(this.payer)
+                .setItems(this.items == null ? null : EntityUtils.covertToProofItemVOList(this.items))
+                .setVerify(this.verify)
+                .setVerifyUser(this.verifyUser == null ? null : this.verifyUser.covert())
+                .setVerifyTime(this.verifyTime);
         return proofVo;
-    }
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Integer getInvoiceCount() {
-        return invoiceCount;
-    }
-
-    public void setInvoiceCount(Integer invoiceCount) {
-        this.invoiceCount = invoiceCount;
-    }
-
-    public String getManager() {
-        return manager;
-    }
-
-    public void setManager(String manager) {
-        this.manager = manager;
-    }
-
-    public String getCollection() {
-        return collection;
-    }
-
-    public void setCollection(String collection) {
-        this.collection = collection;
-    }
-
-    public Integer getRecorderId() {
-        return recorderId;
-    }
-
-    public void setRecorderId(Integer recorderId) {
-        this.recorderId = recorderId;
-    }
-
-    public User getRecorder() {
-        return recorder;
-    }
-
-    public void setRecorder(User recorder) {
-        this.recorder = recorder;
-    }
-
-    public String getCashier() {
-        return cashier;
-    }
-
-    public void setCashier(String cashier) {
-        this.cashier = cashier;
-    }
-
-    public String getPayer() {
-        return payer;
-    }
-
-    public void setPayer(String payer) {
-        this.payer = payer;
-    }
-
-    public List<ProofItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ProofItem> items) {
-        this.items = items;
-    }
-
-    public Integer getVerify() {
-        return verify;
-    }
-
-    public void setVerify(Integer verify) {
-        this.verify = verify;
-    }
-
-    public Integer getVerifyUserId() {
-        return verifyUserId;
-    }
-
-    public void setVerifyUserId(Integer verifyUserId) {
-        this.verifyUserId = verifyUserId;
-    }
-
-    public User getVerifyUser() {
-        return verifyUser;
-    }
-
-    public void setVerifyUser(User verifyUser) {
-        this.verifyUser = verifyUser;
-    }
-
-    public Date getVerifyTime() {
-        return verifyTime;
-    }
-
-    public void setVerifyTime(Date verifyTime) {
-        this.verifyTime = verifyTime;
     }
 
 

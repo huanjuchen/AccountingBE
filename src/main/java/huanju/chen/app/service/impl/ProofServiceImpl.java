@@ -110,7 +110,6 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-
     @Override
     public Proof find(Integer id) {
         return proofMapper.find(id);
@@ -189,6 +188,36 @@ public class ProofServiceImpl implements ProofService {
             //总账
         }
     }
+
+    /**
+     * 现金日记账处理
+     */
+    private void cashAccountHandle(ProofItem item) {
+
+
+    }
+
+    /**
+     * 银行日记账处理
+     */
+    private void bankAccountHandle() {
+
+    }
+
+    /**
+     * 总账处理
+     */
+    private void ledgerAccountHandle() {
+
+    }
+
+    /**
+     * 明细分类账处理
+     */
+    private void subAccountHandle() {
+
+    }
+
 
     private void verifyFailed(Proof proof) {
 
