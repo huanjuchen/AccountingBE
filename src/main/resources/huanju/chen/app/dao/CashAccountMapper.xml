@@ -41,10 +41,19 @@
                 AND date BETWEEN #{startDate} AND #{endDate}
             </if>
         </where>
+        ORDER BY date
         <if test="offset!=null and count!=null">
             LIMIT #{offset},#{count}
         </if>
+    </select>
 
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id) FROM cash_account
+        <where>
+            <if test="startDate!=null and endDate!=null">
+                AND date BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
     </select>
 
 </mapper>

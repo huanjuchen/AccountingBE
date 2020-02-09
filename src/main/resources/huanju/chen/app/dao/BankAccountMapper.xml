@@ -13,7 +13,7 @@
         <result column="proof_id" property="proofId"/>
         <result column="abstraction" property="abstraction"/>
         <result column="subject_id" property="subjectId"/>
-        <result column="debit_money" property="debit_money"/>
+        <result column="debit_money" property="debitMoney"/>
         <result column="credit_money" property="creditMoney"/>
         <association property="subject">
             <id column="sId" property="id"/>
@@ -41,10 +41,19 @@
                 AND date BETWEEN #{startDate} AND #{endDate}
             </if>
         </where>
+        ORDER BY date
         <if test="offset!=null and count!=null">
             LIMIT #{offset},#{count}
         </if>
+    </select>
 
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id) FROM bank_account
+        <where>
+            <if test="startDate!=null and endDate!=null">
+                AND date BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
     </select>
 
 </mapper>

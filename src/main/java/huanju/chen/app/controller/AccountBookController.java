@@ -40,9 +40,23 @@ public class AccountBookController {
         return bankAndCash(startDate, endDate, page, pageSize, BANK);
     }
 
+    @GetMapping("/accountBook/bank/count")
+    public ApiResult<Integer> getBankAccountCount(String startDate, String endDate) {
+        Map<String, Object> map = paramEncapsulation(startDate, endDate, null, null);
+        Integer count = accountBookService.getBankAccountCount(map);
+        return ApiResult.success(count == null ? 0 : count);
+    }
+
     @GetMapping("/accountBook/cash")
     public ApiResult<List> getCashAccountList(String startDate, String endDate, Integer page, Integer pageSize) {
         return bankAndCash(startDate, endDate, page, pageSize, CASH);
+    }
+
+    @GetMapping("/accountBook/cash/count")
+    public ApiResult<Integer> getCashAccountCount(String startDate, String endDate) {
+        Map<String, Object> map = paramEncapsulation(startDate, endDate, null, null);
+        Integer count = accountBookService.getCashAccountCount(map);
+        return ApiResult.success(count == null ? 0 : count);
     }
 
 
@@ -51,9 +65,29 @@ public class AccountBookController {
         return ledgerAndSub(subjectId, startDate, endDate, page, pageSize, LEDGER);
     }
 
+    @GetMapping("/accountBook/ledger/count")
+    public ApiResult<Integer> getLedgerAccountCount(Integer subjectId, String startDate, String endDate) {
+        Map<String, Object> map = paramEncapsulation(startDate, endDate, null, null);
+        if (subjectId != null) {
+            map.put("subjectId", subjectId);
+        }
+        Integer count = accountBookService.getLedgerAccountCount(map);
+        return ApiResult.success(count == null ? 0 : count);
+    }
+
     @GetMapping("/accountBook/sub")
-    public ApiResult<List> getSubAccountList(Integer subjectId, String startDate, String endDate, Integer page, Integer pageSiz) {
-        return ledgerAndSub(subjectId, startDate, endDate, page, page, SUB);
+    public ApiResult<List> getSubAccountList(Integer subjectId, String startDate, String endDate, Integer page, Integer pageSize) {
+        return ledgerAndSub(subjectId, startDate, endDate, page, pageSize, SUB);
+    }
+
+    @GetMapping("/accountBook/sub/count")
+    public ApiResult<Integer> getSubAccountCount(Integer subjectId, String startDate, String endDate) {
+        Map<String, Object> map = paramEncapsulation(startDate, endDate, null, null);
+        if (subjectId != null) {
+            map.put("subjectId", subjectId);
+        }
+        Integer count = accountBookService.getSubAccountCount(map);
+        return ApiResult.success(count == null ? 0 : count);
     }
 
 

@@ -4,7 +4,7 @@
 <mapper namespace="huanju.chen.app.dao.SubAccountMapper">
     <insert id="save" parameterType="subAccount">
         INSERT INTO sub_account(date, proof_id, abstraction, subject_id, debit_money, credit_money)
-        VALUES ( #{date}, #{proofId}, #{abstraction}, #{subjectId}, #{debitMoney}, #{creditMoney})
+        VALUES (#{date}, #{proofId}, #{abstraction}, #{subjectId}, #{debitMoney}, #{creditMoney})
     </insert>
 
     <select id="list" parameterType="map" resultType="subAccount">
@@ -18,10 +18,23 @@
                 AND date BETWEEN #{startDate} AND #{endDate}
             </if>
         </where>
+        ORDER BY date
         <if test="offset!=null and count!=null">
             LIMIT #{offset},#{count}
         </if>
+    </select>
 
+
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id) FROM sub_account
+        <where>
+            <if test="subjectId!=null">
+                AND subject_id=#{subjectId}
+            </if>
+            <if test="startDate!=null and endDate!=null">
+                AND date BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
     </select>
 
 

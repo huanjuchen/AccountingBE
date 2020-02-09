@@ -194,6 +194,13 @@ public class ProofServiceImpl implements ProofService {
             总账
              */
             ledgerAccountHandle(item, proof.getDate(), proof.getId());
+            ProofItem item1 = new ProofItem();
+            item.setId(item.getId());
+            item.setCharge(true);
+            int rows = proofItemMapper.update(item1);
+            if (rows != 1) {
+                throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
+            }
         }
     }
 
