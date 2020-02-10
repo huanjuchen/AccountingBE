@@ -8,7 +8,7 @@
         credit_ledger_subject_id, money, charge, proof_id)
         VALUES
         (NULL,#{abstraction},#{debitSubSubjectId},#{creditSubSubjectId},
-        #{debitLedgerSubjectId},#{creditLedgerSubjectId},#{money},#{charge},#{proofId})
+        #{debitLedgerSubjectId},#{creditLedgerSubjectId},#{money},0,#{proofId})
         <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">
             SELECT last_insert_id()
         </selectKey>

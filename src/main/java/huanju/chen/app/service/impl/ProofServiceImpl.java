@@ -198,7 +198,7 @@ public class ProofServiceImpl implements ProofService {
                     .setDebitSubSubjectId(item.getDebitSubSubjectId())
                     .setCreditSubSubjectId(item.getCreditSubSubjectId())
                     .setDebitLedgerSubjectId(item.getDebitLedgerSubjectId())
-                    .setCreditLedgerSubjectId(item.getDebitLedgerSubjectId())
+                    .setCreditLedgerSubjectId(item.getCreditLedgerSubjectId())
                     .setCharge(item.getCharge()).setProofId(trashProof.getId());
             trashItem.setMoney(item.getMoney().multiply(new BigDecimal(-1)));
             if (proofItemMapper.save(trashItem) != 1) {
@@ -269,7 +269,7 @@ public class ProofServiceImpl implements ProofService {
             cashAccount.setDate(date)
                     .setProofId(proofId)
                     .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getCreditLedgerSubjectId())
+                    .setSubjectId(item.getDebitLedgerSubjectId())
                     .setCreditMoney(item.getMoney());
         }
 
@@ -294,7 +294,7 @@ public class ProofServiceImpl implements ProofService {
             bankAccount.setDate(date)
                     .setProofId(proofId)
                     .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getCreditLedgerSubjectId())
+                    .setSubjectId(item.getDebitLedgerSubjectId())
                     .setCreditMoney(item.getMoney());
         }
         int rows = bankAccountMapper.save(bankAccount);
