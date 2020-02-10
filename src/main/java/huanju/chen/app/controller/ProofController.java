@@ -184,4 +184,14 @@ public class ProofController {
         return ApiResult.success();
     }
 
+
+    /**
+     * 冲账
+     */
+    @PutMapping("/manage/proof/trash/{id}")
+    public ApiResult trashProof(@PathVariable Integer id) {
+        proofService.trashProof(id);
+        return ApiResult.success();
+    }
+
 }

@@ -80,6 +80,11 @@ public class Proof implements Serializable {
      */
     private Date verifyTime;
 
+    /**
+     * 冲账辨识
+     */
+    private Integer trash;
+
     public ProofVO covert() {
         ProofVO proofVo = new ProofVO();
         proofVo.setId(this.id)
@@ -93,7 +98,8 @@ public class Proof implements Serializable {
                 .setItems(this.items == null ? null : EntityUtils.covertToProofItemVOList(this.items))
                 .setVerify(this.verify)
                 .setVerifyUser(this.verifyUser == null ? null : this.verifyUser.covert())
-                .setVerifyTime(this.verifyTime);
+                .setVerifyTime(this.verifyTime)
+                .setTrash(this.trash);
         return proofVo;
     }
 

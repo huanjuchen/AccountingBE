@@ -25,4 +25,6 @@ public class ProofVO implements Serializable {
     private Date verifyTime;
     private List<ProofItemVO> items;
 
+    private Integer trash;
+
 }

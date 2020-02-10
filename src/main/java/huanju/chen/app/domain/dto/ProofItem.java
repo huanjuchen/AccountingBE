@@ -80,6 +80,7 @@ public class ProofItem implements Serializable {
                 .setDebitSubSubject(this.debitSubSubject==null?null:this.debitSubSubject.covert())
                 .setMoney(this.money)
                 .setCharge(this.charge);
+
         return proofItemVo;
     }
 }

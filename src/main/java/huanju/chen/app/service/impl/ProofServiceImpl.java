@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +161,55 @@ public class ProofServiceImpl implements ProofService {
 
     }
 
+    /**
+     * 冲账
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
+    public void trashProof(Integer proofId) {
+        Proof proof = proofMapper.find(proofId);
+        if (proof.getTrash() != 0) {
+            throw new BadUpdateException(400, "不能重复冲账");
+        }
+        Proof temp = new Proof();
+        temp.setId(proof.getId());
+        temp.setTrash(1);
+        if (proofMapper.update(temp) != 1) {
+            throw new BadCreateException(500, "服务器错误");
+        }
+
+        Proof trashProof = new Proof();
+        trashProof.setDate(proof.getDate())
+                .setInvoiceCount(proof.getInvoiceCount())
+                .setManager(proof.getManager())
+                .setCollection(proof.getCollection())
+                .setRecorderId(proof.getRecorderId())
+                .setCashier(proof.getCashier())
+                .setPayer(proof.getPayer())
+                .setVerifyUserId(proof.getVerifyUserId())
+                .setVerify(proof.getVerify())
+                .setTrash(1);
+        if (proofMapper.save(trashProof) != 1) {
+            throw new BadCreateException(500, "服务器错误");
+        }
+        for (ProofItem item : proof.getItems()) {
+            ProofItem trashItem = new ProofItem();
+            trashItem.setAbstraction(item.getAbstraction())
+                    .setDebitSubSubjectId(item.getDebitSubSubjectId())
+                    .setCreditSubSubjectId(item.getCreditSubSubjectId())
+                    .setDebitLedgerSubjectId(item.getDebitLedgerSubjectId())
+                    .setCreditLedgerSubjectId(item.getDebitLedgerSubjectId())
+                    .setCharge(item.getCharge()).setProofId(trashProof.getId());
+            trashItem.setMoney(item.getMoney().multiply(new BigDecimal(-1)));
+            if (proofItemMapper.save(trashItem) != 1) {
+                throw new BadCreateException(500, "服务器错误");
+            }
+        }
+
+        verifyPass(proofMapper.find(trashProof.getId()));
+
+    }
+
     private final static char DEBIT = 'D';
     private final static char CREDIT = 'C';
 
@@ -194,10 +244,10 @@ public class ProofServiceImpl implements ProofService {
             总账
              */
             ledgerAccountHandle(item, proof.getDate(), proof.getId());
-            ProofItem item1 = new ProofItem();
-            item.setId(item.getId());
-            item.setCharge(true);
-            int rows = proofItemMapper.update(item1);
+            ProofItem itemNew = new ProofItem();
+            itemNew.setId(item.getId());
+            itemNew.setCharge(true);
+            int rows = proofItemMapper.update(itemNew);
             if (rows != 1) {
                 throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
             }

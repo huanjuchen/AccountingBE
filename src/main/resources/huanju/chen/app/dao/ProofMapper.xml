@@ -5,9 +5,9 @@
     <insert id="save" parameterType="proof">
         INSERT INTO proof(id, date,
         invoice_count, manager, collection,
-        recorder_id, cashier, payer,verify,verify_user_id,verify_time)
+        recorder_id, cashier, payer,verify,verify_user_id,verify_time,trash)
         VALUES (NULL,#{date},#{invoiceCount},#{manager},
-        #{collection},#{recorderId},#{cashier},#{payer},0,null,null)
+        #{collection},#{recorderId},#{cashier},#{payer},0,null,null,0)
         <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">
             SELECT last_insert_id()
         </selectKey>
@@ -25,6 +25,7 @@
         <result column="pVerify" property="verify"/>
         <result column="pVerifyUserId" property="verifyUserId"/>
         <result column="pVerifyTime" property="verifyTime"/>
+        <result column="pTrash" property="trash"/>
         <association property="recorder">
             <id column="uId" property="id"/>
             <result column="uUsername" property="username"/>
@@ -45,6 +46,7 @@
         <result column="pDate" property="date"/>
         <result column="pInvoiceCount" property="invoiceCount"/>
         <result column="pVerify" property="verify"/>
+        <result column="pTrash" property="trash"/>
         <association property="recorder">
             <id column="uId" property="id"/>
             <result column="uUsername" property="username"/>
@@ -64,6 +66,7 @@
                p.verify         AS pVerify,
                p.verify_user_id AS pVerifyUserId,
                p.verify_time    AS pVerifyTime,
+               p.trash          AS pTrash,
                u.id             AS uId,
                u.username       AS uUsername,
                u.name           AS uName,
@@ -83,6 +86,7 @@
         p.date AS pDate,
         p.invoice_count AS pInvoiceCount,
         p.verify AS pVerify,
+        p.trash AS pTrash,
         u.id AS uId,
         u.username AS uUsername,
         u.name AS uName
@@ -139,9 +143,20 @@
 
     <update id="update" parameterType="proof">
         UPDATE proof
-        SET verify=#{verify},
-            verify_user_id=#{verifyUserId},
-            verify_time=#{verifyTime}
+        <set>
+            <if test="verify!=null">
+                verify=#{verify},
+            </if>
+            <if test="verifyUserId!=null">
+                verify_user_id=#{verifyUserId},
+            </if>
+            <if test="verifyTime!=null">
+                verify_time=#{verifyTime},
+            </if>
+            <if test="trash!=null">
+                trash=#{trash}
+            </if>
+        </set>
         WHERE id = #{id}
     </update>
 

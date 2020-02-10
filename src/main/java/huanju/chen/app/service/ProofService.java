@@ -17,4 +17,6 @@ public interface ProofService {
     Integer count(Map<String, Object> map);
 
     void verify(Integer proofId, Boolean result, String tokenId);
+
+    void trashProof(Integer proofId);
 }
