@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="huanju.chen.app.dao.InformationMapper">
+    <insert id="save" parameterType="information">
+        INSERT INTO information(time, user_id, content)
+        VALUES (#{time}, #{userId}, #{content})
+    </insert>
+
+    <select id="find" parameterType="integer" resultMap="informationMap">
+        SELECT i.id       AS id,
+               i.time     AS time,
+               i.user_id  AS user_id,
+               i.content  AS content,
+               u.id       AS uid,
+               u.username AS uUsername,
+               u.name     AS uName
+        FROM information i
+                 INNER JOIN user u
+                            ON i.user_id = u.id
+        WHERE i.id = #{key}
+    </select>
+
+    <select id="list" parameterType="map" resultMap="informationMap">
+        SELECT i.id AS id,
+        i.time AS time,
+        i.user_id AS user_id,
+        i.content AS content,
+        u.id AS uid,
+        u.username AS uUsername,
+        u.name AS uName
+        FROM information i
+        INNER JOIN user u
+        ON i.user_id=u.id
+        <where>
+            <if test="userId!=null">
+                AND i.user_id=#{userId}
+            </if>
+        </where>
+        ORDER BY i.id DESC
+        <if test="offset!=null and count!=null">
+            LIMIT #{offset},#{count}
+        </if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id) FROM information
+        <where>
+            <if test="userId!=null">
+                AND user_id=#{userId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="delete" parameterType="integer">
+        DELETE
+        FROM information
+        WHERE id = #{key}
+    </delete>
+
+    <resultMap id="informationMap" type="information">
+        <id column="id" property="id"/>
+        <result column="time" property="time"/>
+        <result column="user_id" property="userId"/>
+        <result column="content" property="content"/>
+        <association property="user">
+            <id column="uid" property="id"/>
+            <result column="uUsername" property="username"/>
+            <result column="uName" property="name"/>
+        </association>
+    </resultMap>
+
+
+</mapper>

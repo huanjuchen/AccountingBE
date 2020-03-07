@@ -1,13 +1,7 @@
 package huanju.chen.app.domain;
 
-import huanju.chen.app.domain.dto.Proof;
-import huanju.chen.app.domain.dto.ProofItem;
-import huanju.chen.app.domain.dto.Subject;
-import huanju.chen.app.domain.dto.User;
-import huanju.chen.app.domain.vo.ProofItemVO;
-import huanju.chen.app.domain.vo.ProofVO;
-import huanju.chen.app.domain.vo.SubjectVO;
-import huanju.chen.app.domain.vo.UserVO;
+import huanju.chen.app.domain.dto.*;
+import huanju.chen.app.domain.vo.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +34,20 @@ public class EntityUtils {
         return proofVos;
     }
 
-
     public static List<ProofItemVO> covertToProofItemVOList(List<ProofItem> proofItems){
         List<ProofItemVO> proofVos=new ArrayList<>(proofItems.size());
         for (int i = 0; i < proofItems.size(); i++) {
             proofVos.add(i,proofItems.get(i).covert());
         }
         return proofVos;
+    }
+
+    public static List<InformationVO> covertToInformationVOList(List<Information> sourcesList){
+        List<InformationVO> vos = new ArrayList<>(sourcesList.size());
+        for (int i = 0; i < sourcesList.size(); i++) {
+            vos.add(i, sourcesList.get(i).covert());
+        }
+        return vos;
     }
 
 }
