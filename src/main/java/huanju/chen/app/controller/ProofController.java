@@ -188,9 +188,11 @@ public class ProofController {
     /**
      * 冲账
      */
-    @PutMapping("/manage/proof/trash/{id}")
-    public ApiResult trashProof(@PathVariable Integer id) {
-        proofService.trashProof(id);
+    @PutMapping("/proof/trash/{id}")
+    public ApiResult trashProof(@PathVariable Integer id,HttpServletRequest request) {
+        String tokenId=request.getHeader("token_id");
+        proofService.trashProof(id,tokenId);
+
         return ApiResult.success();
     }
 

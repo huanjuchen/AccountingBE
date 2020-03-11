@@ -17,14 +17,16 @@ import javax.annotation.Resource;
 public class MvcConfig implements WebMvcConfigurer {
 
 
-
     @Resource
     private AuthInterceptor authInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor).addPathPatterns("/**")
-                .excludePathPatterns("/login","/hello");
+                .excludePathPatterns("/login", "/hello")
+                .excludePathPatterns("/js/**").excludePathPatterns("/css/**")
+                .excludePathPatterns("/").excludePathPatterns("/index")
+                .excludePathPatterns("/favicon.ico").excludePathPatterns("/fonts/*");
     }
 
 

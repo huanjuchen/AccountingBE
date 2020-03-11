@@ -18,5 +18,5 @@ public interface ProofService {
 
     void verify(Integer proofId, Boolean result, String tokenId);
 
-    void trashProof(Integer proofId);
+    void trashProof(Integer proofId,String tokenId);
 }

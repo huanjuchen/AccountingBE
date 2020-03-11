@@ -35,6 +35,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         Cache cache=cacheManager.getCache("tokenV2Cache");
 
+        if (tokenId==null){
+            throw new UnAuthException(401,"未登录或已过期");
+        }
+
         if (cache==null){
             logger.error("无法找到缓存容器...");
             throw new AccountingException(500,"系统出现了异常，请稍后重试");

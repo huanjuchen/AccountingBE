@@ -31,28 +31,60 @@ import java.util.Map;
 public class ProofServiceImpl implements ProofService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProofServiceImpl.class);
-    @Resource
     private ProofMapper proofMapper;
-    @Resource
+
     private ProofItemMapper proofItemMapper;
-    @Resource
+
     private SubjectMapper subjectMapper;
 
-    @Resource
     private BankAccountMapper bankAccountMapper;
 
-    @Resource
     private CashAccountMapper cashAccountMapper;
 
-    @Resource
     private LedgerAccountMapper ledgerAccountMapper;
 
-    @Resource
     private SubAccountMapper subAccountMapper;
 
-    @Resource
     private CacheManager cacheManager;
 
+    @Resource
+    public void setProofMapper(ProofMapper proofMapper) {
+        this.proofMapper = proofMapper;
+    }
+
+    @Resource
+    public void setProofItemMapper(ProofItemMapper proofItemMapper) {
+        this.proofItemMapper = proofItemMapper;
+    }
+
+    @Resource
+    public void setSubjectMapper(SubjectMapper subjectMapper) {
+        this.subjectMapper = subjectMapper;
+    }
+
+    @Resource
+    public void setBankAccountMapper(BankAccountMapper bankAccountMapper) {
+        this.bankAccountMapper = bankAccountMapper;
+    }
+
+    public void setCashAccountMapper(CashAccountMapper cashAccountMapper) {
+        this.cashAccountMapper = cashAccountMapper;
+    }
+
+    @Resource
+    public void setLedgerAccountMapper(LedgerAccountMapper ledgerAccountMapper) {
+        this.ledgerAccountMapper = ledgerAccountMapper;
+    }
+
+    @Resource
+    public void setSubAccountMapper(SubAccountMapper subAccountMapper) {
+        this.subAccountMapper = subAccountMapper;
+    }
+
+    @Resource
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
@@ -71,7 +103,7 @@ public class ProofServiceImpl implements ProofService {
             throw new AccountingException(500, "系统出现了异常，请稍后重试");
         }
         Integer userId = token.getUserId();
-        proof.setRecorderId(userId);
+        proof.setRecorderId(userId).setVerify(0).setVerifyTime(null).setTrash(0);
         //调用DAO层保存到数据库
         int rows = proofMapper.save(proof);
         if (rows != 1) {
@@ -91,6 +123,7 @@ public class ProofServiceImpl implements ProofService {
             if (proofItem.getDebitSubSubjectId() != null) {
                 checkSubject(proofItem.getDebitSubSubjectId());
             }
+
             //调用DAO层保存到数据库
             int resultRows = proofItemMapper.save(proofItem);
             if (resultRows != 1) {
@@ -166,10 +199,22 @@ public class ProofServiceImpl implements ProofService {
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
-    public void trashProof(Integer proofId) {
+    public void trashProof(Integer proofId, String tokenId) {
+        Cache cache = cacheManager.getCache("tokenV2Cache");
+        if (cache == null) {
+            throw new AccountingException(500, "系统出现异常");
+        }
+        Token token = cache.get(tokenId, Token.class);
+        if (token == null) {
+            throw new AccountingException(500, "系统出现异常");
+        }
         Proof proof = proofMapper.find(proofId);
         if (proof.getTrash() != 0) {
             throw new BadUpdateException(400, "不能重复冲账");
+        }
+        Integer recorderId = proof.getRecorderId();
+        if (token.getRole() > 2 && !recorderId.equals(token.getUserId())) {
+            throw new BadUpdateException(400, "只能对自己创建的凭证冲账");
         }
         Proof temp = new Proof();
         temp.setId(proof.getId());
@@ -187,6 +232,7 @@ public class ProofServiceImpl implements ProofService {
                 .setCashier(proof.getCashier())
                 .setPayer(proof.getPayer())
                 .setVerifyUserId(proof.getVerifyUserId())
+                .setVerifyTime(proof.getVerifyTime())
                 .setVerify(proof.getVerify())
                 .setTrash(1);
         if (proofMapper.save(trashProof) != 1) {

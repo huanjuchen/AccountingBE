@@ -7,7 +7,7 @@
         invoice_count, manager, collection,
         recorder_id, cashier, payer,verify,verify_user_id,verify_time,trash)
         VALUES (NULL,#{date},#{invoiceCount},#{manager},
-        #{collection},#{recorderId},#{cashier},#{payer},0,null,null,0)
+        #{collection},#{recorderId},#{cashier},#{payer},#{verify},#{verifyUserId},#{verifyTime},#{trash})
         <selectKey resultType="integer" keyProperty="id" keyColumn="id" order="AFTER">
             SELECT last_insert_id()
         </selectKey>
