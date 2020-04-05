@@ -37,62 +37,31 @@ public class AccountBookController {
 
     @GetMapping("/accountBook/bank")
     public ApiResult<List> getBankAccountList(String startDate, String endDate, Integer page, Integer pageSize) {
-        return bankAndCash(startDate, endDate, page, pageSize, BANK);
+        return bankAndCash(startDate, endDate, BANK);
     }
 
-    @GetMapping("/accountBook/bank/count")
-    public ApiResult<Integer> getBankAccountCount(String startDate, String endDate) {
-        Map<String, Object> map = paramEncapsulation(startDate, endDate, null, null);
-        Integer count = accountBookService.getBankAccountCount(map);
-        return ApiResult.success(count == null ? 0 : count);
-    }
 
     @GetMapping("/accountBook/cash")
     public ApiResult<List> getCashAccountList(String startDate, String endDate, Integer page, Integer pageSize) {
-        return bankAndCash(startDate, endDate, page, pageSize, CASH);
+        return bankAndCash(startDate, endDate, CASH);
     }
 
-    @GetMapping("/accountBook/cash/count")
-    public ApiResult<Integer> getCashAccountCount(String startDate, String endDate) {
-        Map<String, Object> map = paramEncapsulation(startDate, endDate, null, null);
-        Integer count = accountBookService.getCashAccountCount(map);
-        return ApiResult.success(count == null ? 0 : count);
-    }
+
 
 
     @GetMapping("/accountBook/ledger")
-    public ApiResult<List> getLedgerAccountList(Integer subjectId, String startDate, String endDate, Integer page, Integer pageSize) {
-        return ledgerAndSub(subjectId, startDate, endDate, page, pageSize, LEDGER);
+    public ApiResult<List> getLedgerAccountList(Integer subjectId, String startDate, String endDate) {
+        return ledgerAndSub(subjectId, startDate, endDate,LEDGER);
     }
 
-    @GetMapping("/accountBook/ledger/count")
-    public ApiResult<Integer> getLedgerAccountCount(Integer subjectId, String startDate, String endDate) {
-        Map<String, Object> map = paramEncapsulation(startDate, endDate, null, null);
-        if (subjectId != null) {
-            map.put("subjectId", subjectId);
-        }
-        Integer count = accountBookService.getLedgerAccountCount(map);
-        return ApiResult.success(count == null ? 0 : count);
-    }
 
     @GetMapping("/accountBook/sub")
-    public ApiResult<List> getSubAccountList(Integer subjectId, String startDate, String endDate, Integer page, Integer pageSize) {
-        return ledgerAndSub(subjectId, startDate, endDate, page, pageSize, SUB);
+    public ApiResult<List> getSubAccountList(Integer subjectId, String startDate, String endDate) {
+        return ledgerAndSub(subjectId, startDate, endDate, SUB);
     }
 
-    @GetMapping("/accountBook/sub/count")
-    public ApiResult<Integer> getSubAccountCount(Integer subjectId, String startDate, String endDate) {
-        Map<String, Object> map = paramEncapsulation(startDate, endDate, null, null);
-        if (subjectId != null) {
-            map.put("subjectId", subjectId);
-        }
-        Integer count = accountBookService.getSubAccountCount(map);
-        return ApiResult.success(count == null ? 0 : count);
-    }
-
-
-    private ApiResult<List> bankAndCash(String startDate, String endDate, Integer page, Integer pageSize, char t) {
-        Map<String, Object> map = paramEncapsulation(startDate, endDate, page, pageSize);
+    private ApiResult<List> bankAndCash(String startDate, String endDate, char t) {
+        Map<String, Object> map = paramEncapsulation(startDate, endDate);
         //封装结束
         if (t == BANK) {
             List<BankAccount> list = accountBookService.getBankAccountList(map);
@@ -111,9 +80,8 @@ public class AccountBookController {
         }
     }
 
-
-    private ApiResult<List> ledgerAndSub(Integer subjectId, String startDate, String endDate, Integer page, Integer pageSize, char t) {
-        Map<String, Object> map = paramEncapsulation(startDate, endDate, page, pageSize);
+    private ApiResult<List> ledgerAndSub(Integer subjectId, String startDate, String endDate, char t) {
+        Map<String, Object> map = paramEncapsulation(startDate, endDate);
         if (subjectId != null) {
             map.put("subjectId", subjectId);
         }
@@ -139,7 +107,7 @@ public class AccountBookController {
     /**
      * 参数封装
      */
-    private Map<String, Object> paramEncapsulation(String startDate, String endDate, Integer page, Integer pageSize) {
+    private Map<String, Object> paramEncapsulation(String startDate, String endDate) {
         Map<String, Object> map = new HashMap<>();
         //封装请求参数开始
         if (startDate != null) {
@@ -161,13 +129,6 @@ public class AccountBookController {
             } else {
                 map.put("endDate", new Date());
             }
-        }
-        if (page != null && pageSize != null) {
-            map.put("offset", page > 0 ? ((page - 1) * pageSize) : 0);
-            map.put("count", pageSize > 1 ? pageSize : 1);
-        } else {
-            map.put("offset", 0);
-            map.put("count", 10);
         }
         return map;
     }

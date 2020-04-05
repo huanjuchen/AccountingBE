@@ -28,6 +28,7 @@ public class ProofItem implements Serializable {
     /**
      * 借方明细账科目ID
      */
+    @NotNull
     private Integer debitSubSubjectId;
     /**
      * 借方明细账科目
@@ -36,6 +37,7 @@ public class ProofItem implements Serializable {
     /**
      * 贷方明细账科目ID
      */
+    @NotNull
     private Integer creditSubSubjectId;
     /**
      * 贷方明细账科目
@@ -44,6 +46,7 @@ public class ProofItem implements Serializable {
     /**
      * 借方总账科目ID
      */
+    @NotNull
     private Integer debitLedgerSubjectId;
     /**
      * 借方总账科目
@@ -52,13 +55,14 @@ public class ProofItem implements Serializable {
     /**
      * 贷方总账科目ID
      */
+    @NotNull
     private Integer creditLedgerSubjectId;
     /**
      * 贷方总账 科目
      */
     private Subject creditLedgerSubject;
     /**
-     * 贷方总账科目ID
+     * 金额
      */
     @NotNull
     private BigDecimal money;
