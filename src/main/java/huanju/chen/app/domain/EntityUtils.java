@@ -11,16 +11,16 @@ public class EntityUtils {
 
     public static List<UserVO> covertToUserVoList(List<User> users) {
         List<UserVO> userVos = new ArrayList<>(users.size());
-        for (int i = 0; i < users.size(); i++) {
-            userVos.add(i, users.get(i).covert());
+        for (User user : users) {
+            userVos.add(user.covert());
         }
         return userVos;
     }
 
     public static List<SubjectVO> covertToSubjectVoList(List<Subject> subjects) {
         List<SubjectVO> subjectVos = new ArrayList<>(subjects.size());
-        for (int i = 0; i < subjects.size(); i++) {
-            subjectVos.add(i, subjects.get(i).covert());
+        for (Subject subject : subjects) {
+            subjectVos.add(subject.covert());
         }
 
         return subjectVos;
@@ -28,24 +28,24 @@ public class EntityUtils {
 
     public static List<ProofVO> covertToProofVoList(List<Proof> proofs){
         List<ProofVO> proofVos=new ArrayList<>(proofs.size());
-        for (int i = 0; i < proofs.size(); i++) {
-            proofVos.add(i,proofs.get(i).covert());
+        for (Proof proof : proofs) {
+            proofVos.add(proof.covert());
         }
         return proofVos;
     }
 
     public static List<ProofItemVO> covertToProofItemVOList(List<ProofItem> proofItems){
         List<ProofItemVO> proofVos=new ArrayList<>(proofItems.size());
-        for (int i = 0; i < proofItems.size(); i++) {
-            proofVos.add(i,proofItems.get(i).covert());
+        for (ProofItem proofItem : proofItems) {
+            proofVos.add(proofItem.covert());
         }
         return proofVos;
     }
 
     public static List<InformationVO> covertToInformationVOList(List<Information> sourcesList){
         List<InformationVO> vos = new ArrayList<>(sourcesList.size());
-        for (int i = 0; i < sourcesList.size(); i++) {
-            vos.add(i, sourcesList.get(i).covert());
+        for (Information information : sourcesList) {
+            vos.add(information.covert());
         }
         return vos;
     }

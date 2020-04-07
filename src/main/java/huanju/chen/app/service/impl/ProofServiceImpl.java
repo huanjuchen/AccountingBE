@@ -90,19 +90,7 @@ public class ProofServiceImpl implements ProofService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
     public void save(Proof proof, String tokenId) {
-        logger.debug("proof：" + JSON.toJSONString(proof));
-        logger.debug("token_id：" + tokenId);
-        //获取缓存中的数据并检查
-        Cache cache = cacheManager.getCache("tokenV2Cache");
-        if (cache == null) {
-            logger.error("无法找到缓存容器...");
-            throw new AccountingException(500, "系统出现了异常，请稍后重试");
-        }
-        Token token = cache.get(tokenId, Token.class);
-        if (token == null) {
-            logger.error("缓存容器错误");
-            throw new AccountingException(500, "系统出现了异常，请稍后重试");
-        }
+        Token token = getToken(tokenId);
         Integer userId = token.getUserId();
         proof.setRecorderId(userId).setVerify(0).setVerifyTime(null).setTrash(0);
         //调用DAO层保存到数据库
@@ -196,25 +184,35 @@ public class ProofServiceImpl implements ProofService {
     }
 
     /**
+     * 获取Token
+     */
+    private Token getToken(String tokenId) {
+        Cache cache = cacheManager.getCache("tokenV2Cache");
+        if (cache == null) {
+            logger.error("无法找到缓存容器...");
+            throw new AccountingException(500, "系统出现了异常，请稍后重试");
+        }
+        Token token = cache.get(tokenId, Token.class);
+        if (token == null) {
+            logger.error("缓存容器错误");
+            throw new AccountingException(500, "系统出现了异常，请稍后重试");
+        }
+        return token;
+    }
+
+    /**
      * 冲账
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
     public void trashProof(Integer proofId, String tokenId) {
-        Cache cache = cacheManager.getCache("tokenV2Cache");
-        if (cache == null) {
-            throw new AccountingException(500, "系统出现异常");
-        }
-        Token token = cache.get(tokenId, Token.class);
-        if (token == null) {
-            throw new AccountingException(500, "系统出现异常");
-        }
+        Token token = getToken(tokenId);
         Proof proof = proofMapper.find(proofId);
         if (proof.getTrash() != 0) {
             throw new BadUpdateException(400, "不能重复冲账");
         }
         Integer recorderId = proof.getRecorderId();
-        if (token.getRole() > 2 && !recorderId.equals(token.getUserId())) {
+        if (!recorderId.equals(token.getUserId())) {
             throw new BadUpdateException(400, "只能对自己创建的凭证冲账");
         }
         Proof temp = new Proof();
@@ -231,9 +229,9 @@ public class ProofServiceImpl implements ProofService {
                 .setRecorderId(proof.getRecorderId())
                 .setCashier(proof.getCashier())
                 .setPayer(proof.getPayer())
-                .setVerifyUserId(proof.getVerifyUserId())
-                .setVerifyTime(proof.getVerifyTime())
-                .setVerify(proof.getVerify())
+                .setVerifyUserId(null)
+                .setVerifyTime(null)
+                .setVerify(0)
                 .setTrash(1);
         if (proofMapper.save(trashProof) != 1) {
             throw new BadCreateException(500, "服务器错误");
@@ -245,13 +243,12 @@ public class ProofServiceImpl implements ProofService {
                     .setCreditSubSubjectId(item.getCreditSubSubjectId())
                     .setDebitLedgerSubjectId(item.getDebitLedgerSubjectId())
                     .setCreditLedgerSubjectId(item.getCreditLedgerSubjectId())
-                    .setCharge(item.getCharge()).setProofId(trashProof.getId());
+                    .setCharge(false);
             trashItem.setMoney(item.getMoney().multiply(new BigDecimal(-1)));
             if (proofItemMapper.save(trashItem) != 1) {
                 throw new BadCreateException(500, "服务器错误");
             }
         }
-        verifyPass(proofMapper.find(trashProof.getId()));
     }
 
     private final static char DEBIT = 'D';

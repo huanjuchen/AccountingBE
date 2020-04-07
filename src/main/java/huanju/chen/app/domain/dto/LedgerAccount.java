@@ -67,8 +67,8 @@ public class LedgerAccount implements Serializable {
 
     public static List<LedgerAccountVO> listCovert(List<LedgerAccount> sourcesList) {
         List<LedgerAccountVO> vos = new ArrayList<>(sourcesList.size());
-        for (int i = 0; i < sourcesList.size(); i++) {
-            vos.add(i, sourcesList.get(i).covert());
+        for (LedgerAccount ledgerAccount : sourcesList) {
+            vos.add(ledgerAccount.covert());
         }
         return vos;
     }

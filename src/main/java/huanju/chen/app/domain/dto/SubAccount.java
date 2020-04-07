@@ -68,8 +68,8 @@ public class SubAccount implements Serializable {
 
     public static List<SubAccountVO> listCovert(List<SubAccount> sourcesList) {
         List<SubAccountVO> vos = new ArrayList<>(sourcesList.size());
-        for (int i = 0; i < sourcesList.size(); i++) {
-            vos.add(i, sourcesList.get(i).covert());
+        for (SubAccount subAccount : sourcesList) {
+            vos.add(subAccount.covert());
         }
         return vos;
     }

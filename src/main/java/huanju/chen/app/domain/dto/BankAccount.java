@@ -64,8 +64,8 @@ public class BankAccount implements Serializable {
 
     public static List<BankAccountVO> listCovert(List<BankAccount> bankAccountList){
         List<BankAccountVO> vos=new ArrayList<>(bankAccountList.size());
-        for (int i = 0; i < bankAccountList.size(); i++) {
-            vos.add(i,bankAccountList.get(i).covert());
+        for (BankAccount bankAccount : bankAccountList) {
+            vos.add(bankAccount.covert());
         }
         return vos;
     }

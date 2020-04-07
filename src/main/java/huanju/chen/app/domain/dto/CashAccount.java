@@ -53,8 +53,8 @@ public class CashAccount implements Serializable {
 
     public static List<CashAccountVO> listCovert(List<CashAccount> cashAccounts){
         List<CashAccountVO> vos=new ArrayList<>(cashAccounts.size());
-        for (int i = 0; i < cashAccounts.size(); i++) {
-            vos.add(i,cashAccounts.get(i).covert());
+        for (CashAccount cashAccount : cashAccounts) {
+            vos.add(cashAccount.covert());
         }
         return vos;
     }
