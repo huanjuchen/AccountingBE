@@ -67,6 +67,7 @@ public class ProofServiceImpl implements ProofService {
         this.bankAccountMapper = bankAccountMapper;
     }
 
+    @Resource
     public void setCashAccountMapper(CashAccountMapper cashAccountMapper) {
         this.cashAccountMapper = cashAccountMapper;
     }
@@ -222,7 +223,6 @@ public class ProofServiceImpl implements ProofService {
         if (proofMapper.update(temp) != 1) {
             throw new BadCreateException(500, "服务器错误");
         }
-
         Proof trashProof = new Proof();
         trashProof.setDate(proof.getDate())
                 .setInvoiceCount(proof.getInvoiceCount())
@@ -251,9 +251,7 @@ public class ProofServiceImpl implements ProofService {
                 throw new BadCreateException(500, "服务器错误");
             }
         }
-
         verifyPass(proofMapper.find(trashProof.getId()));
-
     }
 
     private final static char DEBIT = 'D';
@@ -269,17 +267,17 @@ public class ProofServiceImpl implements ProofService {
             填写日记账
              */
             //现金
-            if (item.getDebitLedgerSubject().getDaysKind() == 1) {
+            if (item.getDebitLedgerSubject() != null && item.getDebitLedgerSubject().getDaysKind() == 1) {
                 //借
                 cashAccountHandle(item, DEBIT, proof.getDate(), proof.getId());
-            } else if (item.getCreditLedgerSubject().getDaysKind() == 1) {
+            } else if (item.getCreditLedgerSubject() != null && item.getCreditLedgerSubject().getDaysKind() == 1) {
                 //贷
                 cashAccountHandle(item, CREDIT, proof.getDate(), proof.getId());
             }
             //银行
             if (item.getDebitLedgerSubject().getDaysKind() == 2) {
                 bankAccountHandle(item, DEBIT, proof.getDate(), proof.getId());
-            } else if (item.getCreditLedgerSubject().getDaysKind() == 2) {
+            } else if (item.getCreditLedgerSubject() != null && item.getCreditLedgerSubject().getDaysKind() == 2) {
                 bankAccountHandle(item, CREDIT, proof.getDate(), proof.getId());
             }
             /*
@@ -318,7 +316,6 @@ public class ProofServiceImpl implements ProofService {
                     .setSubjectId(item.getDebitLedgerSubjectId())
                     .setCreditMoney(item.getMoney());
         }
-
         int rows = cashAccountMapper.save(cashAccount);
         if (rows != 1) {
             throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");

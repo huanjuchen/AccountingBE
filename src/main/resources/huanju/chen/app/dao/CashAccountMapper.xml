@@ -13,7 +13,7 @@
         <result column="proof_id" property="proofId"/>
         <result column="abstraction" property="abstraction"/>
         <result column="subject_id" property="subjectId"/>
-        <result column="debit_money" property="debit_money"/>
+        <result column="debit_money" property="debitMoney"/>
         <result column="credit_money" property="creditMoney"/>
         <association property="subject">
             <id column="sId" property="id"/>
