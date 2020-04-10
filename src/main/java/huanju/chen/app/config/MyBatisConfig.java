@@ -22,7 +22,6 @@ public class MyBatisConfig {
 //                registry.registerAliases("huanju.chen.app.domain.dto");
                 registry.registerAlias(BankAccount.class);
                 registry.registerAlias(CashAccount.class);
-                registry.registerAlias(DaysAccount.class);
                 registry.registerAlias(Information.class);
                 registry.registerAlias(LedgerAccount.class);
                 registry.registerAlias(Proof.class);

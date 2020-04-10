@@ -27,8 +27,7 @@ public class SubjectVO implements Serializable {
 
     private Integer category;
 
-
-    private Integer daysKind;
+    private SubjectVO parent;
 
     private String remark;
 

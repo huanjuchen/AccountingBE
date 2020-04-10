@@ -17,14 +17,6 @@ public class EntityUtils {
         return userVos;
     }
 
-    public static List<SubjectVO> covertToSubjectVoList(List<Subject> subjects) {
-        List<SubjectVO> subjectVos = new ArrayList<>(subjects.size());
-        for (Subject subject : subjects) {
-            subjectVos.add(subject.covert());
-        }
-
-        return subjectVos;
-    }
 
     public static List<ProofVO> covertToProofVoList(List<Proof> proofs){
         List<ProofVO> proofVos=new ArrayList<>(proofs.size());

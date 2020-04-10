@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.SUPPORTS, readOnly = true)
@@ -154,17 +155,7 @@ public class ProofServiceImpl implements ProofService {
             throw new NotFoundException(400, "未找到该凭证");
         }
         logger.debug("token_id：" + tokenId);
-        //获取缓存中的数据并检查
-        Cache cache = cacheManager.getCache("tokenV2Cache");
-        if (cache == null) {
-            logger.error("无法找到缓存容器...");
-            throw new AccountingException(500, "系统出现了异常，请稍后重试");
-        }
-        Token token = cache.get(tokenId, Token.class);
-        if (token == null) {
-            logger.error("缓存容器错误");
-            throw new AccountingException(500, "系统出现了异常，请稍后重试");
-        }
+        Token token = getToken(tokenId);
         Integer userId = token.getUserId();
         if (result) {
             proof.setVerify(1);
@@ -236,13 +227,15 @@ public class ProofServiceImpl implements ProofService {
         if (proofMapper.save(trashProof) != 1) {
             throw new BadCreateException(500, "服务器错误");
         }
-        for (ProofItem item : proof.getItems()) {
+        List<ProofItem> items = proof.getItems();
+        for (ProofItem item : items) {
             ProofItem trashItem = new ProofItem();
             trashItem.setAbstraction(item.getAbstraction())
                     .setDebitSubSubjectId(item.getDebitSubSubjectId())
                     .setCreditSubSubjectId(item.getCreditSubSubjectId())
                     .setDebitLedgerSubjectId(item.getDebitLedgerSubjectId())
                     .setCreditLedgerSubjectId(item.getCreditLedgerSubjectId())
+                    .setProofId(trashProof.getId())
                     .setCharge(false);
             trashItem.setMoney(item.getMoney().multiply(new BigDecimal(-1)));
             if (proofItemMapper.save(trashItem) != 1) {
@@ -259,22 +252,33 @@ public class ProofServiceImpl implements ProofService {
      */
     private void verifyPass(Proof proof) {
         List<ProofItem> items = proof.getItems();
+
+        //借方总账科目
+        Subject dls = null;
+        //贷方总账科目
+        Subject cls = null;
+
         for (ProofItem item : items) {
+            dls = null;
+            cls = null;
+            dls = item.getDebitLedgerSubject();
+            cls = item.getCreditLedgerSubject();
             /*
             填写日记账
              */
             //现金
-            if (item.getDebitLedgerSubject() != null && item.getDebitLedgerSubject().getDaysKind() == 1) {
+            if (dls != null && Objects.equals(dls.getCode(), "1001")) {
                 //借
                 cashAccountHandle(item, DEBIT, proof.getDate(), proof.getId());
-            } else if (item.getCreditLedgerSubject() != null && item.getCreditLedgerSubject().getDaysKind() == 1) {
+            } else if (cls != null &&
+                    Objects.equals(cls.getCode(), "1001")) {
                 //贷
                 cashAccountHandle(item, CREDIT, proof.getDate(), proof.getId());
             }
             //银行
-            if (item.getDebitLedgerSubject().getDaysKind() == 2) {
+            if (dls != null&&Objects.equals(dls.getCode(),"1002")) {
                 bankAccountHandle(item, DEBIT, proof.getDate(), proof.getId());
-            } else if (item.getCreditLedgerSubject() != null && item.getCreditLedgerSubject().getDaysKind() == 2) {
+            } else if (cls != null && Objects.equals(cls.getCode(),"1002")) {
                 bankAccountHandle(item, CREDIT, proof.getDate(), proof.getId());
             }
             /*

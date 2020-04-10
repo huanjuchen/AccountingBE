@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 科目实体
@@ -43,11 +45,17 @@ public class Subject implements Serializable {
      * 6、损益类科目
      */
     private Integer category;
+
     /**
-     * 1：现金类科目
-     * 2：银行类科目
+     * 上级科目ID
      */
-    private Integer daysKind;
+    private Integer parentId;
+
+    /**
+     * 上级科目
+     */
+    private Subject parent;
+
     /**
      * 科目备注
      */
@@ -63,10 +71,17 @@ public class Subject implements Serializable {
                 .setCode(this.code)
                 .setName(this.name)
                 .setCategory(this.category)
-                .setDaysKind(this.daysKind)
+                .setParent(this.parent==null?null:this.parent.covert())
                 .setRemark(this.remark)
                 .setValid(this.valid);
         return subjectVo;
+    }
 
+    public static List<SubjectVO> listCovert(List<Subject> subjects) {
+        List<SubjectVO> subjectVos = new ArrayList<>(subjects.size());
+        for (Subject subject : subjects) {
+            subjectVos.add(subject.covert());
+        }
+        return subjectVos;
     }
 }

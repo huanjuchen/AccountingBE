@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.SUPPORTS, readOnly = true)
@@ -52,6 +53,9 @@ public class SubjectServiceImpl implements SubjectService {
             throw new AlreadyExistsException(400, "科目名已存在");
         }
         subject.setValid(true);
+        if (subject.getParentId() == null) {
+            subject.setParentId(0);
+        }
         subjectMapper.save(subject);
         return subjectMapper.find(subject.getId());
     }
@@ -73,7 +77,7 @@ public class SubjectServiceImpl implements SubjectService {
     /**
      * 检查科目是否被使用
      */
-    protected void checkEdit(Integer id, char type) {
+    private void checkEdit(Integer id, char type) {
         List<ProofItem> proofItems = proofItemMapper.listBySubject(id);
         if (proofItems != null && proofItems.size() > 0) {
             if (type == 'u') {
@@ -105,6 +109,9 @@ public class SubjectServiceImpl implements SubjectService {
             throw new BadUpdateException(400, "该科目名已被使用");
         }
 
+        if (Objects.equals(subject.getId(), subject.getParentId())) {
+            throw new BadUpdateException(400, "无法将自己设为上级科目");
+        }
 
         int rows = subjectMapper.update(subject);
 
