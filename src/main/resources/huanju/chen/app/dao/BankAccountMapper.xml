@@ -56,4 +56,11 @@
         </where>
     </select>
 
+    <select id="monthStartSumMoney" resultType="sumMoney">
+        SELECT SUM(credit_money) AS creditMoney, SUM(debit_money) AS debitMoney
+        FROM bank_account
+        WHERE date &lt; #{date}
+    </select>
+
+
 </mapper>

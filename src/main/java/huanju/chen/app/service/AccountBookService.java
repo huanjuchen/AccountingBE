@@ -18,12 +18,4 @@ public interface AccountBookService {
 
     List<LedgerAccount> getLedgerAccountList(Map<String, Object> map);
 
-    Integer getBankAccountCount(Map<String,Object> map);
-
-    Integer getCashAccountCount(Map<String,Object> map);
-
-    Integer getLedgerAccountCount(Map<String,Object> map);
-
-    Integer getSubAccountCount(Map<String,Object> map);
-
 }

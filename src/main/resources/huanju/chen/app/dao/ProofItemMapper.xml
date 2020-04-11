@@ -36,7 +36,6 @@
             <result column="DSSCode" property="code"/>
             <result column="DSSName" property="name"/>
             <result column="DSSCategory" property="category"/>
-            <result column="DSSDaysKind" property="daysKind"/>
             <result column="DSSValid" property="valid"/>
         </association>
         <association property="creditSubSubject">
@@ -44,7 +43,6 @@
             <result column="CSSCode" property="code"/>
             <result column="CSSName" property="name"/>
             <result column="CSSCategory" property="category"/>
-            <result column="CSSDaysKind" property="daysKind"/>
             <result column="CSSValid" property="valid"/>
         </association>
         <association property="debitLedgerSubject">
@@ -52,7 +50,6 @@
             <result column="DLSCode" property="code"/>
             <result column="DLSName" property="name"/>
             <result column="DLSCategory" property="category"/>
-            <result column="DLSDaysKind" property="daysKind"/>
             <result column="DLSValid" property="valid"/>
         </association>
         <association property="creditLedgerSubject">
@@ -60,7 +57,6 @@
             <result column="CLSCode" property="code"/>
             <result column="CLSName" property="name"/>
             <result column="CLSCategory" property="category"/>
-            <result column="CLSDaysKind" property="daysKind"/>
             <result column="CLSValid" property="valid"/>
         </association>
     </resultMap>
@@ -79,25 +75,21 @@
                DSS.code                 AS DSSCode,
                DSS.name                 AS DSSName,
                DSS.category             AS DSSCategory,
-               DSS.days_kind            AS DSSDaysKind,
                DSS.valid                AS DSSValid,
                css.id                   AS CSSCSSId,
                css.code                 AS CSSCode,
                css.name                 AS CSSName,
                css.category             AS CSSCategory,
-               css.days_kind            AS CSSDaysKind,
                css.valid                AS CSSValid,
                dls.id                   AS DLSDLSId,
                dls.code                 AS DLSCode,
                dls.name                 AS DLSName,
                dls.category             AS DLSCategory,
-               dls.days_kind            AS DLSDaysKind,
                dls.valid                AS DLSValid,
                cls.id                   AS CLSCLSId,
                cls.code                 AS CLSCode,
                cls.name                 AS CLSName,
                cls.category             AS CLSCategory,
-               cls.days_kind            AS CLSDaysKind,
                cls.valid                AS CLSValid
         FROM proof_item pi
                  LEFT JOIN subject DSS ON DSS.id = pi.debit_sub_subject_id

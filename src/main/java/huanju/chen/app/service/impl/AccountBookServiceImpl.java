@@ -53,23 +53,4 @@ public class AccountBookServiceImpl implements AccountBookService {
         return ledgerAccountMapper.list(map);
     }
 
-    @Override
-    public Integer getBankAccountCount(Map<String, Object> map) {
-        return bankAccountMapper.count(map);
-    }
-
-    @Override
-    public Integer getCashAccountCount(Map<String, Object> map) {
-        return cashAccountMapper.count(map);
-    }
-
-    @Override
-    public Integer getLedgerAccountCount(Map<String, Object> map) {
-        return ledgerAccountMapper.count(map);
-    }
-
-    @Override
-    public Integer getSubAccountCount(Map<String, Object> map) {
-        return subAccountMapper.count(map);
-    }
 }

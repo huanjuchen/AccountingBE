@@ -21,5 +21,7 @@ public class SubAccountVO implements Serializable {
     private String abstraction;
     private BigDecimal debitMoney;
     private BigDecimal creditMoney;
+    private Integer mark;
+    private BigDecimal money;
 
 }

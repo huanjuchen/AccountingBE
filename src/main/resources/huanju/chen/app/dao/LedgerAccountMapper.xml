@@ -3,13 +3,42 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="huanju.chen.app.dao.LedgerAccountMapper">
     <insert id="save" parameterType="ledgerAccount">
-        INSERT INTO ledger_account(date, subject_id, proof_id, abstraction, debit_money, credit_money)
-        VALUES (#{date}, #{subjectId}, #{proofId}, #{abstraction}, #{debitMoney}, #{creditMoney})
+        INSERT INTO ledger_account(date, subject_id, abstraction, debit_money, credit_money)
+        VALUES (#{date}, #{subjectId}, #{abstraction}, #{debitMoney}, #{creditMoney})
     </insert>
+
+    <select id="findBySubjectAndDate" resultType="ledgerAccount">
+        SELECT id, date, subject_id, abstraction, debit_money, credit_money
+        FROM ledger_account
+        WHERE subject_id = #{subjectId}
+          AND date = #{date}
+    </select>
+
+    <update id="update" parameterType="ledgerAccount">
+        UPDATE ledger_account
+        <set>
+            <if test="date!=null">
+                date=#{date},
+            </if>
+            <if test="subjectId!=null">
+                subject_id=#{subjectId},
+            </if>
+            <if test="abstraction!=null and abstraction!=''">
+                abstraction=#{abstraction},
+            </if>
+            <if test="debitMoney!=null">
+                debit_money=#{debitMoney},
+            </if>
+            <if test="creditMoney!=null">
+                credit_money=#{creditMoney}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
 
 
     <select id="list" parameterType="map" resultType="ledgerAccount">
-        SELECT id, date, subject_id, proof_id, abstraction, debit_money, credit_money
+        SELECT id, date, subject_id, abstraction, debit_money, credit_money
         FROM ledger_account
         <where>
             <if test="subjectId!=null">

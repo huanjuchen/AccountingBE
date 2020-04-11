@@ -24,7 +24,7 @@ import java.util.Map;
 
 
 @RestController
-public class ProofController {
+public final class ProofController {
 
     @Resource(name = "proofServiceImpl")
     private ProofService proofService;

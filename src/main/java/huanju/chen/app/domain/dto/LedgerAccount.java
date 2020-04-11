@@ -37,10 +37,6 @@ public class LedgerAccount implements Serializable {
      */
     private Date date;
     /**
-     * 凭证号
-     */
-    private Integer proofId;
-    /**
      * 摘要
      */
     private String abstraction;
@@ -53,15 +49,30 @@ public class LedgerAccount implements Serializable {
      */
     private BigDecimal creditMoney;
 
+    /**
+     * 借贷平标志
+     * 借: -1
+     * 贷: 1
+     * 平: 0
+     */
+    private Integer mark;
+
+    /**
+     * 金额
+     */
+    private BigDecimal money;
+
+
     public LedgerAccountVO covert() {
         LedgerAccountVO leda = new LedgerAccountVO();
         leda.setId(this.id)
                 .setDate(this.date)
                 .setSubject(this.subject == null ? null : this.subject.covert())
                 .setAbstraction(this.abstraction)
-                .setProofId(this.proofId)
                 .setDebitMoney(this.debitMoney)
-                .setCreditMoney(this.creditMoney);
+                .setCreditMoney(this.creditMoney)
+                .setMark(this.mark)
+                .setMoney(this.money);
         return leda;
     }
 

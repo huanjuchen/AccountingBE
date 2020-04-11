@@ -53,6 +53,19 @@ public class SubAccount implements Serializable {
      */
     private BigDecimal creditMoney;
 
+    /**
+     * 借贷平标志
+     * 借: -1
+     * 贷: 1
+     * 平: 0
+     */
+    private Integer mark;
+
+    /**
+     * 金额
+     */
+    private BigDecimal money;
+
 
     public SubAccountVO covert() {
         SubAccountVO vo = new SubAccountVO();
@@ -62,7 +75,9 @@ public class SubAccount implements Serializable {
                 .setProofId(this.proofId)
                 .setAbstraction(this.abstraction)
                 .setDebitMoney(this.debitMoney)
-                .setCreditMoney(this.creditMoney);
+                .setCreditMoney(this.creditMoney)
+                .setMark(this.mark)
+                .setMoney(this.money);
         return vo;
     }
 

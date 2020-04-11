@@ -10,6 +10,7 @@ import huanju.chen.app.exception.v2.BadUpdateException;
 import huanju.chen.app.exception.v2.NotFoundException;
 import huanju.chen.app.security.token.Token;
 import huanju.chen.app.service.ProofService;
+import huanju.chen.app.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -22,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.SUPPORTS, readOnly = true)
@@ -88,6 +86,26 @@ public class ProofServiceImpl implements ProofService {
         this.cacheManager = cacheManager;
     }
 
+
+    private static final int CLS = 1;
+
+    private static final int DLS = 2;
+
+    private static final int CSS = 3;
+
+    private static final int DSS = 4;
+
+    private static Map<Integer, String> MSG_MAP = new HashMap<>(1 >> 3);
+
+    static {
+        MSG_MAP.put(CLS, "贷方总账科目");
+        MSG_MAP.put(DLS, "借方总账科目");
+        MSG_MAP.put(CSS, "贷方明细账科目");
+        MSG_MAP.put(DSS, "借方明细账科目");
+
+    }
+
+
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
     public void save(Proof proof, String tokenId) {
@@ -99,21 +117,35 @@ public class ProofServiceImpl implements ProofService {
         if (rows != 1) {
             throw new AccountingException(500, "系统出现了异常，请稍后重试");
         }
+
+        Subject clSubject = null;
+        Subject dlSubject = null;
+        Subject csSubject = null;
+        Subject dsSubject = null;
+
+
         for (ProofItem proofItem : proof.getItems()) {
             proofItem.setProofId(proof.getId());
-            if (proofItem.getCreditLedgerSubjectId() != null) {
-                checkSubject(proofItem.getCreditLedgerSubjectId());
-            }
-            if (proofItem.getCreditSubSubjectId() != null) {
-                checkSubject(proofItem.getCreditSubSubjectId());
-            }
-            if (proofItem.getDebitLedgerSubjectId() != null) {
-                checkSubject(proofItem.getDebitLedgerSubjectId());
-            }
-            if (proofItem.getDebitSubSubjectId() != null) {
-                checkSubject(proofItem.getDebitSubSubjectId());
-            }
-
+            clSubject = subjectMapper.find(proofItem.getCreditLedgerSubjectId());
+            dlSubject = subjectMapper.find(proofItem.getDebitLedgerSubjectId());
+            csSubject = subjectMapper.find(proofItem.getCreditSubSubjectId());
+            dsSubject = subjectMapper.find(proofItem.getDebitSubSubjectId());
+            /*
+            检查贷方总账科目CLS
+             */
+            checkLedSubject(clSubject, CLS);
+            /*
+            检查借方总账科目DLS
+             */
+            checkLedSubject(dlSubject, DLS);
+            /*
+            检查贷方明细账科目CSS
+             */
+            checkSubSubject(csSubject,clSubject,CSS,CLS);
+            /*
+            检查借方明细账科目
+             */
+            checkSubSubject(dsSubject,dlSubject,DSS,DLS);
             //调用DAO层保存到数据库
             int resultRows = proofItemMapper.save(proofItem);
             if (resultRows != 1) {
@@ -123,14 +155,34 @@ public class ProofServiceImpl implements ProofService {
     }
 
     /**
-     * 检查会计科目是否可用
+     * 验证总账科目
      */
-    private void checkSubject(Integer subjectId) {
-        Subject subject = subjectMapper.find(subjectId);
-        if (subject == null || subject.getValid().equals(false)) {
-            throw new BadCreateException(400, "未选择科目/科目不可用");
+    private void checkLedSubject(Subject subject, int subjectType) {
+        String msg = MSG_MAP.get(subjectType);
+        if (subject == null) {
+            throw new BadCreateException(400, msg + "输入有误");
+        }
+
+        if (Objects.equals(subject.getValid(), Boolean.FALSE)) {
+            throw new BadCreateException(400, "科目" + subject.getName() + "已被禁用");
         }
     }
+
+    /**
+     * 验证明细账科目
+     */
+    private void checkSubSubject(Subject subject, Subject parent, int subjectType,int parentType) {
+        checkLedSubject(subject, subjectType);
+        String msg = MSG_MAP.get(subjectType);
+        String parentMsg=MSG_MAP.get(parentType);
+        if (subject.getParent() == null) {
+            throw new BadCreateException(400, "科目" + subject.getName() + "不是明细账科目");
+        }
+        if (!Objects.equals(subject.getParent(), parent)) {
+            throw new BadCreateException(400, msg + "不是"+parentMsg+"的明细账科目");
+        }
+    }
+
 
     @Override
     public Proof find(Integer id) {
@@ -259,8 +311,6 @@ public class ProofServiceImpl implements ProofService {
         Subject cls = null;
 
         for (ProofItem item : items) {
-            dls = null;
-            cls = null;
             dls = item.getDebitLedgerSubject();
             cls = item.getCreditLedgerSubject();
             /*
@@ -276,9 +326,9 @@ public class ProofServiceImpl implements ProofService {
                 cashAccountHandle(item, CREDIT, proof.getDate(), proof.getId());
             }
             //银行
-            if (dls != null&&Objects.equals(dls.getCode(),"1002")) {
+            if (dls != null && Objects.equals(dls.getCode(), "1002")) {
                 bankAccountHandle(item, DEBIT, proof.getDate(), proof.getId());
-            } else if (cls != null && Objects.equals(cls.getCode(),"1002")) {
+            } else if (cls != null && Objects.equals(cls.getCode(), "1002")) {
                 bankAccountHandle(item, CREDIT, proof.getDate(), proof.getId());
             }
             /*
@@ -288,7 +338,7 @@ public class ProofServiceImpl implements ProofService {
             /*
             总账
              */
-            ledgerAccountHandle(item, proof.getDate(), proof.getId());
+            ledgerAccountHandle(item, proof.getDate());
             ProofItem itemNew = new ProofItem();
             itemNew.setId(item.getId());
             itemNew.setCharge(true);
@@ -351,7 +401,7 @@ public class ProofServiceImpl implements ProofService {
      * 明细分类账处理
      */
     private void subAccountHandle(ProofItem item, Date date, Integer proofId) {
-        int rows = 0;
+
         if (item.getDebitSubSubject() != null) {
             SubAccount subAccount = new SubAccount();
             subAccount.setDate(date)
@@ -359,12 +409,11 @@ public class ProofServiceImpl implements ProofService {
                     .setAbstraction(item.getAbstraction())
                     .setSubjectId(item.getDebitSubSubjectId())
                     .setDebitMoney(item.getMoney());
-            rows = subAccountMapper.save(subAccount);
+            int rows = subAccountMapper.save(subAccount);
             if (rows != 1) {
                 throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
             }
         }
-
         if (item.getCreditSubSubject() != null) {
             SubAccount subAccount = new SubAccount();
             subAccount.setDate(date)
@@ -372,37 +421,63 @@ public class ProofServiceImpl implements ProofService {
                     .setAbstraction(item.getAbstraction())
                     .setSubjectId(item.getCreditSubSubjectId())
                     .setCreditMoney(item.getMoney());
-            rows = subAccountMapper.save(subAccount);
+            int rows = subAccountMapper.save(subAccount);
             if (rows != 1) {
                 throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
             }
         }
+
     }
 
     /**
      * 总账处理
      */
-    private void ledgerAccountHandle(ProofItem item, Date date, Integer proofId) {
-        int rows = 0;
-        if (item.getDebitLedgerSubject() != null) {
-            LedgerAccount ledgerAccount = new LedgerAccount();
-            ledgerAccount.setDate(date).setProofId(proofId)
-                    .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getDebitLedgerSubjectId())
-                    .setDebitMoney(item.getMoney());
-            rows = ledgerAccountMapper.save(ledgerAccount);
-            if (rows != 1) {
+    private void ledgerAccountHandle(ProofItem item, Date date) {
+        Date last = DateUtils.getMonthEnd(date);
+        Subject dls = item.getDebitLedgerSubject();
+        Subject cls = item.getCreditLedgerSubject();
+        if (dls != null) {
+            Integer dlsId = dls.getId();
+            LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(dlsId, last);
+            int row = 0;
+            if (la == null) {
+                la = new LedgerAccount();
+                la.setAbstraction("本月合计")
+                        .setDate(last)
+                        .setSubjectId(dlsId)
+                        .setDebitMoney(item.getMoney());
+                row = ledgerAccountMapper.save(la);
+
+            } else {
+                BigDecimal money = la.getDebitMoney();
+                LedgerAccount nla = new LedgerAccount();
+                nla.setId(la.getId()).setDebitMoney(money.add(item.getMoney()));
+                row = ledgerAccountMapper.update(nla);
+            }
+            if (row != 1) {
                 throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
             }
         }
-        if (item.getCreditLedgerSubject() != null) {
-            LedgerAccount ledgerAccount = new LedgerAccount();
-            ledgerAccount.setDate(date).setProofId(proofId)
-                    .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getCreditLedgerSubjectId())
-                    .setCreditMoney(item.getMoney());
-            rows = ledgerAccountMapper.save(ledgerAccount);
-            if (rows != 1) {
+
+        if (cls != null) {
+            Integer clsId = cls.getId();
+            LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(clsId, last);
+            int row = 0;
+            if (la == null) {
+                la = new LedgerAccount();
+                la.setAbstraction("本月合计")
+                        .setDate(last).setSubjectId(clsId).setCreditMoney(item.getMoney());
+                row = ledgerAccountMapper.save(la);
+            } else {
+                BigDecimal money = la.getCreditMoney();
+                if (money == null) {
+                    money = new BigDecimal(0);
+                }
+                LedgerAccount nla = new LedgerAccount();
+                nla.setId(la.getId()).setCreditMoney(money.add(item.getMoney()));
+                row = ledgerAccountMapper.update(nla);
+            }
+            if (row != 1) {
                 throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
             }
         }

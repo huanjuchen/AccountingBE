@@ -36,17 +36,15 @@ public class AccountBookController {
 
 
     @GetMapping("/accountBook/bank")
-    public ApiResult<List> getBankAccountList(String startDate, String endDate, Integer page, Integer pageSize) {
+    public ApiResult<List> getBankAccountList(String startDate, String endDate) {
         return bankAndCash(startDate, endDate, BANK);
     }
 
 
     @GetMapping("/accountBook/cash")
-    public ApiResult<List> getCashAccountList(String startDate, String endDate, Integer page, Integer pageSize) {
+    public ApiResult<List> getCashAccountList(String startDate, String endDate) {
         return bankAndCash(startDate, endDate, CASH);
     }
-
-
 
 
     @GetMapping("/accountBook/ledger")

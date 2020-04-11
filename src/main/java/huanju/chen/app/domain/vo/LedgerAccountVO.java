@@ -20,11 +20,13 @@ public class LedgerAccountVO implements Serializable {
 
     private Date date;
 
-    private Integer proofId;
-
     private String abstraction;
 
     private BigDecimal debitMoney;
 
     private BigDecimal creditMoney;
+
+    private Integer mark;
+
+    private BigDecimal money;
 }

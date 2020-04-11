@@ -6,6 +6,8 @@ import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.math.BigDecimal;
+
 /**
  * @author HuanJu
  */
@@ -29,6 +31,8 @@ public class MyBatisConfig {
                 registry.registerAlias(SubAccount.class);
                 registry.registerAlias(Subject.class);
                 registry.registerAlias(User.class);
+                registry.registerAlias(BigDecimal.class);
+                registry.registerAlias(SumMoney.class);
 
             }
         };
