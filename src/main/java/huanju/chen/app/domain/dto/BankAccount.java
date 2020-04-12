@@ -49,6 +49,10 @@ public class BankAccount implements Serializable {
      * 贷方金额
      */
     private BigDecimal creditMoney;
+    /**
+     * 余额
+     */
+    private BigDecimal money;
 
     public BankAccountVO covert() {
         BankAccountVO bankAccountVO = new BankAccountVO();
@@ -58,12 +62,13 @@ public class BankAccount implements Serializable {
                 .setAbstraction(this.abstraction)
                 .setSubject(this.subject != null ? this.subject.covert() : null)
                 .setDebitMoney(this.debitMoney)
-                .setCreditMoney(this.creditMoney);
+                .setCreditMoney(this.creditMoney)
+                .setMoney(this.money);
         return bankAccountVO;
     }
 
-    public static List<BankAccountVO> listCovert(List<BankAccount> bankAccountList){
-        List<BankAccountVO> vos=new ArrayList<>(bankAccountList.size());
+    public static List<BankAccountVO> listCovert(List<BankAccount> bankAccountList) {
+        List<BankAccountVO> vos = new ArrayList<>(bankAccountList.size());
         for (BankAccount bankAccount : bankAccountList) {
             vos.add(bankAccount.covert());
         }

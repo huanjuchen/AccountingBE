@@ -7,33 +7,71 @@ import java.util.Date;
 /**
  * @author HuanJu
  */
-public class DateUtils {
+public final class DateUtils {
+
+    private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+
+    public static String[] yearStartEnd(Integer year) {
+        if (year == null) {
+            String str = sdf.format(new Date());
+            String[] ymd = str.split("-");
+            String startDate = ymd[0] + "-01-01";
+            String endDate = ymd[0] + "-12-31";
+            return new String[]{startDate,endDate};
+        }else {
+            String startDate = year + "-01-01";
+            String endDate = year + "-12-31";
+            return new String[]{startDate,endDate};
+        }
+    }
+
+
+    public static Date getDate(String dateStr) {
+        try {
+            return sdf.parse(dateStr);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+
+    public static String[] monthStartEnd(Date date) {
+        String dateStr = sdf.format(date);
+        return monthStartEnd(dateStr);
+    }
+
+
+    public static String[] monthStartEnd(String dateStr) {
+        String[] ymd = dateStr.split("-");
+        String yearStr = ymd[0];
+        String monthStr = ymd[1];
+        String start = yearStr + '-' + monthStr + "-01";
+        int lastDay = getMonthLastDay(dateStr);
+        String end = yearStr + '-' + monthStr + '-' + lastDay;
+        return new String[]{start, end};
+    }
 
 
     public static Date getMonthEnd(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateStr = sdf.format(date);
-        String[] ymd=dateStr.split("-");
-        String newDateStr=getMonthEnd(dateStr);
-        Date endDate=null;
+        String[] ymd = dateStr.split("-");
+        String newDateStr = getMonthEnd(dateStr);
+        Date endDate = null;
         try {
-            endDate=sdf.parse(newDateStr);
+            endDate = sdf.parse(newDateStr);
         } catch (ParseException e) {
-            endDate=null;
         }
         return endDate;
     }
 
-    public static String getMonthEnd(String dateStr){
-        String[] ymd=dateStr.split("-");
+    public static String getMonthEnd(String dateStr) {
+        String[] ymd = dateStr.split("-");
 
-        StringBuilder builder=new StringBuilder(ymd[0]);
-        builder.append('-');
-        builder.append(ymd[1]);
-        builder.append('-');
-        builder.append(getMonthLastDay(dateStr));
-
-        return builder.toString();
+        return ymd[0] + '-' +
+                ymd[1] +
+                '-' +
+                getMonthLastDay(dateStr);
     }
 
 

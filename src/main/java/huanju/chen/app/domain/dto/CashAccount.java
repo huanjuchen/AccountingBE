@@ -38,6 +38,9 @@ public class CashAccount implements Serializable {
 
     private BigDecimal creditMoney;
 
+    private BigDecimal money;
+
+
     public CashAccountVO covert() {
         CashAccountVO cashAccountVO = new CashAccountVO();
         cashAccountVO.setId(this.id)
@@ -46,13 +49,14 @@ public class CashAccount implements Serializable {
                 .setAbstraction(this.abstraction)
                 .setSubject(this.subject != null ? this.subject.covert() : null)
                 .setDebitMoney(this.debitMoney)
-                .setCreditMoney(this.creditMoney);
+                .setCreditMoney(this.creditMoney)
+                .setMoney(this.money);
         return cashAccountVO;
     }
 
 
-    public static List<CashAccountVO> listCovert(List<CashAccount> cashAccounts){
-        List<CashAccountVO> vos=new ArrayList<>(cashAccounts.size());
+    public static List<CashAccountVO> listCovert(List<CashAccount> cashAccounts) {
+        List<CashAccountVO> vos = new ArrayList<>(cashAccounts.size());
         for (CashAccount cashAccount : cashAccounts) {
             vos.add(cashAccount.covert());
         }

@@ -45,27 +45,18 @@
                 AND subject_id=#{subjectId}
             </if>
             <if test="startDate!=null and endDate!=null">
-                AND date BETWEEN #{startDate} AND #{endDate}
+                AND date &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d') AND date &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d')
             </if>
         </where>
         ORDER BY date
-        <if test="offset!=null and count!=null">
-            LIMIT #{offset},#{count}
-        </if>
     </select>
 
-
-    <select id="count" parameterType="map" resultType="integer">
-        SELECT COUNT(id) FROM ledger_account
-        <where>
-            <if test="subjectId!=null">
-                AND subject_id=#{subjectId}
-            </if>
-            <if test="startDate!=null and endDate!=null">
-                AND date BETWEEN #{startDate} AND #{endDate}
-            </if>
-        </where>
+    <select id="monthStartSumMoney" resultType="sumMoney">
+        SELECT SUM(credit_money) AS creditMoney, SUM(debit_money) AS debitMoney
+        FROM ledger_account
+        WHERE subject_id=#{subjectId} AND date &lt; DATE_FORMAT(#{date},'%Y-%m-%d')
     </select>
+
 
 
 </mapper>

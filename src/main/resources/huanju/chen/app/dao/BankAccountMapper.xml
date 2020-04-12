@@ -38,28 +38,18 @@
         LEFT JOIN subject s ON s.id = b.subject_id
         <where>
             <if test="startDate!=null and endDate!=null">
-                AND date BETWEEN #{startDate} AND #{endDate}
+                AND date &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d') AND date &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d')
             </if>
         </where>
         ORDER BY date
-        <if test="offset!=null and count!=null">
-            LIMIT #{offset},#{count}
-        </if>
     </select>
 
-    <select id="count" parameterType="map" resultType="integer">
-        SELECT COUNT(id) FROM bank_account
-        <where>
-            <if test="startDate!=null and endDate!=null">
-                AND date BETWEEN #{startDate} AND #{endDate}
-            </if>
-        </where>
-    </select>
+
 
     <select id="monthStartSumMoney" resultType="sumMoney">
         SELECT SUM(credit_money) AS creditMoney, SUM(debit_money) AS debitMoney
         FROM bank_account
-        WHERE date &lt; #{date}
+        WHERE date &lt; DATE_FORMAT(#{date},'%Y-%m-%d')
     </select>
 
 

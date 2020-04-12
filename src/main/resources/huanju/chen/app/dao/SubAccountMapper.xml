@@ -32,9 +32,15 @@
                 AND subject_id=#{subjectId}
             </if>
             <if test="startDate!=null and endDate!=null">
-                AND date BETWEEN #{startDate} AND #{endDate}
+                AND date &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d') AND date &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d')
             </if>
         </where>
+    </select>
+
+    <select id="monthStartSumMoney" resultType="sumMoney">
+        SELECT SUM(credit_money) AS creditMoney, SUM(debit_money) AS debitMoney
+        FROM sub_account
+        WHERE subject_id=#{subjectId} AND date &lt; DATE_FORMAT(#{date},'%Y-%m-%d')
     </select>
 
 

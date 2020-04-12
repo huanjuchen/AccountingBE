@@ -28,4 +28,6 @@ public class BankAccountVO implements Serializable {
     private BigDecimal debitMoney;
 
     private BigDecimal creditMoney;
+
+    private BigDecimal money;
 }

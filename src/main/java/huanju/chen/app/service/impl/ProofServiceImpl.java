@@ -178,7 +178,7 @@ public class ProofServiceImpl implements ProofService {
         if (subject.getParent() == null) {
             throw new BadCreateException(400, "科目" + subject.getName() + "不是明细账科目");
         }
-        if (!Objects.equals(subject.getParent(), parent)) {
+        if (!Objects.equals(subject.getParent().getId(), parent.getId())) {
             throw new BadCreateException(400, msg + "不是"+parentMsg+"的明细账科目");
         }
     }
@@ -447,9 +447,11 @@ public class ProofServiceImpl implements ProofService {
                         .setSubjectId(dlsId)
                         .setDebitMoney(item.getMoney());
                 row = ledgerAccountMapper.save(la);
-
             } else {
                 BigDecimal money = la.getDebitMoney();
+                if (money==null){
+                    money=new BigDecimal(0.00);
+                }
                 LedgerAccount nla = new LedgerAccount();
                 nla.setId(la.getId()).setDebitMoney(money.add(item.getMoney()));
                 row = ledgerAccountMapper.update(nla);
@@ -470,8 +472,8 @@ public class ProofServiceImpl implements ProofService {
                 row = ledgerAccountMapper.save(la);
             } else {
                 BigDecimal money = la.getCreditMoney();
-                if (money == null) {
-                    money = new BigDecimal(0);
+                if (money==null){
+                    money=new BigDecimal(0.00);
                 }
                 LedgerAccount nla = new LedgerAccount();
                 nla.setId(la.getId()).setCreditMoney(money.add(item.getMoney()));

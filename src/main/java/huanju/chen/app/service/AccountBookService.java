@@ -1,21 +1,21 @@
 package huanju.chen.app.service;
 
-import huanju.chen.app.domain.dto.BankAccount;
-import huanju.chen.app.domain.dto.CashAccount;
-import huanju.chen.app.domain.dto.LedgerAccount;
-import huanju.chen.app.domain.dto.SubAccount;
+
+import huanju.chen.app.domain.vo.BankAccountVO;
+import huanju.chen.app.domain.vo.CashAccountVO;
+import huanju.chen.app.domain.vo.LedgerAccountVO;
+import huanju.chen.app.domain.vo.SubAccountVO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface AccountBookService {
 
-    List<BankAccount> getBankAccountList(Map<String, Object> map);
+    List<BankAccountVO> getBankAccount(String startDate, String endDate);
 
-    List<CashAccount> getCashAccountList(Map<String, Object> map);
+    List<CashAccountVO> getCashAccount(String startDate, String endDate);
 
-    List<SubAccount> getSubAccountList(Map<String, Object> map);
+    List<SubAccountVO> getSubAccount(Integer subjectId, String startDate, String endDate);
 
-    List<LedgerAccount> getLedgerAccountList(Map<String, Object> map);
+    List<LedgerAccountVO> getLedgerAccount(Integer subjectId, Integer year);
 
 }

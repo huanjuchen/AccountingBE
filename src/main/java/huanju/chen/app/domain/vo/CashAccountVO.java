@@ -21,5 +21,6 @@ public class CashAccountVO implements Serializable {
     private SubjectVO subject;
     private BigDecimal debitMoney;
     private BigDecimal creditMoney;
+    private BigDecimal money;
 
 }

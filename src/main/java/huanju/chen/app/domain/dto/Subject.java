@@ -37,12 +37,13 @@ public class Subject implements Serializable {
     private String name;
     /**
      * 科目类别
-     * 1、资产类科目
-     * 2、负债类科目
-     * 3、共同类科目
-     * 4、所有者权益类科目
-     * 5、成本类科目
-     * 6、损益类科目
+     * 1、资产类
+     * 2、负债类
+     * 3、共同类
+     * 4、所有者权益类
+     * 5、成本类
+     * 6、损益类-收入
+     * 7、损益类-费用
      */
     private Integer category;
 

@@ -6,7 +6,7 @@ package huanju.chen.app.response;
  *
  * @param <T> 数据类型
  */
-public class ApiResult<T> {
+public final class ApiResult<T> {
     /**
      * 状态码
      */
