@@ -23,33 +23,67 @@
     </resultMap>
 
 
+    <!--    <select id="list" parameterType="map" resultMap="listMap">-->
+    <!--            SELECT b.id AS id,-->
+    <!--    b.date AS date,-->
+    <!--    b.proof_id AS proof_id,-->
+    <!--    b.abstraction AS abstraction,-->
+    <!--    b.subject_id AS subject_id,-->
+    <!--    b.debit_money AS debit_money,-->
+    <!--    b.credit_money AS credit_money,-->
+    <!--    s.id AS sId,-->
+    <!--    s.code AS sCode,-->
+    <!--    s.name AS sName-->
+    <!--        FROM bank_account b-->
+    <!--        LEFT JOIN subject s ON s.id = b.subject_id-->
+    <!--        <where>-->
+    <!--            <if test="startDate!=null and endDate!=null">-->
+    <!--                AND date &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d') AND date &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d')-->
+    <!--            </if>-->
+    <!--        </where>-->
+    <!--        ORDER BY date-->
+    <!--        <if test="offset!=null and count!=null">-->
+    <!--            LIMIT #{offset},#{count}-->
+    <!--        </if>-->
+    <!--    </select>-->
+
+
     <select id="list" parameterType="map" resultMap="listMap">
-        SELECT b.id AS id,
-        b.date AS date,
-        b.proof_id AS proof_id,
-        b.abstraction AS abstraction,
-        b.subject_id AS subject_id,
-        b.debit_money AS debit_money,
-        b.credit_money AS credit_money,
-        s.id AS sId,
-        s.code AS sCode,
-        s.name AS sName
-        FROM bank_account b
-        LEFT JOIN subject s ON s.id = b.subject_id
-        <where>
-            <if test="startDate!=null and endDate!=null">
-                AND date &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d') AND date &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d')
-            </if>
-        </where>
-        ORDER BY date
+        SELECT b.id           AS id,
+               b.date         AS date,
+               b.proof_id     AS proof_id,
+               b.abstraction  AS abstraction,
+               b.subject_id   AS subject_id,
+               b.debit_money  AS debit_money,
+               b.credit_money AS credit_money,
+               s.id           AS sId,
+               s.code         AS sCode,
+               s.name         AS sName
+        FROM subject s
+                 RIGHT JOIN
+             (SELECT ba_temp.*
+              FROM bank_account ba_temp
+                       RIGHT JOIN
+                   (SELECT id
+                    FROM bank_account
+                    WHERE date &gt;= #{startDate}
+                      AND date &lt;= #{endDate}
+                    ORDER BY date) bai_temp ON ba_temp.id = bai_temp.id) b
+             ON s.id = b.subject_id
     </select>
 
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id)
+        FROM bank_account
+        WHERE date &gt;= #{startDate}
+          AND date &lt;= #{endDate}
+    </select>
 
 
     <select id="monthStartSumMoney" resultType="sumMoney">
         SELECT SUM(credit_money) AS creditMoney, SUM(debit_money) AS debitMoney
         FROM bank_account
-        WHERE date &lt; DATE_FORMAT(#{date},'%Y-%m-%d')
+        WHERE date &lt; #{date}
     </select>
 
 

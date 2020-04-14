@@ -4,7 +4,7 @@
 <mapper namespace="huanju.chen.app.dao.CashAccountMapper">
     <insert id="save" parameterType="cashAccount">
         INSERT INTO cash_account(date, proof_id, abstraction, subject_id, debit_money, credit_money)
-        VALUES ( #{date}, #{proofId}, #{abstraction}, #{subjectId}, #{debitMoney}, #{creditMoney})
+        VALUES (#{date}, #{proofId}, #{abstraction}, #{subjectId}, #{debitMoney}, #{creditMoney})
     </insert>
 
     <resultMap id="listMap" type="cashAccount">
@@ -22,7 +22,6 @@
         </association>
     </resultMap>
 
-
     <select id="list" parameterType="map" resultMap="listMap">
         SELECT c.id           AS id,
                c.date         AS date,
@@ -34,20 +33,31 @@
                s.id           AS sId,
                s.code         AS sCode,
                s.name         AS sName
-        FROM cash_account c
-                 LEFT JOIN subject s ON s.id = c.subject_id
-        <where>
-            <if test="startDate!=null and endDate!=null">
-                AND date &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d') AND date &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d')
-            </if>
-        </where>
-        ORDER BY date
+        FROM subject s
+                 RIGHT JOIN
+             (SELECT ca_temp.*
+              FROM cash_account ca_temp
+                       RIGHT JOIN
+                   (SELECT id
+                    FROM cash_account
+                    WHERE date &gt;= #{startDate}
+                      AND date &lt;= #{endDate}
+                    ORDER BY date) cai_temp ON ca_temp.id = cai_temp.id) c
+             ON s.id = c.subject_id
     </select>
+
 
     <select id="monthStartSumMoney" resultType="sumMoney">
         SELECT SUM(credit_money) AS creditMoney, SUM(debit_money) AS debitMoney
         FROM cash_account
-        WHERE date &lt; DATE_FORMAT(#{date},'%Y-%m-%d')
+        WHERE date &lt; DATE_FORMAT(#{date}, '%Y-%m-%d')
+    </select>
+
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id)
+        FROM cash_account
+        WHERE date &gt;= #{startDate}
+          AND date &lt;= #{endDate}
     </select>
 
 

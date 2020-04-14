@@ -7,40 +7,33 @@
         VALUES (#{date}, #{proofId}, #{abstraction}, #{subjectId}, #{debitMoney}, #{creditMoney})
     </insert>
 
+
     <select id="list" parameterType="map" resultType="subAccount">
-        SELECT id, date, proof_id, abstraction, subject_id, debit_money, credit_money
-        FROM sub_account
-        <where>
-            <if test="subjectId!=null">
-                AND subject_id=#{subjectId}
-            </if>
-            <if test="startDate!=null and endDate!=null">
-                AND date BETWEEN #{startDate} AND #{endDate}
-            </if>
-        </where>
-        ORDER BY date
-        <if test="offset!=null and count!=null">
-            LIMIT #{offset},#{count}
-        </if>
-    </select>
-
-
-    <select id="count" parameterType="map" resultType="integer">
-        SELECT COUNT(id) FROM sub_account
-        <where>
-            <if test="subjectId!=null">
-                AND subject_id=#{subjectId}
-            </if>
-            <if test="startDate!=null and endDate!=null">
-                AND date &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d') AND date &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d')
-            </if>
-        </where>
+        SELECT s.*
+        FROM sub_account s
+                 RIGHT JOIN
+             (SELECT id
+              FROM sub_account
+              WHERE subject_id = #{subjectId}
+                AND date &gt;= #{startDate}
+                AND date &lt;= #{endDate}
+              ORDER BY date) id_temp
+             ON s.id = id_temp.id
     </select>
 
     <select id="monthStartSumMoney" resultType="sumMoney">
         SELECT SUM(credit_money) AS creditMoney, SUM(debit_money) AS debitMoney
         FROM sub_account
-        WHERE subject_id=#{subjectId} AND date &lt; DATE_FORMAT(#{date},'%Y-%m-%d')
+        WHERE subject_id = #{subjectId}
+          AND date &lt; #{date}
+    </select>
+
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id)
+        FROM sub_account
+        WHERE subject_id = #{subjectId}
+          AND date &gt;= #{startDate}
+          AND date &lt;= #{endDate}
     </select>
 
 

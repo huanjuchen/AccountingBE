@@ -38,25 +38,33 @@
 
 
     <select id="list" parameterType="map" resultType="ledgerAccount">
-        SELECT id, date, subject_id, abstraction, debit_money, credit_money
-        FROM ledger_account
-        <where>
-            <if test="subjectId!=null">
-                AND subject_id=#{subjectId}
-            </if>
-            <if test="startDate!=null and endDate!=null">
-                AND date &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d') AND date &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d')
-            </if>
-        </where>
-        ORDER BY date
+        SELECT l.*
+        FROM ledger_account l
+                 RIGHT JOIN
+             (SELECT id
+              FROM ledger_account
+              WHERE subject_id = #{subjectId}
+                AND date &gt;= #{startDate}
+                AND date &lt;= #{endDate}
+              ORDER BY date) id_temp
+             ON l.id = id_temp.id
     </select>
+
 
     <select id="monthStartSumMoney" resultType="sumMoney">
         SELECT SUM(credit_money) AS creditMoney, SUM(debit_money) AS debitMoney
         FROM ledger_account
-        WHERE subject_id=#{subjectId} AND date &lt; DATE_FORMAT(#{date},'%Y-%m-%d')
+        WHERE subject_id = #{subjectId}
+          AND date &lt; #{date}
     </select>
 
+    <select id="count" parameterType="map" resultType="integer">
+        SELECT COUNT(id)
+        FROM ledger_account
+        WHERE subject_id = #{subjectId}
+          AND date &gt;= #{startDate}
+          AND date &lt;= #{endDate}
+    </select>
 
 
 </mapper>

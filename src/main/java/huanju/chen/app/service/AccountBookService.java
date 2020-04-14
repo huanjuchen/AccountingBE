@@ -10,12 +10,21 @@ import java.util.List;
 
 public interface AccountBookService {
 
-    List<BankAccountVO> getBankAccount(String startDate, String endDate);
+    List<BankAccountVO> getBankAccount(String startDate, String endDate, Integer page);
 
-    List<CashAccountVO> getCashAccount(String startDate, String endDate);
+    List<CashAccountVO> getCashAccount(String startDate, String endDate,Integer page);
 
-    List<SubAccountVO> getSubAccount(Integer subjectId, String startDate, String endDate);
+    List<SubAccountVO> getSubAccount(Integer subjectId, String startDate, String endDate,Integer page);
 
-    List<LedgerAccountVO> getLedgerAccount(Integer subjectId, Integer year);
+    List<LedgerAccountVO> getLedgerAccount(Integer subjectId, String startDate, String endDate);
+
+
+    Integer getBankAccountCount(String startDate, String endDate);
+
+    Integer getCashAccountCount(String startDate, String endDate);
+
+    Integer getLedgerAccountCount(Integer subjectId, String startDate, String endDate);
+
+    Integer getSubAccountCount(Integer subjectId, String startDate, String endDate);
 
 }

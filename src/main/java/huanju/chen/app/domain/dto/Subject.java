@@ -27,7 +27,7 @@ public class Subject implements Serializable {
      * 科目代码
      */
     @NotNull(message = "科目代码不能为空")
-    @Size(min = 4, max = 6, message = "科目代码的长度为${min}至${max}位")
+    @Size(min = 4, max = 8, message = "科目代码的长度为${min}至${max}位")
     private String code;
     /**
      * 科目名

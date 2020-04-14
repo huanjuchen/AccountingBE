@@ -282,14 +282,15 @@ public class ProofServiceImpl implements ProofService {
         List<ProofItem> items = proof.getItems();
         for (ProofItem item : items) {
             ProofItem trashItem = new ProofItem();
-            trashItem.setAbstraction(item.getAbstraction())
-                    .setDebitSubSubjectId(item.getDebitSubSubjectId())
-                    .setCreditSubSubjectId(item.getCreditSubSubjectId())
-                    .setDebitLedgerSubjectId(item.getDebitLedgerSubjectId())
-                    .setCreditLedgerSubjectId(item.getCreditLedgerSubjectId())
+            trashItem.setAbstraction(item.getAbstraction()+"错误冲账")
+                    //反向
+                    .setDebitSubSubjectId(item.getCreditSubSubjectId())
+                    .setCreditSubSubjectId(item.getDebitSubSubjectId())
+                    .setDebitLedgerSubjectId(item.getCreditLedgerSubjectId())
+                    .setCreditLedgerSubjectId(item.getDebitLedgerSubjectId())
                     .setProofId(trashProof.getId())
                     .setCharge(false);
-            trashItem.setMoney(item.getMoney().multiply(new BigDecimal(-1)));
+            trashItem.setMoney(item.getMoney());
             if (proofItemMapper.save(trashItem) != 1) {
                 throw new BadCreateException(500, "服务器错误");
             }
@@ -438,12 +439,12 @@ public class ProofServiceImpl implements ProofService {
         Subject cls = item.getCreditLedgerSubject();
         if (dls != null) {
             Integer dlsId = dls.getId();
-            LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(dlsId, last);
+            LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(dlsId, date);
             int row = 0;
             if (la == null) {
                 la = new LedgerAccount();
-                la.setAbstraction("本月合计")
-                        .setDate(last)
+                la.setAbstraction("本日合计")
+                        .setDate(date)
                         .setSubjectId(dlsId)
                         .setDebitMoney(item.getMoney());
                 row = ledgerAccountMapper.save(la);
@@ -463,12 +464,12 @@ public class ProofServiceImpl implements ProofService {
 
         if (cls != null) {
             Integer clsId = cls.getId();
-            LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(clsId, last);
+            LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(clsId, date);
             int row = 0;
             if (la == null) {
                 la = new LedgerAccount();
-                la.setAbstraction("本月合计")
-                        .setDate(last).setSubjectId(clsId).setCreditMoney(item.getMoney());
+                la.setAbstraction("本日合计")
+                        .setDate(date).setSubjectId(clsId).setCreditMoney(item.getMoney());
                 row = ledgerAccountMapper.save(la);
             } else {
                 BigDecimal money = la.getCreditMoney();

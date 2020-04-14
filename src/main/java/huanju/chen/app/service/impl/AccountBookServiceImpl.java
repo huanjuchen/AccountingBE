@@ -53,15 +53,8 @@ public class AccountBookServiceImpl implements AccountBookService {
     }
 
     @Override
-    public List<BankAccountVO> getBankAccount(String startDate, String endDate) {
-        if (startDate == null || startDate.length() == 0) {
-            String[] se = DateUtils.monthStartEnd(new Date());
-            startDate = se[0];
-            endDate = se[1];
-        }
-        Map<String, Object> map = new HashMap<>(1 << 2);
-        map.put("startDate", startDate);
-        map.put("endDate", endDate);
+    public List<BankAccountVO> getBankAccount(String startDate, String endDate, Integer page) {
+        Map<String, Object> map = paramHandle(null, startDate, endDate, page == null ? 0 : page);
         List<BankAccount> list = bankAccountMapper.list(map);
         SumMoney sumMoney = bankAccountMapper.monthStartSumMoney(startDate);
         BigDecimal debitMoney = null;
@@ -78,7 +71,7 @@ public class AccountBookServiceImpl implements AccountBookService {
             creditMoney = sumMoney.getCreditMoney();
             temp = AccountBookUtils.computeMoney(1, null, debitMoney, creditMoney);
             bav = new BankAccountVO();
-            bav.setAbstraction("月初余额").setMoney(temp).setDate(DateUtils.getDate(startDate));
+            bav.setAbstraction("期初余额").setMoney(temp).setDate(DateUtils.getDate(startDate));
             bavS.add(bav);
         }
         //其他处理
@@ -95,15 +88,9 @@ public class AccountBookServiceImpl implements AccountBookService {
 
 
     @Override
-    public List<CashAccountVO> getCashAccount(String startDate, String endDate) {
-        if (startDate == null || startDate.length() == 0) {
-            String[] se = DateUtils.monthStartEnd(new Date());
-            startDate = se[0];
-            endDate = se[1];
-        }
-        Map<String, Object> map = new HashMap<>(1 << 2);
-        map.put("startDate", startDate);
-        map.put("endDate", endDate);
+    public List<CashAccountVO> getCashAccount(String startDate, String endDate, Integer page) {
+        Map<String, Object> map = paramHandle(null, startDate, endDate, page == null ? 0 : page);
+
         List<CashAccount> cashAccounts = cashAccountMapper.list(map);
         SumMoney sumMoney = cashAccountMapper.monthStartSumMoney(startDate);
         BigDecimal dm = null;
@@ -120,7 +107,7 @@ public class AccountBookServiceImpl implements AccountBookService {
             cm = sumMoney.getCreditMoney();
             temp = AccountBookUtils.computeMoney(1, null, dm, cm);
             cav = new CashAccountVO();
-            cav.setAbstraction("月初余额").setMoney(temp).setDate(DateUtils.getDate(startDate));
+            cav.setAbstraction("期初余额").setMoney(temp).setDate(DateUtils.getDate(startDate));
             cas.add(cav);
         }
         //其他处理
@@ -136,23 +123,16 @@ public class AccountBookServiceImpl implements AccountBookService {
     }
 
     @Override
-    public List<SubAccountVO> getSubAccount(Integer subjectId, String startDate, String endDate) {
+    public List<SubAccountVO> getSubAccount(Integer subjectId, String startDate, String endDate, Integer page) {
         Subject subject = subjectMapper.find(subjectId);
         if (subject == null) {
             return null;
         }
         int category = subject.getCategory();
-        if (startDate == null || startDate.length() == 0) {
-            String[] se = DateUtils.monthStartEnd(new Date());
-            startDate = se[0];
-            endDate = se[1];
-        }
-        Map<String, Object> map = new HashMap<>(1 << 2);
-        map.put("startDate", startDate);
-        map.put("endDate", endDate);
-        map.put("subjectId", subjectId);
+        Map<String, Object> map = paramHandle(subjectId, startDate, endDate, page == null ? 0 : page);
         List<SubAccount> list = subAccountMapper.list(map);
-        SumMoney sumMoney = subAccountMapper.monthStartSumMoney(startDate,subjectId);
+
+        SumMoney sumMoney = subAccountMapper.monthStartSumMoney(startDate, subjectId);
         BigDecimal dm = null;
         BigDecimal cm = null;
         /*
@@ -169,7 +149,7 @@ public class AccountBookServiceImpl implements AccountBookService {
             temp = AccountBookUtils.computeMoney(category, null, dm, cm);
             sav = new SubAccountVO();
             mark = AccountBookUtils.getMark(category, dm, cm);
-            sav.setAbstraction("月初余额").setMoney(temp).setDate(DateUtils.getDate(startDate)).setMark(mark);
+            sav.setAbstraction("期初余额").setMoney(temp).setDate(DateUtils.getDate(startDate)).setMark(mark);
             sas.add(sav);
         }
 
@@ -185,23 +165,17 @@ public class AccountBookServiceImpl implements AccountBookService {
         return sas;
     }
 
+
     @Override
-    public List<LedgerAccountVO> getLedgerAccount(Integer subjectId, Integer year) {
+    public List<LedgerAccountVO> getLedgerAccount(Integer subjectId, String startDate, String endDate) {
         Subject subject = subjectMapper.find(subjectId);
         if (subject == null) {
             return null;
         }
         int category = subject.getCategory();
-        String[] dates = DateUtils.yearStartEnd(year);
-        String startDate = dates[0];
-        String endDate = dates[1];
-        Map<String, Object> map = new HashMap<>(1 << 3);
-        map.put("startDate", startDate);
-        map.put("endDate", endDate);
-        map.put("subjectId", subjectId);
-
+        Map<String, Object> map = paramHandle(subjectId, startDate, endDate, null);
         List<LedgerAccount> list = ledgerAccountMapper.list(map);
-        SumMoney sumMoney = ledgerAccountMapper.monthStartSumMoney(startDate,subjectId);
+        SumMoney sumMoney = ledgerAccountMapper.monthStartSumMoney(startDate, subjectId);
         BigDecimal dm = null;
         BigDecimal cm = null;
 
@@ -215,11 +189,11 @@ public class AccountBookServiceImpl implements AccountBookService {
             temp = AccountBookUtils.computeMoney(category, null, dm, cm);
             lav = new LedgerAccountVO();
             mark = AccountBookUtils.getMark(category, dm, cm);
-            lav.setAbstraction("年初余额").setMoney(temp).setDate(DateUtils.getDate(startDate)).setMark(mark);
+            lav.setAbstraction("期初余额").setMoney(temp).setDate(DateUtils.getDate(startDate)).setMark(mark);
             las.add(lav);
         }
-        for (LedgerAccount item:list){
-            lav=item.covert();
+        for (LedgerAccount item : list) {
+            lav = item.covert();
             dm = item.getDebitMoney();
             cm = item.getCreditMoney();
             temp = AccountBookUtils.computeMoney(category, temp, dm, cm);
@@ -229,4 +203,56 @@ public class AccountBookServiceImpl implements AccountBookService {
         }
         return las;
     }
+
+
+    @Override
+    public Integer getBankAccountCount(String startDate, String endDate) {
+        Map<String, Object> map = paramHandle(null, startDate, endDate, null);
+        return bankAccountMapper.count(map);
+    }
+
+    @Override
+    public Integer getCashAccountCount(String startDate, String endDate) {
+        Map<String, Object> map = paramHandle(null, startDate, endDate, null);
+        return cashAccountMapper.count(map);
+    }
+
+    @Override
+    public Integer getLedgerAccountCount(Integer subjectId, String startDate, String endDate) {
+        if (subjectId==null||subjectId==0){
+            return 0;
+        }
+        Map<String, Object> map = paramHandle(subjectId, startDate, endDate, null);
+        return ledgerAccountMapper.count(map);
+    }
+
+    @Override
+    public Integer getSubAccountCount(Integer subjectId, String startDate, String endDate) {
+        if (subjectId==null||subjectId==0){
+            return 0;
+        }
+        Map<String, Object> map = paramHandle(subjectId, startDate, endDate, null);
+        return subAccountMapper.count(map);
+    }
+
+
+    private Map<String, Object> paramHandle(Integer subjectId, String startDate, String endDate, Integer page) {
+        Map<String, Object> map = new HashMap<>(1 << 3);
+        if (startDate == null || startDate.length() == 0) {
+            String[] se = DateUtils.monthStartEnd(new Date());
+            startDate = se[0];
+            endDate = se[1];
+        }
+        map.put("startDate", startDate);
+        map.put("endDate", endDate);
+        if (subjectId != null) {
+            map.put("subjectId", subjectId);
+        }
+        if (page != null) {
+            map.put("offset", page > 0 ? ((page - 1) * 10) : 0);
+            map.put("count", 10);
+        }
+        return map;
+    }
+
 }
