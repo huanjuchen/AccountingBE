@@ -1,6 +1,7 @@
 package huanju.chen.app.service;
 
 
+import huanju.chen.app.domain.dto.Proof;
 import huanju.chen.app.domain.vo.BankAccountVO;
 import huanju.chen.app.domain.vo.CashAccountVO;
 import huanju.chen.app.domain.vo.LedgerAccountVO;
@@ -17,6 +18,8 @@ public interface AccountBookService {
     List<SubAccountVO> getSubAccount(Integer subjectId, String startDate, String endDate,Integer page);
 
     List<LedgerAccountVO> getLedgerAccount(Integer subjectId, String startDate, String endDate);
+
+    void AccountBookHandle(Proof proof);
 
 
     Integer getBankAccountCount(String startDate, String endDate);

@@ -1,6 +1,8 @@
 package huanju.chen.app.service.impl;
 
 import huanju.chen.app.dao.*;
+import huanju.chen.app.handle.HandleCenter;
+import huanju.chen.app.handle.ProofSyncQueue;
 import huanju.chen.app.domain.dto.*;
 
 import huanju.chen.app.exception.v2.AccountingException;
@@ -19,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -42,6 +43,16 @@ public class ProofServiceImpl implements ProofService {
     private SubAccountMapper subAccountMapper;
 
     private CacheManager cacheManager;
+
+    private HandleCenter handleCenter;
+
+
+    private final ProofSyncQueue queue=ProofSyncQueue.getInstance();
+
+    @Resource
+    public void setHandleCenter(HandleCenter handleCenter) {
+        this.handleCenter = handleCenter;
+    }
 
     @Resource
     public void setProofMapper(ProofMapper proofMapper) {
@@ -218,7 +229,8 @@ public class ProofServiceImpl implements ProofService {
             throw new BadUpdateException(400, "更新失败");
         }
         if (result) {
-            verifyPass(proof);
+            queue.add(proof);
+            handleCenter.wakeHandle();
         }
     }
 
@@ -289,194 +301,6 @@ public class ProofServiceImpl implements ProofService {
             trashItem.setMoney(item.getMoney());
             if (proofItemMapper.save(trashItem) != 1) {
                 throw new BadCreateException(500, "服务器错误");
-            }
-        }
-    }
-
-    private final static char DEBIT = 'D';
-    private final static char CREDIT = 'C';
-
-    /**
-     * 审核通过
-     */
-    private void verifyPass(Proof proof) {
-        List<ProofItem> items = proof.getItems();
-
-        //借方总账科目
-        Subject dls;
-        //贷方总账科目
-        Subject cls;
-
-        for (ProofItem item : items) {
-            dls = item.getDebitLedgerSubject();
-            cls = item.getCreditLedgerSubject();
-            /*
-            填写日记账
-             */
-            //现金
-            if (dls != null && Objects.equals(dls.getCode(), "1001")) {
-                //借
-                cashAccountHandle(item, DEBIT, proof.getDate(), proof.getId());
-            } else if (cls != null &&
-                    Objects.equals(cls.getCode(), "1001")) {
-                //贷
-                cashAccountHandle(item, CREDIT, proof.getDate(), proof.getId());
-            }
-            //银行
-            if (dls != null && Objects.equals(dls.getCode(), "1002")) {
-                bankAccountHandle(item, DEBIT, proof.getDate(), proof.getId());
-            } else if (cls != null && Objects.equals(cls.getCode(), "1002")) {
-                bankAccountHandle(item, CREDIT, proof.getDate(), proof.getId());
-            }
-            /*
-            明细账
-             */
-            subAccountHandle(item, proof.getDate(), proof.getId());
-            /*
-            总账
-             */
-            ledgerAccountHandle(item, proof.getDate());
-            ProofItem itemNew = new ProofItem();
-            itemNew.setId(item.getId());
-            itemNew.setCharge(true);
-            int rows = proofItemMapper.update(itemNew);
-            if (rows != 1) {
-                throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
-            }
-        }
-    }
-
-    /**
-     * 现金日记账处理
-     */
-    private void cashAccountHandle(ProofItem item, char t, Date date, Integer proofId) {
-        CashAccount cashAccount = new CashAccount();
-        if (t == DEBIT) {
-            cashAccount.setDate(date)
-                    .setProofId(proofId)
-                    .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getCreditLedgerSubjectId())
-                    .setDebitMoney(item.getMoney());
-        } else {
-            cashAccount.setDate(date)
-                    .setProofId(proofId)
-                    .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getDebitLedgerSubjectId())
-                    .setCreditMoney(item.getMoney());
-        }
-        int rows = cashAccountMapper.save(cashAccount);
-        if (rows != 1) {
-            throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
-        }
-    }
-
-    /**
-     * 银行日记账处理
-     */
-    private void bankAccountHandle(ProofItem item, char t, Date date, Integer proofId) {
-        BankAccount bankAccount = new BankAccount();
-        if (t == DEBIT) {
-            bankAccount.setDate(date)
-                    .setProofId(proofId)
-                    .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getCreditLedgerSubjectId())
-                    .setDebitMoney(item.getMoney());
-        } else {
-            bankAccount.setDate(date)
-                    .setProofId(proofId)
-                    .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getDebitLedgerSubjectId())
-                    .setCreditMoney(item.getMoney());
-        }
-        int rows = bankAccountMapper.save(bankAccount);
-        if (rows != 1) {
-            throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
-        }
-    }
-
-    /**
-     * 明细分类账处理
-     */
-    private void subAccountHandle(ProofItem item, Date date, Integer proofId) {
-
-        if (item.getDebitSubSubject() != null) {
-            SubAccount subAccount = new SubAccount();
-            subAccount.setDate(date)
-                    .setProofId(proofId)
-                    .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getDebitSubSubjectId())
-                    .setDebitMoney(item.getMoney());
-            int rows = subAccountMapper.save(subAccount);
-            if (rows != 1) {
-                throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
-            }
-        }
-        if (item.getCreditSubSubject() != null) {
-            SubAccount subAccount = new SubAccount();
-            subAccount.setDate(date)
-                    .setProofId(proofId)
-                    .setAbstraction(item.getAbstraction())
-                    .setSubjectId(item.getCreditSubSubjectId())
-                    .setCreditMoney(item.getMoney());
-            int rows = subAccountMapper.save(subAccount);
-            if (rows != 1) {
-                throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
-            }
-        }
-
-    }
-
-    /**
-     * 总账处理
-     */
-    private void ledgerAccountHandle(ProofItem item, Date date) {
-        Subject dls = item.getDebitLedgerSubject();
-        Subject cls = item.getCreditLedgerSubject();
-        if (dls != null) {
-            Integer dlsId = dls.getId();
-            LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(dlsId, date);
-            int row;
-            if (la == null) {
-                la = new LedgerAccount();
-                la.setAbstraction("本日合计")
-                        .setDate(date)
-                        .setSubjectId(dlsId)
-                        .setDebitMoney(item.getMoney());
-                row = ledgerAccountMapper.save(la);
-            } else {
-                BigDecimal money = la.getDebitMoney();
-                if (money==null){
-                    money=new BigDecimal("0.00");
-                }
-                LedgerAccount nla = new LedgerAccount();
-                nla.setId(la.getId()).setDebitMoney(money.add(item.getMoney()));
-                row = ledgerAccountMapper.update(nla);
-            }
-            if (row != 1) {
-                throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
-            }
-        }
-
-        if (cls != null) {
-            Integer clsId = cls.getId();
-            LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(clsId, date);
-            int row;
-            if (la == null) {
-                la = new LedgerAccount();
-                la.setAbstraction("本日合计")
-                        .setDate(date).setSubjectId(clsId).setCreditMoney(item.getMoney());
-                row = ledgerAccountMapper.save(la);
-            } else {
-                BigDecimal money = la.getCreditMoney();
-                if (money==null){
-                    money=new BigDecimal("0.00");
-                }
-                LedgerAccount nla = new LedgerAccount();
-                nla.setId(la.getId()).setCreditMoney(money.add(item.getMoney()));
-                row = ledgerAccountMapper.update(nla);
-            }
-            if (row != 1) {
-                throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
             }
         }
     }
