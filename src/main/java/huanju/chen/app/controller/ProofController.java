@@ -32,10 +32,10 @@ public final class ProofController {
     private static final Logger logger = LoggerFactory.getLogger(ProofController.class);
 
     @PostMapping("/proof")
-    public ApiResult createProof(@Validated @RequestBody Proof proof, HttpServletRequest request) {
+    public ApiResult<Object> createProof(@Validated @RequestBody Proof proof, HttpServletRequest request) {
         String tokenId = request.getHeader("token_id");
         proofService.save(proof, tokenId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
     private final Object object = new Object();

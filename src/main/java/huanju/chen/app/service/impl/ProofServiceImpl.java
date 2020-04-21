@@ -125,13 +125,10 @@ public class ProofServiceImpl implements ProofService {
         if (rows != 1) {
             throw new AccountingException(500, "系统出现了异常，请稍后重试");
         }
-
         Subject clSubject;
         Subject dlSubject;
         Subject csSubject;
         Subject dsSubject;
-
-
         for (ProofItem proofItem : proof.getItems()) {
             proofItem.setProofId(proof.getId());
             clSubject = subjectMapper.find(proofItem.getCreditLedgerSubjectId());

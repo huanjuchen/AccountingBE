@@ -278,10 +278,6 @@ public class AccountBookServiceImpl implements AccountBookService {
             } finally {
                 lock.unlock();
             }
-            if (true) {
-                throw new RuntimeException("模拟错误");
-            }
-
             ProofItem itemNew = new ProofItem();
             itemNew.setId(item.getId());
             itemNew.setCharge(true);
