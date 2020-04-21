@@ -6,6 +6,7 @@ import huanju.chen.app.domain.vo.BankAccountVO;
 import huanju.chen.app.domain.vo.CashAccountVO;
 import huanju.chen.app.domain.vo.LedgerAccountVO;
 import huanju.chen.app.domain.vo.SubAccountVO;
+import huanju.chen.app.handle.HandleCenter;
 import huanju.chen.app.service.AccountBookService;
 import huanju.chen.app.utils.AccountBookUtils;
 import huanju.chen.app.utils.DateUtils;
@@ -20,7 +21,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
-@Transactional(rollbackFor = RuntimeException.class,propagation = Propagation.SUPPORTS,readOnly = true)
+@Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.SUPPORTS, readOnly = true)
 public class AccountBookServiceImpl implements AccountBookService {
 
     private BankAccountMapper bankAccountMapper;
@@ -33,7 +34,15 @@ public class AccountBookServiceImpl implements AccountBookService {
 
     private ProofMapper proofMapper;
 
-    private Lock lock=new ReentrantLock();
+    private Lock lock = new ReentrantLock();
+
+    private HandleCenter handleCenter;
+
+    @Resource
+    public void setHandleCenter(HandleCenter handleCenter) {
+        this.handleCenter = handleCenter;
+    }
+
 
     @Resource
     public void setProofItemMapper(ProofItemMapper proofItemMapper) {
@@ -226,7 +235,7 @@ public class AccountBookServiceImpl implements AccountBookService {
     private final static char CREDIT = 'C';
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class,propagation = Propagation.REQUIRED)
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public void AccountBookHandle(Proof proof) {
         List<ProofItem> items = proof.getItems();
 
@@ -266,9 +275,13 @@ public class AccountBookServiceImpl implements AccountBookService {
             lock.lock();
             try {
                 ledgerAccountHandle(item, proof.getDate());
-            }finally {
+            } finally {
                 lock.unlock();
             }
+            if (true) {
+                throw new RuntimeException("模拟错误");
+            }
+
             ProofItem itemNew = new ProofItem();
             itemNew.setId(item.getId());
             itemNew.setCharge(true);
@@ -276,8 +289,16 @@ public class AccountBookServiceImpl implements AccountBookService {
             if (rows != 1) {
                 throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
             }
+            handleCenter.wakeHandle();
         }
+    }
 
+    @Override
+    public void HandleRollBack(Proof proof) {
+        int rows = proofMapper.update(proof);
+        if (rows != 1) {
+            throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
+        }
     }
 
 
@@ -380,8 +401,8 @@ public class AccountBookServiceImpl implements AccountBookService {
                 row = ledgerAccountMapper.save(la);
             } else {
                 BigDecimal money = la.getDebitMoney();
-                if (money==null){
-                    money=new BigDecimal("0.00");
+                if (money == null) {
+                    money = new BigDecimal("0.00");
                 }
                 LedgerAccount nla = new LedgerAccount();
                 nla.setId(la.getId()).setDebitMoney(money.add(item.getMoney()));
@@ -403,8 +424,8 @@ public class AccountBookServiceImpl implements AccountBookService {
                 row = ledgerAccountMapper.save(la);
             } else {
                 BigDecimal money = la.getCreditMoney();
-                if (money==null){
-                    money=new BigDecimal("0.00");
+                if (money == null) {
+                    money = new BigDecimal("0.00");
                 }
                 LedgerAccount nla = new LedgerAccount();
                 nla.setId(la.getId()).setCreditMoney(money.add(item.getMoney()));
@@ -431,7 +452,7 @@ public class AccountBookServiceImpl implements AccountBookService {
 
     @Override
     public Integer getLedgerAccountCount(Integer subjectId, String startDate, String endDate) {
-        if (subjectId==null||subjectId==0){
+        if (subjectId == null || subjectId == 0) {
             return 0;
         }
         Map<String, Object> map = paramHandle(subjectId, startDate, endDate, null);
@@ -440,7 +461,7 @@ public class AccountBookServiceImpl implements AccountBookService {
 
     @Override
     public Integer getSubAccountCount(Integer subjectId, String startDate, String endDate) {
-        if (subjectId==null||subjectId==0){
+        if (subjectId == null || subjectId == 0) {
             return 0;
         }
         Map<String, Object> map = paramHandle(subjectId, startDate, endDate, null);

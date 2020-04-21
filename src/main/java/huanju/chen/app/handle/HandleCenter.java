@@ -19,17 +19,18 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component
 public class HandleCenter {
 
-    private Logger logger = LoggerFactory.getLogger(HandleCenter.class);
+    private final static Logger logger = LoggerFactory.getLogger(HandleCenter.class);
 
-    private ProofSyncQueue queue = ProofSyncQueue.getInstance();
+    private final ProofSyncQueue queue = ProofSyncQueue.getInstance();
 
-    private Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
-    private Condition condition = lock.newCondition();
+    private final Condition condition = lock.newCondition();
 
-    private ExecutorService executorService= new ThreadPoolExecutor(5,5,
+    ExecutorService executorService= new ThreadPoolExecutor(5,5,
             60L, TimeUnit.SECONDS
             ,new ArrayBlockingQueue<>(5),new ThreadPoolExecutor.AbortPolicy());
+
 
     private AccountBookService service;
 
@@ -40,7 +41,10 @@ public class HandleCenter {
     }
 
     {
-        this.handle();
+        new Thread(()->{
+            logger.info("处理线程已经启动");
+            this.handle();
+        }, "lookUp" ).start();
     }
 
     public void wakeHandle() {
@@ -63,9 +67,8 @@ public class HandleCenter {
               }
               Proof proof=queue.get();
               BookTask task=new BookTask(service,proof);
-              FutureTask<Boolean> bookTask=new FutureTask<>(task);
               try {
-                  executorService.execute(bookTask);
+                  executorService.execute(task);
                   queue.remove();
               }catch (RejectedExecutionException e){
                   condition.await();
@@ -74,6 +77,7 @@ public class HandleCenter {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
+            executorService.shutdown();
             lock.unlock();
         }
     }

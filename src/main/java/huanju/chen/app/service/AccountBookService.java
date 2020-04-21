@@ -21,6 +21,7 @@ public interface AccountBookService {
 
     void AccountBookHandle(Proof proof);
 
+    void HandleRollBack(Proof proof);
 
     Integer getBankAccountCount(String startDate, String endDate);
 

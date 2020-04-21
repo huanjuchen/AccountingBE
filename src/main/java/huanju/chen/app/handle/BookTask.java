@@ -6,17 +6,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author HuanJu
  */
-public class BookTask implements Callable<Boolean> {
+public class BookTask implements Runnable {
 
-    private final static Logger logger= LoggerFactory.getLogger(BookTask.class);
+    private final static Logger logger = LoggerFactory.getLogger(BookTask.class);
 
     private AccountBookService service;
 
     private Proof proof;
+
+    private ProofSyncQueue queue;
 
     public BookTask(AccountBookService service, Proof proof) {
         this.service = service;
@@ -24,13 +27,26 @@ public class BookTask implements Callable<Boolean> {
     }
 
     @Override
-    public Boolean call() throws Exception {
+    public void run() {
         try {
+            logger.info("处理" + proof.getId() + "号凭证");
             service.AccountBookHandle(proof);
-        }catch (Exception e){
-            logger.error("凭证"+proof.getId()+"处理出现了异常");
-            return false;
+            logger.info(proof.getId() + "处理成功");
+        }catch (RuntimeException e){
+            rollback(proof.getId());
         }
-        return true;
+    }
+
+
+    private void rollback(Integer proofId){
+        Proof proof=new Proof();
+        proof.setId(proofId).setVerify(0).setVerifyUserId(0);
+        try {
+            service.HandleRollBack(proof);
+            logger.error(proofId+"凭证处理失败，已回滚");
+        }catch (RuntimeException e){
+            logger.error(proofId+"凭证处理失败，且回滚失败");
+        }
+
     }
 }
