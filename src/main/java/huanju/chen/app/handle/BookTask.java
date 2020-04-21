@@ -30,7 +30,7 @@ public class BookTask implements Runnable {
     public void run() {
         try {
             logger.info("处理" + proof.getId() + "号凭证");
-            service.AccountBookHandle(proof);
+            service.accountBookHandle(proof);
             logger.info(proof.getId() + "处理成功");
         }catch (RuntimeException e){
             rollback(proof.getId());
@@ -42,7 +42,7 @@ public class BookTask implements Runnable {
         Proof proof=new Proof();
         proof.setId(proofId).setVerify(0).setVerifyUserId(0);
         try {
-            service.HandleRollBack(proof);
+            service.handleRollBack(proof);
             logger.error(proofId+"凭证处理失败，已回滚");
         }catch (RuntimeException e){
             logger.error(proofId+"凭证处理失败，且回滚失败");

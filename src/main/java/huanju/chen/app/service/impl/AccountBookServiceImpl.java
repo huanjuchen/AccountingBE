@@ -236,7 +236,7 @@ public class AccountBookServiceImpl implements AccountBookService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
-    public void AccountBookHandle(Proof proof) {
+    public void accountBookHandle(Proof proof) {
         List<ProofItem> items = proof.getItems();
 
         //借方总账科目
@@ -290,7 +290,7 @@ public class AccountBookServiceImpl implements AccountBookService {
     }
 
     @Override
-    public void HandleRollBack(Proof proof) {
+    public void handleRollBack(Proof proof) {
         int rows = proofMapper.update(proof);
         if (rows != 1) {
             throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");

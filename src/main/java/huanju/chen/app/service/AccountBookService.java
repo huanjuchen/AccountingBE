@@ -19,9 +19,9 @@ public interface AccountBookService {
 
     List<LedgerAccountVO> getLedgerAccount(Integer subjectId, String startDate, String endDate);
 
-    void AccountBookHandle(Proof proof);
+    void accountBookHandle(Proof proof);
 
-    void HandleRollBack(Proof proof);
+    void handleRollBack(Proof proof);
 
     Integer getBankAccountCount(String startDate, String endDate);
 
