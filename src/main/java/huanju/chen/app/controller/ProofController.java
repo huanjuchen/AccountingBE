@@ -38,13 +38,13 @@ public final class ProofController {
         return ApiResult.success();
     }
 
-    private Object object = new Object();
-    private static String ID_DESC = "idDESC";
-    private static String ID_ASC = "idASC";
-    private static String DATE_DESC = "dateDESC";
-    private static String DATE_ASC = "dateASC";
-    private static String RID_DESC = "ridDESC";
-    private static String RID_ASC = "ridASC";
+    private final Object object = new Object();
+    private static final String ID_DESC = "idDESC";
+    private static final String ID_ASC = "idASC";
+    private static final String DATE_DESC = "dateDESC";
+    private static final String DATE_ASC = "dateASC";
+    private static final String RID_DESC = "ridDESC";
+    private static final String RID_ASC = "ridASC";
 
     /**
      * 查询会计凭证
@@ -90,18 +90,25 @@ public final class ProofController {
             }
         }
         if (orderType != null) {
-            if (ID_ASC.equals(orderType)) {
-                map.put(ID_ASC, object);
-            } else if (ID_DESC.equals(orderType)) {
-                map.put(ID_DESC, object);
-            } else if (DATE_ASC.equals(orderType)) {
-                map.put(DATE_ASC, object);
-            } else if (DATE_DESC.equals(orderType)) {
-                map.put(DATE_DESC, object);
-            } else if (RID_ASC.equals(orderType)) {
-                map.put(RID_ASC, object);
-            } else if (RID_DESC.equals(orderType)) {
-                map.put(RID_DESC, object);
+            switch (orderType) {
+                case ID_ASC:
+                    map.put(ID_ASC, object);
+                    break;
+                case ID_DESC:
+                    map.put(ID_DESC, object);
+                    break;
+                case DATE_ASC:
+                    map.put(DATE_ASC, object);
+                    break;
+                case DATE_DESC:
+                    map.put(DATE_DESC, object);
+                    break;
+                case RID_ASC:
+                    map.put(RID_ASC, object);
+                    break;
+                case RID_DESC:
+                    map.put(RID_DESC, object);
+                    break;
             }
 
         }
@@ -178,10 +185,10 @@ public final class ProofController {
      * 审核
      */
     @PutMapping("/manage/proof/verify")
-    public ApiResult verify(@RequestBody @Validated ProofVerify proofVerify, HttpServletRequest request) {
+    public ApiResult<Object> verify(@RequestBody @Validated ProofVerify proofVerify, HttpServletRequest request) {
         String tokenId = request.getHeader("token_id");
         proofService.verify(proofVerify.getId(), proofVerify.getResult(), tokenId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 
@@ -189,11 +196,11 @@ public final class ProofController {
      * 冲账
      */
     @PutMapping("/proof/trash/{id}")
-    public ApiResult trashProof(@PathVariable Integer id,HttpServletRequest request) {
+    public ApiResult<Object> trashProof(@PathVariable Integer id,HttpServletRequest request) {
         String tokenId=request.getHeader("token_id");
         proofService.trashProof(id,tokenId);
 
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 }

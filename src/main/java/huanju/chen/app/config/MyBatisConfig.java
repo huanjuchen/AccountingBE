@@ -16,12 +16,12 @@ public class MyBatisConfig {
 
     @Bean
     public ConfigurationCustomizer configurationCustomizer() {
+
         return new ConfigurationCustomizer() {
             @Override
             public void customize(org.apache.ibatis.session.Configuration configuration) {
                 configuration.setMapUnderscoreToCamelCase(true);
                 TypeAliasRegistry registry = configuration.getTypeAliasRegistry();
-//                registry.registerAliases("huanju.chen.app.domain.dto");
                 registry.registerAlias(BankAccount.class);
                 registry.registerAlias(CashAccount.class);
                 registry.registerAlias(Information.class);

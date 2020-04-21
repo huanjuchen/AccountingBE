@@ -1,6 +1,5 @@
 package huanju.chen.app.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import huanju.chen.app.dao.*;
 import huanju.chen.app.domain.dto.*;
 
@@ -10,12 +9,10 @@ import huanju.chen.app.exception.v2.BadUpdateException;
 import huanju.chen.app.exception.v2.NotFoundException;
 import huanju.chen.app.security.token.Token;
 import huanju.chen.app.service.ProofService;
-import huanju.chen.app.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +92,7 @@ public class ProofServiceImpl implements ProofService {
 
     private static final int DSS = 4;
 
-    private static Map<Integer, String> MSG_MAP = new HashMap<>(1 >> 3);
+    private static final Map<Integer, String> MSG_MAP = new HashMap<>(1 >> 3);
 
     static {
         MSG_MAP.put(CLS, "贷方总账科目");
@@ -107,7 +104,7 @@ public class ProofServiceImpl implements ProofService {
 
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public void save(Proof proof, String tokenId) {
         Token token = getToken(tokenId);
         Integer userId = token.getUserId();
@@ -118,10 +115,10 @@ public class ProofServiceImpl implements ProofService {
             throw new AccountingException(500, "系统出现了异常，请稍后重试");
         }
 
-        Subject clSubject = null;
-        Subject dlSubject = null;
-        Subject csSubject = null;
-        Subject dsSubject = null;
+        Subject clSubject;
+        Subject dlSubject;
+        Subject csSubject;
+        Subject dsSubject;
 
 
         for (ProofItem proofItem : proof.getItems()) {
@@ -200,7 +197,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public void verify(Integer proofId, Boolean result, String tokenId) {
         Proof proof = proofMapper.find(proofId);
         if (proof == null) {
@@ -223,7 +220,6 @@ public class ProofServiceImpl implements ProofService {
         if (result) {
             verifyPass(proof);
         }
-
     }
 
     /**
@@ -247,7 +243,7 @@ public class ProofServiceImpl implements ProofService {
      * 冲账
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public void trashProof(Integer proofId, String tokenId) {
         Token token = getToken(tokenId);
         Proof proof = proofMapper.find(proofId);
@@ -301,15 +297,15 @@ public class ProofServiceImpl implements ProofService {
     private final static char CREDIT = 'C';
 
     /**
-     * 稽核通过
+     * 审核通过
      */
     private void verifyPass(Proof proof) {
         List<ProofItem> items = proof.getItems();
 
         //借方总账科目
-        Subject dls = null;
+        Subject dls;
         //贷方总账科目
-        Subject cls = null;
+        Subject cls;
 
         for (ProofItem item : items) {
             dls = item.getDebitLedgerSubject();
@@ -434,13 +430,12 @@ public class ProofServiceImpl implements ProofService {
      * 总账处理
      */
     private void ledgerAccountHandle(ProofItem item, Date date) {
-        Date last = DateUtils.getMonthEnd(date);
         Subject dls = item.getDebitLedgerSubject();
         Subject cls = item.getCreditLedgerSubject();
         if (dls != null) {
             Integer dlsId = dls.getId();
             LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(dlsId, date);
-            int row = 0;
+            int row;
             if (la == null) {
                 la = new LedgerAccount();
                 la.setAbstraction("本日合计")
@@ -451,7 +446,7 @@ public class ProofServiceImpl implements ProofService {
             } else {
                 BigDecimal money = la.getDebitMoney();
                 if (money==null){
-                    money=new BigDecimal(0.00);
+                    money=new BigDecimal("0.00");
                 }
                 LedgerAccount nla = new LedgerAccount();
                 nla.setId(la.getId()).setDebitMoney(money.add(item.getMoney()));
@@ -465,7 +460,7 @@ public class ProofServiceImpl implements ProofService {
         if (cls != null) {
             Integer clsId = cls.getId();
             LedgerAccount la = ledgerAccountMapper.findBySubjectAndDate(clsId, date);
-            int row = 0;
+            int row;
             if (la == null) {
                 la = new LedgerAccount();
                 la.setAbstraction("本日合计")
@@ -474,7 +469,7 @@ public class ProofServiceImpl implements ProofService {
             } else {
                 BigDecimal money = la.getCreditMoney();
                 if (money==null){
-                    money=new BigDecimal(0.00);
+                    money=new BigDecimal("0.00");
                 }
                 LedgerAccount nla = new LedgerAccount();
                 nla.setId(la.getId()).setCreditMoney(money.add(item.getMoney()));

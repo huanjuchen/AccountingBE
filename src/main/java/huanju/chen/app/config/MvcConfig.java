@@ -2,7 +2,6 @@ package huanju.chen.app.config;
 
 import huanju.chen.app.interceptor.AuthInterceptor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -17,8 +16,12 @@ import javax.annotation.Resource;
 public class MvcConfig implements WebMvcConfigurer {
 
 
-    @Resource
     private AuthInterceptor authInterceptor;
+
+    @Resource
+    public void setAuthInterceptor(AuthInterceptor authInterceptor) {
+        this.authInterceptor = authInterceptor;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

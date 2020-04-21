@@ -8,7 +8,6 @@ import huanju.chen.app.exception.v2.BadRequestException;
 import huanju.chen.app.exception.v2.BadUpdateException;
 import huanju.chen.app.security.token.Token;
 import huanju.chen.app.service.UserCenterService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;

@@ -9,10 +9,10 @@ public final class AccountBookUtils {
 
     public static int getMark(int category, BigDecimal dm, BigDecimal cm) {
         if (dm == null) {
-            dm = new BigDecimal(0.00);
+            dm = new BigDecimal("0.00");
         }
         if (cm == null) {
-            cm = new BigDecimal(0.00);
+            cm = new BigDecimal("0.00");
         }
         BigDecimal m = null;
         if (category == 1 || category == 7) {
@@ -51,7 +51,7 @@ public final class AccountBookUtils {
      */
     private static BigDecimal debitCredit(BigDecimal m, BigDecimal dm, BigDecimal cm) {
         if (m == null) {
-            m = new BigDecimal(0.00);
+            m = new BigDecimal("0.00");
         }
         if (dm != null) {
             m = m.add(dm);
@@ -70,7 +70,7 @@ public final class AccountBookUtils {
      */
     private static BigDecimal creditDebit(BigDecimal money, BigDecimal debitMoney, BigDecimal creditMoney) {
         if (money == null) {
-            money = new BigDecimal(0.00);
+            money = new BigDecimal("0.00");
         }
         if (creditMoney != null) {
             money = money.add(creditMoney);

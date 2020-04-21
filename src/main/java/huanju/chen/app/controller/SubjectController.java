@@ -5,7 +5,6 @@ import huanju.chen.app.domain.dto.Subject;
 import huanju.chen.app.domain.vo.SubjectVO;
 import huanju.chen.app.response.ApiResult;
 import huanju.chen.app.service.SubjectService;
-import huanju.chen.app.domain.EntityUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +56,7 @@ public final class SubjectController {
      */
 
     @GetMapping({"/subject"})
-    public ApiResult<List> list(
+    public ApiResult<List<SubjectVO>> list(
             String searchWord,
             String valid,
             String desc,
@@ -86,6 +85,7 @@ public final class SubjectController {
         if (searchWord != null && searchWord.length() > 0) {
             try {
                 Integer codeNum = Integer.valueOf(searchWord);
+                map.put("codeNum",codeNum);
                 map.put("codeSw", searchWord);
             } catch (NumberFormatException e) {
                 map.put("nameSw", searchWord);
@@ -142,9 +142,9 @@ public final class SubjectController {
      * @param subject 科目数据
      */
     @PutMapping("/manage/subject")
-    public ApiResult update(@RequestBody @Validated Subject subject) {
+    public ApiResult<Object> update(@RequestBody @Validated Subject subject) {
         subjectService.update(subject);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 
@@ -154,9 +154,9 @@ public final class SubjectController {
      * @param subjectId 科目ID
      */
     @PutMapping("/manage/subject/lock/{subjectId}")
-    public ApiResult lock(@PathVariable Integer subjectId) {
+    public ApiResult<Object> lock(@PathVariable Integer subjectId) {
         subjectService.lock(subjectId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 
@@ -167,9 +167,9 @@ public final class SubjectController {
      */
 
     @PutMapping("/manage/subject/unlock/{subjectId}")
-    public ApiResult unlock(@PathVariable Integer subjectId) {
+    public ApiResult<Object> unlock(@PathVariable Integer subjectId) {
         subjectService.unlock(subjectId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 
@@ -177,9 +177,9 @@ public final class SubjectController {
      * 删除科目
      */
     @DeleteMapping("/manage/subject/{subjectId}")
-    public ApiResult delete(@PathVariable Integer subjectId) {
+    public ApiResult<Object> delete(@PathVariable Integer subjectId) {
         subjectService.delete(subjectId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 

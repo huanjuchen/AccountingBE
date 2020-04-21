@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/admin/user")
-    public ApiResult<List> getUserList(@RequestParam(required = false, name = "page") String page,
+    public ApiResult<List<UserVO>> getUserList(@RequestParam(required = false, name = "page") String page,
                                        @RequestParam(required = false, name = "pageSize") String pageSize,
                                        @RequestParam(required = false, name = "selectWord") String selectWord,
                                        @RequestParam(required = false, name = "desc") String desc,
@@ -102,22 +102,22 @@ public class UserController {
 
 
     @PutMapping("/admin/user/resetPwd/{userId}")
-    public ApiResult resetPassword(@PathVariable Integer userId) {
+    public ApiResult<Object> resetPassword(@PathVariable Integer userId) {
         userService.resetPwd(userId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 
     @PutMapping("/admin/user/lock/{userId}")
-    public ApiResult lockUser(@PathVariable Integer userId) {
+    public ApiResult<Object> lockUser(@PathVariable Integer userId) {
         userService.lockUser(userId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
     @PutMapping("/admin/user/unlock/{userId}")
-    public ApiResult unLockUser(@PathVariable Integer userId) {
+    public ApiResult<Object> unLockUser(@PathVariable Integer userId) {
         userService.unLockUser(userId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
     @RequestMapping("/admin/user/count")

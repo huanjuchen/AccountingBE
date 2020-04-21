@@ -1,5 +1,8 @@
 package huanju.chen.app.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,21 +13,6 @@ import java.util.Date;
 public final class DateUtils {
 
     private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-
-    public static String[] yearStartEnd(Integer year) {
-        if (year == null) {
-            String str = sdf.format(new Date());
-            String[] ymd = str.split("-");
-            String startDate = ymd[0] + "-01-01";
-            String endDate = ymd[0] + "-12-31";
-            return new String[]{startDate,endDate};
-        }else {
-            String startDate = year + "-01-01";
-            String endDate = year + "-12-31";
-            return new String[]{startDate,endDate};
-        }
-    }
 
 
     public static Date getDate(String dateStr) {
@@ -52,40 +40,6 @@ public final class DateUtils {
         return new String[]{start, end};
     }
 
-
-    public static Date getMonthEnd(Date date) {
-        String dateStr = sdf.format(date);
-        String[] ymd = dateStr.split("-");
-        String newDateStr = getMonthEnd(dateStr);
-        Date endDate = null;
-        try {
-            endDate = sdf.parse(newDateStr);
-        } catch (ParseException e) {
-        }
-        return endDate;
-    }
-
-    public static String getMonthEnd(String dateStr) {
-        String[] ymd = dateStr.split("-");
-
-        return ymd[0] + '-' +
-                ymd[1] +
-                '-' +
-                getMonthLastDay(dateStr);
-    }
-
-
-    /**
-     * 获取当前月最后一天
-     */
-    public static int getMonthLastDay(Date date) {
-        if (date == null) {
-            return 0;
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dateStr = sdf.format(date);
-        return getMonthLastDay(dateStr);
-    }
 
 
     public static int getMonthLastDay(String dateStr) {

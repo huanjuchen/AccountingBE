@@ -23,23 +23,23 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ApiResult<Map> login(@Validated @RequestBody LoginParam loginParam){
+    public ApiResult<Map<String,Object>> login(@Validated @RequestBody LoginParam loginParam){
         Map<String,Object> map=userService.userLogin(loginParam);
         return ApiResult.success(map);
     }
 
 
     @GetMapping("/logout")
-    public ApiResult logout(HttpServletRequest request,HttpServletResponse response){
+    public ApiResult<Object> logout(HttpServletRequest request,HttpServletResponse response){
         String tokenId=request.getHeader("token_id");
         if (tokenId!=null){
             userService.userLogout(tokenId);
         }
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
     @GetMapping("/test")
-    public ApiResult test(HttpServletRequest request){
+    public ApiResult<Object> test(HttpServletRequest request){
         Enumeration<String> headerNames = request.getHeaderNames();
 
         while (headerNames.hasMoreElements()){
@@ -48,7 +48,7 @@ public class AuthController {
             System.out.println(headerName+": "+headerValue);
 
         }
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 }

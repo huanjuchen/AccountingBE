@@ -35,7 +35,7 @@ public final class ApiResult<T> {
      * @return apiResult
      */
     public static ApiResult success() {
-        return new ApiResult(200, "ok");
+        return new ApiResult(200, "ok",null);
     }
 
     /**

@@ -9,8 +9,7 @@ import huanju.chen.app.exception.v2.*;
 import huanju.chen.app.service.SubjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,11 +37,11 @@ public class SubjectServiceImpl implements SubjectService {
      * @return 科目
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public Subject save(Subject subject) {
         logger.debug(JSON.toJSONString(subject));
         try {
-            Integer subjectCode = Integer.valueOf(subject.getCode());
+            Integer.valueOf(subject.getCode());
         } catch (NumberFormatException e) {
             throw new BadCreateException(400, "科目代码只能为纯数字");
         }
@@ -62,7 +61,7 @@ public class SubjectServiceImpl implements SubjectService {
 
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public void delete(Integer id) {
         //检查科目是否被使用
         checkEdit(id, 'd');
@@ -92,9 +91,9 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, readOnly = false)
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public void update(Subject subject) {
-        Subject temp = null;
+        Subject temp;
         //查看该科目是否被使用
         checkEdit(subject.getId(), 'u');
         //查看修改的科目代码是否被占用

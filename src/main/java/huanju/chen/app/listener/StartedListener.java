@@ -5,7 +5,6 @@ import huanju.chen.app.dao.UserMapper;
 import huanju.chen.app.domain.dto.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
@@ -25,8 +24,12 @@ public class StartedListener implements ApplicationListener<ApplicationStartedEv
 
     public static final Logger logger= LoggerFactory.getLogger(StartedListener.class);
 
-    @Resource
     private UserMapper userMapper;
+
+    @Resource
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {

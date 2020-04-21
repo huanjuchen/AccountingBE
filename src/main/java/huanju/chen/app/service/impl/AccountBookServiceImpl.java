@@ -10,7 +10,6 @@ import huanju.chen.app.service.AccountBookService;
 import huanju.chen.app.utils.AccountBookUtils;
 import huanju.chen.app.utils.DateUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -57,13 +56,13 @@ public class AccountBookServiceImpl implements AccountBookService {
         Map<String, Object> map = paramHandle(null, startDate, endDate, page == null ? 0 : page);
         List<BankAccount> list = bankAccountMapper.list(map);
         SumMoney sumMoney = bankAccountMapper.monthStartSumMoney(startDate);
-        BigDecimal debitMoney = null;
-        BigDecimal creditMoney = null;
+        BigDecimal debitMoney;
+        BigDecimal creditMoney;
         /*
         账簿处理
          */
         List<BankAccountVO> bavS = new ArrayList<>();
-        BankAccountVO bav = null;
+        BankAccountVO bav;
         BigDecimal temp = null;
         //月初余额处理
         if (sumMoney != null) {
@@ -93,13 +92,13 @@ public class AccountBookServiceImpl implements AccountBookService {
 
         List<CashAccount> cashAccounts = cashAccountMapper.list(map);
         SumMoney sumMoney = cashAccountMapper.monthStartSumMoney(startDate);
-        BigDecimal dm = null;
-        BigDecimal cm = null;
+        BigDecimal dm;
+        BigDecimal cm;
         /*
         账簿处理
          */
         List<CashAccountVO> cas = new ArrayList<>();
-        CashAccountVO cav = null;
+        CashAccountVO cav;
         BigDecimal temp = null;
         //上期金额处理
         if (sumMoney != null) {
@@ -133,15 +132,15 @@ public class AccountBookServiceImpl implements AccountBookService {
         List<SubAccount> list = subAccountMapper.list(map);
 
         SumMoney sumMoney = subAccountMapper.monthStartSumMoney(startDate, subjectId);
-        BigDecimal dm = null;
-        BigDecimal cm = null;
+        BigDecimal dm;
+        BigDecimal cm;
         /*
         账簿处理
          */
         List<SubAccountVO> sas = new ArrayList<>();
-        SubAccountVO sav = null;
+        SubAccountVO sav;
         BigDecimal temp = null;
-        int mark = -3;
+        int mark;
         //上期金额
         if (sumMoney != null) {
             dm = sumMoney.getDebitMoney();
@@ -176,13 +175,13 @@ public class AccountBookServiceImpl implements AccountBookService {
         Map<String, Object> map = paramHandle(subjectId, startDate, endDate, null);
         List<LedgerAccount> list = ledgerAccountMapper.list(map);
         SumMoney sumMoney = ledgerAccountMapper.monthStartSumMoney(startDate, subjectId);
-        BigDecimal dm = null;
-        BigDecimal cm = null;
+        BigDecimal dm;
+        BigDecimal cm;
 
         List<LedgerAccountVO> las = new ArrayList<>();
-        LedgerAccountVO lav = null;
+        LedgerAccountVO lav;
         BigDecimal temp = null;
-        int mark = -3;
+        int mark;
         if (sumMoney != null) {
             dm = sumMoney.getDebitMoney();
             cm = sumMoney.getCreditMoney();

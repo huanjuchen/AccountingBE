@@ -29,10 +29,10 @@ public class InformationController {
     }
 
     @PostMapping("/manage/information")
-    public ApiResult add(@Validated @RequestBody Information information, HttpServletRequest request) {
+    public ApiResult<Object> add(@Validated @RequestBody Information information, HttpServletRequest request) {
         String tokenId = getTokenId(request);
         informationService.add(information, tokenId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
     @GetMapping("/information/{id}")
@@ -42,7 +42,7 @@ public class InformationController {
     }
 
     @GetMapping("/information")
-    public ApiResult<List> list(Integer uid, Integer page, Integer pageSize) {
+    public ApiResult<List<InformationVO>> list(Integer uid, Integer page, Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
         if (uid != null) {
             map.put("userId", uid);
@@ -70,10 +70,10 @@ public class InformationController {
     }
 
     @DeleteMapping("/manage/information/{id}")
-    public ApiResult delete(@PathVariable Integer id, HttpServletRequest request) {
+    public ApiResult<Object> delete(@PathVariable Integer id, HttpServletRequest request) {
         String tokenId = getTokenId(request);
         informationService.delete(id, tokenId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
 

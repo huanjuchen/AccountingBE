@@ -33,24 +33,24 @@ public class UserCenterController {
     }
 
     @PutMapping("/center/changeName")
-    public ApiResult changeName(HttpServletRequest request, String newName) {
+    public ApiResult<Object> changeName(HttpServletRequest request, String newName) {
         String tokenId = getTokenId(request);
         userCenterService.changeName(newName, tokenId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
     @PutMapping("/center/changePhone")
-    public ApiResult changePhone(HttpServletRequest request, String newPhone) {
+    public ApiResult<Object> changePhone(HttpServletRequest request, String newPhone) {
         String tokenId = getTokenId(request);
         userCenterService.changePhone(newPhone, tokenId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
     @PutMapping("/center/changePwd")
-    public ApiResult changePwd(HttpServletRequest request, String newPwd) {
+    public ApiResult<Object> changePwd(HttpServletRequest request, String newPwd) {
         String tokenId = getTokenId(request);
         userCenterService.changePassword(newPwd, tokenId);
-        return ApiResult.success();
+        return ApiResult.success(null);
     }
 
     private String getTokenId(HttpServletRequest request) {
