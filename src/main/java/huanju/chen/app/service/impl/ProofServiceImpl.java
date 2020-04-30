@@ -227,7 +227,8 @@ public class ProofServiceImpl implements ProofService {
         }
         if (result) {
             queue.add(proof);
-            handleCenter.wakeHandle();
+            //唤醒处理线程
+            handleCenter.noticeHandle();
         }
     }
 

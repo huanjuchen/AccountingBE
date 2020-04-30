@@ -27,9 +27,16 @@ public class HandleCenter {
 
     private final Condition condition = lock.newCondition();
 
-    ExecutorService executorService= new ThreadPoolExecutor(5,5,
+    /**
+     * 处理线程信号灯
+     * true：表示运行
+     * false：表示等待中
+     */
+    private boolean running;
+
+    ExecutorService executorService = new ThreadPoolExecutor(5, 5,
             60L, TimeUnit.SECONDS
-            ,new ArrayBlockingQueue<>(5),new ThreadPoolExecutor.AbortPolicy());
+            , new ArrayBlockingQueue<>(5), new ThreadPoolExecutor.AbortPolicy());
 
 
     private AccountBookService service;
@@ -41,16 +48,24 @@ public class HandleCenter {
     }
 
     {
-        new Thread(()->{
+        new Thread(() -> {
             logger.info("处理线程已经启动");
             this.handle();
-        }, "lookUp" ).start();
+        }, "handleThread").start();
     }
 
-    public void wakeHandle() {
+    public void noticeHandle() {
+        /*
+        处理线程正在运行
+        无须唤醒
+         */
+        if (running){
+            return;
+        }
+
         lock.lock();
         try {
-            condition.signal();
+            condition.signalAll();
         } finally {
             lock.unlock();
         }
@@ -61,19 +76,22 @@ public class HandleCenter {
     public void handle() {
         lock.lock();
         try {
-          while (true){
-              while (queue.isEmpty()){
-                  condition.await();
-              }
-              Proof proof=queue.get();
-              BookTask task=new BookTask(service,proof);
-              try {
-                  executorService.execute(task);
-                  queue.remove();
-              }catch (RejectedExecutionException e){
-                  condition.await();
-              }
-          }
+            while (true) {
+                running = true;
+                while (queue.isEmpty()) {
+                    running = false;
+                    condition.await();
+                }
+                Proof proof = queue.get();
+                BookTask task = new BookTask(service, proof);
+                try {
+                    executorService.execute(task);
+                    queue.remove();
+                } catch (RejectedExecutionException e) {
+                    running = false;
+                    condition.await();
+                }
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {

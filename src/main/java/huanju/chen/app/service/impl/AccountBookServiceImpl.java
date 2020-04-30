@@ -285,7 +285,7 @@ public class AccountBookServiceImpl implements AccountBookService {
             if (rows != 1) {
                 throw new huanju.chen.app.exception.v2.BadCreateException(500, "系统错误，处理失败");
             }
-            handleCenter.wakeHandle();
+            handleCenter.noticeHandle();
         }
     }
 
